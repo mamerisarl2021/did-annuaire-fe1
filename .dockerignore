@@ -1,0 +1,22 @@
+# deps / logs
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# next build artifacts
+.next
+out
+
+# local env (don’t ship)
+.env*
+!.env*.sample
+
+# vcs
+.git
+.gitignore
+
+# docker context
+docker/*
+!.dockerignore
