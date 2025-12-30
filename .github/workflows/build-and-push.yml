@@ -1,0 +1,47 @@
+name: build-and-push
+on:
+  push:
+    branches: [ staging ]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".gitignore"
+    tags: [ 'v*' ]
+  workflow_dispatch:
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ctrldaviddee/annuaire_did
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=raw,value=prod-latest,enable={{is_default_branch}}
+            type=sha
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Wait for image to be available
+        run: sleep 30
+
+      # Trivy image scan (dependency/vuln monitoring)
+      - name: Run scan image with Trivy
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ctrldaviddee/annuaire_did:staging
+          format: table
+          exit-code: '0'
+          ignore-unfixed: true

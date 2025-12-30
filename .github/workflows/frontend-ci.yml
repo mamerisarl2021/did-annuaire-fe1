@@ -1,0 +1,23 @@
+name: frontend-ci
+on:
+  pull_request:
+    branches: [ staging ]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        id: cache-nodemodules
+
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: npm ci
+        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
+      - run: npm run lint
+      - run: npm run type-check || true
+      - run: npm run build
+

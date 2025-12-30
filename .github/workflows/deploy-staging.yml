@@ -1,0 +1,42 @@
+name: deploy-staging
+on:
+  workflow_run:
+    workflows: [ "build-and-push" ]
+    types: [ completed ]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'staging' }}  # Only deploy if build succeeded
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH deploy (blue)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            set -euo pipefail
+            
+            cd ${{ secrets.VPS_PATH }}/staging
+            export IMAGE_TAG=staging
+            
+            echo "➡️  Création du réseau Docker 'annuaire_did_web'"
+            docker network create annuaire_did_web 2>/dev/null || true
+            
+            echo "➡️ Pulling latest image"
+            docker compose -f compose.blue.yml pull
+            
+            echo "➡️ Stopping current stack"
+            docker compose -f compose.blue.yml down || true
+            
+            echo "➡️ Starting new stack"
+            IMAGE_TAG=${IMAGE_TAG} docker compose -f compose.blue.yml up -d --remove-orphans
+            
+            echo "➡️ Waiting for service to be healthy"
+            timeout 60 sh -c 'until docker run --rm --network annuaire_did_web curlimages/curl:8.11.1 -sf http://frontend-blue:3000/; do sleep 5; done' || exit 1
+            
+            echo "✅ Service healthy — switching to blue"
+            bash switch_active.sh
+            
+            # keep green up for rollback, optional stop: docker compose -f compose.green.yml down
