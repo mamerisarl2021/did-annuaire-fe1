@@ -12,6 +12,13 @@ const config: NextConfig = {
             headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
         },
     ],
-}
+    images:{
+    domains: [],
+  },
+  env: {
+    NEXT_PUBLIC_APP_NAME: "DID Annuaire",
+    NEXT_PUBLIC_APP_VERSION: "1.0.0",
+  },
+};
 
 export default config

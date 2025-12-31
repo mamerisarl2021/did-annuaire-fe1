@@ -1,0 +1,45 @@
+'use client';
+
+import Link from 'next/link';
+import { Shield } from 'lucide-react';
+import { Button } from '../ui/button';
+import { typography } from '@/lib/typography';
+import { ROUTES } from '@/shared/lib/constants/routes';
+
+export function LandingHeader() {
+  return (
+    <header className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        <Link href={ROUTES.public.home} className="flex items-center gap-2">
+          <div className="bg-primary/10 rounded-lg p-2">
+            <Shield className="text-primary h-6 w-6" />
+          </div>
+          <span className="font-heading text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            DID Annuaire
+          </span>
+        </Link>
+
+        <nav className={`hidden items-center gap-8 ${typography.label} text-slate-600 md:flex`}>
+          <Link href="#features" className="hover:text-primary transition-colors">
+            Fonctionnalités
+          </Link>
+          <Link href="#security" className="hover:text-primary transition-colors">
+            Sécurité
+          </Link>
+          <Link href="#cas-usage" className="hover:text-primary transition-colors">
+            Cas d&apos;usage
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" asChild className="hidden sm:flex">
+            <Link href={ROUTES.public.login}>Connexion</Link>
+          </Button>
+          <Button asChild>
+            <Link href={ROUTES.public.register}>Commencer</Link>
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}
