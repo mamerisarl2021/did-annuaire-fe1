@@ -6,8 +6,8 @@ on:
       - "**.md"
       - "docs/**"
       - ".gitignore"
-    tags: [ 'v*' ]
   workflow_dispatch:
+
 jobs:
   build-push:
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
 
       - name: Wait for image to be available
-        run: sleep 30
+        run: sleep 15
 
       # Trivy image scan (dependency/vuln monitoring)
       - name: Run scan image with Trivy
