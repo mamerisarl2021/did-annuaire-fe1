@@ -1,7 +1,7 @@
 name: frontend-ci
 on:
   pull_request:
-    branches: [ main, staging ]
+    branches: [ master, staging ]
 jobs:
   ci:
     runs-on: ubuntu-latest
