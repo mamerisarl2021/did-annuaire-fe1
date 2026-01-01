@@ -1,4 +1,4 @@
-name: deploy-staging
+name: deploy-staging-frontend
 on:
   workflow_run:
     workflows: [ "deploy-staging-frontend" ]
