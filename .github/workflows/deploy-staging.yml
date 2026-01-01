@@ -1,7 +1,7 @@
 name: deploy-staging-frontend
 on:
   workflow_run:
-    workflows: [ "deploy-staging-frontend" ]
+    workflows: [ "build-push-frontend" ]
     types: [ completed ]
 
 jobs:
