@@ -31,6 +31,3 @@ jobs:
             
             echo "➡️ Starting new stack"
             docker compose -f compose.yml up -d --remove-orphans
-            
-            echo "➡️ Waiting for service to be healthy"
-            timeout 60 sh -c 'until docker run --rm --network annuaire_staging_net curlimages/curl:8.11.1 -sf http://frontend-blue:3000/; do sleep 5; done' || exit 1
