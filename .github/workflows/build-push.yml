@@ -1,11 +1,8 @@
-name: build-and-push
+name: build-push-frontend
 on:
   push:
     branches: [ staging ]
-    paths-ignore:
-      - "**.md"
-      - "docs/**"
-      - ".gitignore"
+    paths-ignore: [ "**.md", "docs/**", ".gitignore" ]
   workflow_dispatch:
 
 jobs:
@@ -23,10 +20,9 @@ jobs:
         with:
           images: ctrldaviddee/annuaire_did
           tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=raw,value=prod-latest,enable={{is_default_branch}}
+            type=raw,value=staging-latest
             type=sha
+
       - uses: docker/build-push-action@v6
         with:
           context: .
