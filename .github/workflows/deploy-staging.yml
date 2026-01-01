@@ -1,4 +1,4 @@
-name: deploy-staging-frontend
+name: deploy-staging
 on:
   workflow_run:
     workflows: [ "build-push" ]
