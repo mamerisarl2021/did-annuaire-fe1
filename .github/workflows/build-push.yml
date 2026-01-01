@@ -1,4 +1,4 @@
-name: build-push
+name: build-push-frontend
 on:
   push:
     branches: [ staging ]
