@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Cache
+.turbo
+.cache
+
+# Logs
+*.log
+
+# Environment variables
+.env*
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Generated files
+*.d.ts
+!src/**/*.d.ts
+
+# Public assets
+public
+
+# Coverage
+coverage
+.nyc_output
