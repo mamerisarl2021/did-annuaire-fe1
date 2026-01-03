@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 export default function LandingScene() {
   return (
     <div className="relative h-[400px] w-full md:h-[600px]">
-      <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
+      <Canvas camera={{ position: [0, 0, 6], fov: 45 }} aria-hidden="true">
         <Suspense fallback={null}>
           <Environment preset="city" />
 
