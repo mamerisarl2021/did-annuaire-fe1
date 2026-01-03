@@ -64,7 +64,7 @@ function useIsomorphicLayoutEffect(
   const canUseDOM = typeof window !== 'undefined';
   const useEffectHook = canUseDOM ? useLayoutEffect : useEffect;
   
-  useEffectHook(effect, deps);
+  return useEffectHook(effect, deps);
 }
 
 /**
