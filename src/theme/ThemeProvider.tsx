@@ -51,9 +51,21 @@ interface ThemeProviderProps {
   disablePersistence?: boolean;
 }
 
-// SSR-safe useLayoutEffect
-const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+/**
+ * SSR-safe useLayoutEffect hook
+ * Determines which effect to use at runtime instead of module load time
+ * This ensures the correct effect is used even if the module is loaded
+ * server-side and then hydrated client-side
+ */
+function useIsomorphicLayoutEffect(
+  effect: React.EffectCallback,
+  deps?: React.DependencyList
+): void {
+  const canUseDOM = typeof window !== 'undefined';
+  const useEffectHook = canUseDOM ? useLayoutEffect : useEffect;
+  
+  useEffectHook(effect, deps);
+}
 
 /**
  * Provider du système de thème
