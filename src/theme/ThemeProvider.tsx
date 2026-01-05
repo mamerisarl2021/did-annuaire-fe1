@@ -51,10 +51,10 @@ interface ThemeProviderProps {
   disablePersistence?: boolean;
 }
 
-// SSR-safe useLayoutEffect
-const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
-
+/**
+ * SSR-safe layout effect - uses useLayoutEffect on client, useEffect on server
+ */
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 /**
  * Provider du système de thème
  */

@@ -10,11 +10,11 @@ import { ROUTES } from '@/shared/lib/constants/routes';
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-slate-50 pt-32 pb-20 lg:pt-48 lg:pb-32">
+    <section className="relative overflow-hidden bg-slate-50 pt-32 pb-20 lg:pt-48 lg:pb-32 dark:bg-slate-950">
       {/* Background decorators */}
       <div className="pointer-events-none absolute top-0 left-0 h-full w-full overflow-hidden">
-        <div className="absolute top-[-10%] right-[-5%] h-[500px] w-[500px] rounded-full bg-blue-100/50 opacity-60 blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-slate-200/50 opacity-60 blur-3xl" />
+        <div className="absolute top-[-10%] right-[-5%] h-[500px] w-[500px] rounded-full bg-blue-100/50 opacity-60 blur-3xl dark:bg-blue-900/20" />
+        <div className="absolute bottom-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-slate-200/50 opacity-60 blur-3xl dark:bg-slate-800/30" />
       </div>
 
       <div className="relative z-10 container mx-auto px-4">
@@ -25,7 +25,9 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className={`mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 ${typography.overline} normal-case text-blue-700`}>
+            <div
+              className={`mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 dark:border-blue-900 dark:bg-blue-900/30 ${typography.overline} text-blue-700 normal-case dark:text-blue-300`}
+            >
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
@@ -33,12 +35,12 @@ export function Hero() {
               Disponible pour les administrations et entreprises
             </div>
 
-            <h1 className={`mb-6 ${typography.displayHero} text-slate-900`}>
+            <h1 className={`mb-6 ${typography.displayHero} text-slate-900 dark:text-white`}>
               L&apos;identité numérique <br />
               <span className="text-primary">décentralisée</span> et de confiance.
             </h1>
 
-            <p className={`mb-8 max-w-lg ${typography.lead}`}>
+            <p className={`mb-8 max-w-lg ${typography.lead} dark:text-slate-300`}>
               Émettez des identifiants vérifiables (W3C VCs) et gérez vos DIDs en toute conformité.
               Une infrastructure souveraine pour bâtir la confiance numérique.
             </p>
@@ -49,17 +51,22 @@ export function Hero() {
                   Créer une organisation <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-12 px-8 text-base" asChild>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 px-8 text-base dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                asChild
+              >
                 <Link href="#features">Découvrir la plateforme</Link>
               </Button>
             </div>
 
             <div className="space-y-3">
-              <div className={`flex items-center gap-2 ${typography.caption}`}>
+              <div className={`flex items-center gap-2 ${typography.caption} dark:text-slate-300`}>
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                 <span>Conforme W3C DID Core & Verifiable Credentials v2</span>
               </div>
-              <div className={`flex items-center gap-2 ${typography.caption}`}>
+              <div className={`flex items-center gap-2 ${typography.caption} dark:text-slate-300`}>
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                 <span>Hébergement souverain & Sécurité auditable</span>
               </div>

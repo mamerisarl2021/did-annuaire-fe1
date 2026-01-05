@@ -50,11 +50,7 @@ interface ThemeToggleProps {
  * Icône correspondant au thème résolu
  */
 function ThemeIcon({ theme }: { theme: ResolvedTheme }) {
-  return theme === 'dark' ? (
-    <Moon className="h-4 w-4" />
-  ) : (
-    <Sun className="h-4 w-4" />
-  );
+  return theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />;
 }
 
 /**

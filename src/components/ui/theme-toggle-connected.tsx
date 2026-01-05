@@ -23,11 +23,7 @@ interface ThemeToggleConnectedProps {
 /**
  * ThemeToggle connecté avec dropdown (light/dark/system)
  */
-export function ThemeToggleConnected({
-  variant,
-  size,
-  className,
-}: ThemeToggleConnectedProps) {
+export function ThemeToggleConnected({ variant, size, className }: ThemeToggleConnectedProps) {
   const { resolvedTheme, mode, setMode } = useTheme();
 
   return (
