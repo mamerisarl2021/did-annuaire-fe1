@@ -9,18 +9,20 @@ import { ROUTES } from '@/shared/lib/constants/routes';
 
 export function LandingHeader() {
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
+    <header className="border-border bg-background/80 fixed top-0 z-50 w-full border-b backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href={ROUTES.public.home} className="flex items-center gap-2">
           <div className="bg-primary/10 rounded-lg p-2">
             <Shield className="text-primary h-6 w-6" />
           </div>
-          <span className="font-heading text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+          <span className="font-heading from-foreground to-muted-foreground bg-gradient-to-r bg-clip-text text-xl font-bold text-transparent">
             DID Annuaire
           </span>
         </Link>
 
-        <nav className={`hidden items-center gap-8 ${typography.label} text-muted-foreground md:flex`}>
+        <nav
+          className={`hidden items-center gap-8 ${typography.label} text-muted-foreground md:flex`}
+        >
           <Link href="#features" className="hover:text-primary transition-colors">
             Fonctionnalités
           </Link>

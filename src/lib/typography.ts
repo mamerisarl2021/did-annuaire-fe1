@@ -104,7 +104,8 @@ export const typography = {
   // ═══════════════════════════════════════════════════════════════
 
   /** Hero principal - Plus grande taille, impact maximal */
-  displayHero: 'font-heading text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] tracking-tight',
+  displayHero:
+    'font-heading text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] tracking-tight',
 
   /** Display principal - Titres de section majeurs */
   displayPrimary: 'font-heading text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight',

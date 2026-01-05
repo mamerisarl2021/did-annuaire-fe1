@@ -28,7 +28,7 @@ const didFeatures = [
 
 export function DidExplanation() {
   return (
-    <section className="bg-white dark:bg-slate-900 py-24">
+    <section className="bg-white py-24 dark:bg-slate-900">
       <div className="container mx-auto px-4">
         <div className="mx-auto mb-16 max-w-3xl text-center">
           <h2 className={`mb-4 ${typography.displaySecondary} text-slate-900 dark:text-white`}>
@@ -49,15 +49,19 @@ export function DidExplanation() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="h-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm transition-shadow duration-300 hover:shadow-md">
+              <Card className="h-full border-slate-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
                 <CardHeader>
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                     <feature.icon className="h-6 w-6" />
                   </div>
-                  <CardTitle className={`${typography.h4} dark:text-white`}>{feature.title}</CardTitle>
+                  <CardTitle className={`${typography.h4} dark:text-white`}>
+                    {feature.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className={`${typography.body} text-slate-600 dark:text-slate-300`}>{feature.description}</p>
+                  <p className={`${typography.body} text-slate-600 dark:text-slate-300`}>
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>

@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 export default function LandingScene() {
   return (
     <div className="relative h-[400px] w-full md:h-[600px]">
-      <Canvas 
+      <Canvas
         camera={{ position: [0, 0, 6], fov: 45 }}
         aria-label="3D visualization of a decentralized digital identity concept"
         role="img"
