@@ -7,16 +7,14 @@
 
 interface ProgressBarProps {
   currentStep: number;
-  totalSteps: number;
 }
 
 const steps = [
-  { number: 1, label: 'Organisation' },
-  { number: 2, label: 'Administrateur' },
-  { number: 3, label: 'Justificatif' },
+  { number: 1, label: 'Informations Organisationnelles' },
+  { number: 2, label: 'Informations Administratives' },
 ];
 
-export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
+export function ProgressBar({ currentStep }: ProgressBarProps) {
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between">
@@ -24,41 +22,28 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
           <div key={step.number} className="flex items-center">
             <div className="flex flex-col items-center">
               <div
-                className={`
-                  w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-                  ${
-                    step.number <= currentStep
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
-                  }
-                `}
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
+                  step.number <= currentStep
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground'
+                } `}
               >
                 {step.number}
               </div>
               <span
-                className={`
-                  mt-2 text-xs font-medium
-                  ${
-                    step.number <= currentStep
-                      ? 'text-primary'
-                      : 'text-muted-foreground'
-                  }
-                `}
+                className={`mt-2 text-xs font-medium ${
+                  step.number <= currentStep ? 'text-primary' : 'text-muted-foreground'
+                } `}
               >
                 {step.label}
               </span>
             </div>
-            
+
             {index < steps.length - 1 && (
               <div
-                className={`
-                  flex-1 h-0.5 mx-4
-                  ${
-                    step.number < currentStep
-                      ? 'bg-primary'
-                      : 'bg-muted'
-                  }
-                `}
+                className={`mx-4 h-0.5 flex-1 ${
+                  step.number < currentStep ? 'bg-primary' : 'bg-muted'
+                } `}
               />
             )}
           </div>

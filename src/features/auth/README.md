@@ -36,23 +36,27 @@ src/app/(auth)/
 ## 🔧 Fonctionnalités implémentées
 
 ### ✅ Connexion
+
 - Formulaire avec email/mot de passe
 - Validation Zod côté client
 - Gestion des erreurs
 - Interface responsive
 
 ### ✅ Inscription (3 étapes)
+
 1. **Organisation** : nom, type, pays, email, téléphone
 2. **Administrateur** : prénom, nom, email professionnel
 3. **Document** : upload de justificatif (drag & drop)
 
 ### ✅ Validation OTP
+
 - Modal élégant après inscription
 - Code à 6 chiffres
 - Fonction de renvoi avec timer
 - Validation automatique
 
 ### ✅ Intégration API pays
+
 - Récupération depuis `restcountries.com`
 - Mise à jour automatique du préfixe téléphonique
 - Affichage des drapeaux
@@ -60,23 +64,28 @@ src/app/(auth)/
 ## 🎨 Design System
 
 ### Palette de couleurs
+
 Utilise la palette définie dans `src/theme/palettes/`:
+
 - **Primary** : `oklch(0.45 0.18 250)` (bleu institutionnel)
 - **Background** : `oklch(1 0 0)` (blanc pur)
 - **Muted** : `oklch(0.97 0 0)` (gris très clair)
 
 ### Typographie
+
 - **Font Sans** : Inter (UI et corps de texte)
 - **Font Heading** : Plus Jakarta Sans (titres)
 
 ## 🚀 Utilisation
 
 ### Pages disponibles
+
 - `/login` - Connexion utilisateur
 - `/register` - Inscription organisation
 - `/auth/test` - Page de test des composants
 
 ### Hooks disponibles
+
 ```typescript
 import { useLogin, useRegister, useOtp } from '@/features/auth';
 
@@ -87,6 +96,7 @@ const { form, canResend, countdown, handleResend } = useOtp();
 ```
 
 ### Services disponibles
+
 ```typescript
 import { loginUser, registerOrganization, fetchCountries } from '@/features/auth';
 

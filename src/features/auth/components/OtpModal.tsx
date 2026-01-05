@@ -30,15 +30,13 @@ export function OtpModal({ isOpen, onClose, onSuccess }: OtpModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">
-            Vérification de votre inscription
-          </DialogTitle>
+          <DialogTitle className="text-center">Vérification de votre inscription</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-6">
-          <p className="text-center text-muted-foreground">
-            Un code de vérification à 6 chiffres a été envoyé à votre adresse email. 
-            Veuillez le saisir ci-dessous pour finaliser votre inscription.
+          <p className="text-muted-foreground text-center">
+            Un code de vérification à 6 chiffres a été envoyé à votre adresse email. Veuillez le
+            saisir ci-dessous pour finaliser votre inscription.
           </p>
 
           <Form {...form}>
@@ -56,7 +54,7 @@ export function OtpModal({ isOpen, onClose, onSuccess }: OtpModalProps) {
                         {...field}
                         id="code"
                         placeholder="000000"
-                        className="text-center text-2xl tracking-widest font-mono"
+                        className="text-center font-mono text-2xl tracking-widest"
                         maxLength={6}
                         disabled={isSubmitting}
                         autoFocus
@@ -67,11 +65,7 @@ export function OtpModal({ isOpen, onClose, onSuccess }: OtpModalProps) {
                 )}
               />
 
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isSubmitting}
-              >
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? 'Vérification...' : 'Valider'}
               </Button>
             </form>
@@ -84,10 +78,7 @@ export function OtpModal({ isOpen, onClose, onSuccess }: OtpModalProps) {
               disabled={!canResend}
               className="text-sm"
             >
-              {canResend 
-                ? 'Renvoyer le code' 
-                : `Renvoyer dans ${countdown}s`
-              }
+              {canResend ? 'Renvoyer le code' : `Renvoyer dans ${countdown}s`}
             </Button>
           </div>
         </div>

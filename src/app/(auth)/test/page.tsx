@@ -11,15 +11,11 @@ import { Card } from '@/components/ui/card';
 
 export default function AuthTestPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <Card className="p-8 max-w-md w-full space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-heading font-semibold">
-            Test d'Authentification
-          </h1>
-          <p className="text-muted-foreground">
-            Testez les pages d'authentification
-          </p>
+    <div className="flex min-h-screen items-center justify-center p-6">
+      <Card className="w-full max-w-md space-y-6 p-8">
+        <div className="space-y-2 text-center">
+          <h1 className="font-heading text-2xl font-semibold">Test d&apos;Authentification</h1>
+          <p className="text-muted-foreground">Testez les pages d&apos;authentification</p>
         </div>
 
         <div className="space-y-4">
@@ -28,17 +24,17 @@ export default function AuthTestPage() {
               Page de Connexion
             </Button>
           </Link>
-          
+
           <Link href="/register" className="block">
             <Button className="w-full" variant="outline">
-              Page d'Inscription
+              Page d&apos;Inscription
             </Button>
           </Link>
         </div>
 
         <div className="text-center">
-          <Link href="/" className="text-sm text-muted-foreground hover:underline">
-            Retour à l'accueil
+          <Link href="/" className="text-muted-foreground text-sm hover:underline">
+            Retour à l&apos;accueil
           </Link>
         </div>
       </Card>

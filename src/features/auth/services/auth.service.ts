@@ -7,28 +7,28 @@
  */
 
 import axios from 'axios';
-import type { 
-  LoginFormData, 
-  RegisterFormData, 
+import type {
+  LoginFormData,
+  RegisterFormData,
   OtpFormData,
-  AuthResponse, 
+  AuthResponse,
   OtpResponse,
-  Country 
+  Country,
 } from '../types/auth.types';
 
 // ═══════════════════════════════════════════════════════════════
 // CONFIGURATION
 // ═══════════════════════════════════════════════════════════════
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// Configuration axios pour usage futur
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+// const apiClient = axios.create({
+//   baseURL: API_BASE_URL,
+//   timeout: 10000,
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+// });
 
 // ═══════════════════════════════════════════════════════════════
 // SERVICES D'AUTHENTIFICATION
@@ -70,6 +70,7 @@ export async function registerOrganization(data: RegisterFormData): Promise<Auth
         success: true,
         message: 'Inscription soumise avec succès',
         data: {
+          organizationId: 'mock-org-' + Date.now(),
           user: {
             id: 'mock-user-id',
             email: data.adminEmail,
@@ -139,12 +140,10 @@ export async function fetchCountries(): Promise<Country[]> {
     const response = await axios.get(
       'https://restcountries.com/v3.1/all?fields=name,cca2,idd,flags'
     );
-    
+
     return response.data
       .filter((country: Country) => country.idd?.root && country.idd?.suffixes)
-      .sort((a: Country, b: Country) => 
-        a.name.common.localeCompare(b.name.common, 'fr')
-      );
+      .sort((a: Country, b: Country) => a.name.common.localeCompare(b.name.common, 'fr'));
   } catch (error) {
     console.error('Erreur lors du chargement des pays:', error);
     return [];

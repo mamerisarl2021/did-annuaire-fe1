@@ -42,6 +42,7 @@ export interface AuthResponse {
   message: string;
   data?: {
     token?: string;
+    organizationId?: string;
     user?: {
       id: string;
       email: string;
@@ -67,16 +68,30 @@ export interface OtpResponse {
 // TYPES D'ÉTAT
 // ═══════════════════════════════════════════════════════════════
 
+/**
+ * State Machine - Statuts d'organisation
+ */
+export enum OrganizationStatus {
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  REFUSED = 'REFUSED',
+  SUSPENDED = 'SUSPENDED',
+}
+
+export interface OrganizationStatusData {
+  id: string;
+  status: OrganizationStatus;
+  organizationName: string;
+  createdAt: string;
+  updatedAt: string;
+  refusalReason?: string;
+}
+
 export interface RegisterState {
   currentStep: number;
   formData: Partial<RegisterFormData>;
   isSubmitting: boolean;
-  showOtpModal: boolean;
+  organizationId?: string;
 }
 
-export type OrganizationType = 
-  | 'entreprise'
-  | 'association'
-  | 'collectivite'
-  | 'etablissement_public'
-  | 'autre';
+export type OrganizationType = 'Administration' | 'Entreprise' | 'PSCE' | 'Autre';

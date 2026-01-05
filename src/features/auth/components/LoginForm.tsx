@@ -32,7 +32,7 @@ export function LoginForm() {
               <Label htmlFor="email">Email</Label>
               <FormControl>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Mail className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
                   <Input
                     {...field}
                     id="email"
@@ -56,26 +56,22 @@ export function LoginForm() {
               <Label htmlFor="password">Mot de passe</Label>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Lock className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
                   <Input
                     {...field}
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
-                    className="pl-10 pr-10"
+                    className="pr-10 pl-10"
                     disabled={isSubmitting}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transform"
                     disabled={isSubmitting}
                   >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </FormControl>
@@ -84,21 +80,14 @@ export function LoginForm() {
           )}
         />
 
-        <Button 
-          type="submit" 
-          className="w-full" 
-          disabled={isSubmitting}
-        >
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? 'Connexion...' : 'Se connecter'}
         </Button>
 
-        <div className="text-center space-y-2">
-          <p className="text-sm text-muted-foreground">
+        <div className="space-y-2 text-center">
+          <p className="text-muted-foreground text-sm">
             Pas encore de compte ?{' '}
-            <Link 
-              href="/register" 
-              className="text-primary hover:underline font-medium"
-            >
+            <Link href="/register" className="text-primary font-medium hover:underline">
               Créer une organisation
             </Link>
           </p>

@@ -10,10 +10,7 @@ import { LoginForm } from '@/features/auth/components/LoginForm';
 
 export default function LoginPage() {
   return (
-    <AuthLayout
-      title="Connexion"
-      subtitle="Accédez à votre espace organisation"
-    >
+    <AuthLayout title="Connexion" subtitle="Accédez à votre espace organisation">
       <LoginForm />
     </AuthLayout>
   );

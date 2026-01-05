@@ -11,28 +11,22 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { 
-  loginSchema, 
-  registerSchema, 
-  otpSchema,
-  step1Schema,
-  step2Schema,
-  step3Schema
-} from '../schemas/auth.schema';
-import { 
-  loginUser, 
-  registerOrganization, 
-  verifyOtp, 
+import { loginSchema, otpSchema, step1Schema, step2Schema } from '../schemas/auth.schema';
+import {
+  loginUser,
+  registerOrganization,
+  verifyOtp,
   resendOtp,
-  fetchCountries 
+  fetchCountries,
 } from '../services/auth.service';
-import type { 
-  LoginFormData, 
-  RegisterFormData, 
+import type {
+  LoginFormData,
+  RegisterFormData,
   OtpFormData,
   Country,
-  RegisterState 
+  RegisterState,
 } from '../types/auth.types';
 
 // ═══════════════════════════════════════════════════════════════
@@ -52,10 +46,10 @@ export function useLogin() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       const result = await loginUser(data);
-      
+
       if (result.success) {
         toast.success('Connexion réussie');
         // TODO: Redirection vers le dashboard
@@ -63,8 +57,8 @@ export function useLogin() {
       } else {
         toast.error(result.message);
       }
-    } catch (error) {
-      toast.error('Une erreur inattendue s\'est produite');
+    } catch {
+      toast.error("Une erreur inattendue s'est produite");
     } finally {
       setIsSubmitting(false);
     }
@@ -82,25 +76,28 @@ export function useLogin() {
 // ═══════════════════════════════════════════════════════════════
 
 export function useRegister() {
+  const router = useRouter();
   const [state, setState] = useState<RegisterState>({
     currentStep: 1,
     formData: {},
     isSubmitting: false,
-    showOtpModal: false,
   });
 
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
-  // Formulaires pour chaque étape
+  // Formulaires pour chaque étape (2 étapes maintenant)
   const step1Form = useForm({
     resolver: zodResolver(step1Schema),
     defaultValues: {
       organizationName: '',
       organizationType: undefined,
       country: '',
+      address: '',
       organizationEmail: '',
       phone: '',
+      domains: [],
+      activityDocument: undefined,
     },
   });
 
@@ -110,13 +107,8 @@ export function useRegister() {
       adminFirstName: '',
       adminLastName: '',
       adminEmail: '',
-    },
-  });
-
-  const step3Form = useForm({
-    resolver: zodResolver(step3Schema),
-    defaultValues: {
-      document: undefined,
+      adminFunction: '',
+      authorizationDocument: undefined,
     },
   });
 
@@ -129,85 +121,74 @@ export function useRegister() {
     loadCountries();
   }, []);
 
-  // Mise à jour du préfixe téléphonique
+  // Mise à jour du préfixe téléphonique quand le pays change
   useEffect(() => {
-    const countryCode = step1Form.watch('country');
-    if (countryCode && countries.length > 0) {
-      const country = countries.find(c => c.cca2 === countryCode);
-      setSelectedCountry(country || null);
-      
-      if (country?.idd) {
-        const prefix = country.idd.root + (country.idd.suffixes?.[0] || '');
-        const currentPhone = step1Form.getValues('phone');
-        if (!currentPhone.startsWith(prefix)) {
-          step1Form.setValue('phone', prefix);
+    const subscription = step1Form.watch((value, { name }) => {
+      if (name === 'country' && value.country && countries.length > 0) {
+        const country = countries.find((c) => c.cca2 === value.country);
+        setSelectedCountry(country || null);
+
+        if (country?.idd) {
+          const prefix = country.idd.root + (country.idd.suffixes?.[0] || '');
+          const currentPhone = step1Form.getValues('phone');
+          // Ne met à jour que si le champ est vide ou contient encore l'ancien préfixe
+          if (!currentPhone || currentPhone.length < 5) {
+            step1Form.setValue('phone', prefix);
+          }
         }
       }
-    }
-  }, [step1Form.watch('country'), countries]);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [step1Form, countries]);
 
   const nextStep = async () => {
-    let isValid = false;
-    
-    switch (state.currentStep) {
-      case 1:
-        isValid = await step1Form.trigger();
-        if (isValid) {
-          setState(prev => ({
-            ...prev,
-            formData: { ...prev.formData, ...step1Form.getValues() },
-            currentStep: 2,
-          }));
-        }
-        break;
-      case 2:
-        isValid = await step2Form.trigger();
-        if (isValid) {
-          setState(prev => ({
-            ...prev,
-            formData: { ...prev.formData, ...step2Form.getValues() },
-            currentStep: 3,
-          }));
-        }
-        break;
+    if (state.currentStep === 1) {
+      const isValid = await step1Form.trigger();
+      if (isValid) {
+        setState((prev) => ({
+          ...prev,
+          formData: { ...prev.formData, ...step1Form.getValues() },
+          currentStep: 2,
+        }));
+      }
     }
   };
 
   const prevStep = () => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       currentStep: Math.max(1, prev.currentStep - 1),
     }));
   };
 
   const submitRegistration = async () => {
-    const step3Valid = await step3Form.trigger();
-    if (!step3Valid) return;
+    const step2Valid = await step2Form.trigger();
+    if (!step2Valid) return;
 
     const finalData = {
       ...state.formData,
-      ...step3Form.getValues(),
+      ...step2Form.getValues(),
     } as RegisterFormData;
 
-    setState(prev => ({ ...prev, isSubmitting: true }));
+    setState((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
       const result = await registerOrganization(finalData);
-      
+
       if (result.success) {
         toast.success('Inscription soumise avec succès');
-        setState(prev => ({ 
-          ...prev, 
-          showOtpModal: true,
-          isSubmitting: false 
-        }));
+
+        // Redirection vers la page de statut avec l'ID de l'organisation
+        const organizationId = result.data?.organizationId || 'mock-org-id';
+        router.push(`/organization/status/${organizationId}`);
       } else {
         toast.error(result.message);
-        setState(prev => ({ ...prev, isSubmitting: false }));
       }
-    } catch (error) {
-      toast.error('Une erreur inattendue s\'est produite');
-      setState(prev => ({ ...prev, isSubmitting: false }));
+    } catch {
+      toast.error("Une erreur inattendue s'est produite");
+    } finally {
+      setState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
 
@@ -217,11 +198,9 @@ export function useRegister() {
     selectedCountry,
     step1Form,
     step2Form,
-    step3Form,
     nextStep,
     prevStep,
     submitRegistration,
-    closeOtpModal: () => setState(prev => ({ ...prev, showOtpModal: false })),
   };
 }
 
@@ -253,18 +232,18 @@ export function useOtp(onSuccess?: () => void) {
 
   const onSubmit = async (data: OtpFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       const result = await verifyOtp(data);
-      
+
       if (result.success) {
         toast.success('Vérification réussie');
         onSuccess?.();
       } else {
         toast.error(result.message);
       }
-    } catch (error) {
-      toast.error('Une erreur inattendue s\'est produite');
+    } catch {
+      toast.error("Une erreur inattendue s'est produite");
     } finally {
       setIsSubmitting(false);
     }
@@ -272,10 +251,10 @@ export function useOtp(onSuccess?: () => void) {
 
   const handleResend = async () => {
     if (!canResend) return;
-    
+
     try {
       const result = await resendOtp();
-      
+
       if (result.success) {
         toast.success('Code renvoyé avec succès');
         setCanResend(false);
@@ -283,7 +262,7 @@ export function useOtp(onSuccess?: () => void) {
       } else {
         toast.error(result.message);
       }
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors du renvoi du code');
     }
   };
