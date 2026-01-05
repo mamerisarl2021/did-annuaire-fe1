@@ -22,7 +22,7 @@ export function UseCases() {
         <Tabs defaultValue="public" className="mx-auto max-w-4xl">
           <TabsList className="mb-8 grid h-auto w-full grid-cols-3 p-1">
             <TabsTrigger value="public" className="py-3 text-sm md:text-base">
-              Securité Publique
+              Sécurité Publique
             </TabsTrigger>
             <TabsTrigger value="education" className="py-3 text-sm md:text-base">
               Éducation & Formation
