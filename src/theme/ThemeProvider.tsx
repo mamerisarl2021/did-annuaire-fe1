@@ -51,9 +51,28 @@ interface ThemeProviderProps {
   disablePersistence?: boolean;
 }
 
-// SSR-safe useLayoutEffect
-const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+/**
+ * A custom hook that returns useLayoutEffect in the browser and useEffect on the server.
+ * This ensures proper behavior with server-side rendering by checking for window at runtime.
+ */
+const useIsomorphicLayoutEffect = (() => {
+  // This check happens at runtime, not module load time
+  if (typeof window === 'undefined') {
+    return useEffect;
+  }
+  
+  // On client-side, use a custom hook to track mount state
+  return () => {
+    const [mounted, setMounted] = useState(false);
+    
+    useEffect(() => {
+      setMounted(true);
+      return () => setMounted(false);
+    }, []);
+    
+    return mounted ? useLayoutEffect : useEffect;
+  };
+})();
 
 /**
  * Provider du système de thème
