@@ -7,6 +7,8 @@ A secure, verifiable directory for organizations using `did:web` decentralized i
 - **Trusted DID Publishing** – Publish and manage decentralized identifiers with cryptographic proof
 - **Direct Resolution** – Resolve DIDs via web infrastructure without blockchain complexity
 - **No Intermediary Verification** – Verify organizational identity directly from the source
+- **Responsive Navigation** – Optimized for all devices with a mobile-friendly menu system
+- **Advanced Data Views** – Sortable, filterable, and paginated data tables for managing organization data
 
 ## Tech Stack
 
@@ -14,6 +16,7 @@ A secure, verifiable directory for organizations using `did:web` decentralized i
 - **Language**: TypeScript
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **Data Tables**: [@tanstack/react-table](https://tanstack.com/table/v8)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Fonts**: Inter (Google Fonts)
 
@@ -21,8 +24,10 @@ A secure, verifiable directory for organizations using `did:web` decentralized i
 
 ```
 app/
- └── (public)/
-     └── page.tsx              # Landing page composition
+ ├── (public)/
+ │   └── page.tsx              # Landing page composition
+ ├── not-found.tsx             # Custom 404 Error Page
+ └── globals.css               # Global styles and variables
 
 components/
  ├── landing/                  # Landing page sections
@@ -31,13 +36,15 @@ components/
  │   ├── CTASection.tsx
  │   └── Footer.tsx
  ├── layout/
- │   └── PublicHeader.tsx
+ │   └── PublicHeader.tsx      # Responsive header with mobile menu
  └── ui/                       # shadcn/ui components
      ├── button.tsx
-     └── card.tsx
-
-lib/
- └── utils.ts                  # Utility functions (cn)
+     ├── card.tsx
+     ├── data-table.tsx        # Advanced Data Table component
+     ├── form.tsx
+     ├── input.tsx
+     ├── sheet.tsx             # Mobile navigation drawer
+     └── ...
 ```
 
 ## Getting Started
