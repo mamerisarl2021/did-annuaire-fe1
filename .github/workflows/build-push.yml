@@ -1,8 +1,8 @@
 name: build-push-frontend
 on:
   push:
-    branches: [ staging ]
-    paths-ignore: [ "**.md", "docs/**", ".gitignore" ]
+    branches: [staging]
+    paths-ignore: ["**.md", "docs/**", ".gitignore"]
   workflow_dispatch:
 
 jobs:
@@ -39,5 +39,5 @@ jobs:
         with:
           image-ref: ctrldaviddee/annuaire_did:staging-latest
           format: table
-          exit-code: '0'
+          exit-code: "0"
           ignore-unfixed: true
