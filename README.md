@@ -65,29 +65,29 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## Available Scripts
 
-| Script             | Description                      |
-| ------------------ | -------------------------------- |
-| `npm run dev`      | Start development server         |
-| `npm run build`    | Build for production             |
-| `npm run start`    | Start production server          |
-| `npm run lint`     | Run ESLint                       |
-| `npm run type-check` | Run TypeScript type checking   |
-| `npm run format`   | Format code with Prettier        |
+| Script               | Description                  |
+| -------------------- | ---------------------------- |
+| `npm run dev`        | Start development server     |
+| `npm run build`      | Build for production         |
+| `npm run start`      | Start production server      |
+| `npm run lint`       | Run ESLint                   |
+| `npm run type-check` | Run TypeScript type checking |
+| `npm run format`     | Format code with Prettier    |
 
 ## Design System
 
 ### Colors
 
-| Variable           | Hex       | Usage                    |
-| ------------------ | --------- | ------------------------ |
-| `--primary-600`    | `#0052CC` | Primary brand color      |
-| `--primary-500`    | `#0065FF` | Primary accent           |
-| `--secondary-400`  | `#00B8D9` | Secondary / Innovation   |
-| `--accent-500`     | `#F7931A` | Accent highlights        |
-| `--neutral-900`    | `#172B4D` | Main text                |
-| `--neutral-600`    | `#5E6C84` | Secondary text           |
-| `--bg-app`         | `#F4F5F7` | App background           |
-| `--bg-surface`     | `#FFFFFF` | Card/surface background  |
+| Variable          | Hex       | Usage                   |
+| ----------------- | --------- | ----------------------- |
+| `--primary-600`   | `#0052CC` | Primary brand color     |
+| `--primary-500`   | `#0065FF` | Primary accent          |
+| `--secondary-400` | `#00B8D9` | Secondary / Innovation  |
+| `--accent-500`    | `#F7931A` | Accent highlights       |
+| `--neutral-900`   | `#172B4D` | Main text               |
+| `--neutral-600`   | `#5E6C84` | Secondary text          |
+| `--bg-app`        | `#F4F5F7` | App background          |
+| `--bg-surface`    | `#FFFFFF` | Card/surface background |
 
 ## Architecture Principles
 
