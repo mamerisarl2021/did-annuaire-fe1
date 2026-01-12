@@ -9,28 +9,16 @@ import {
 } from "@/components/ui/pagination";
 
 interface OrganizationsPaginationProps {
-  /** Current page (1-indexed) */
   currentPage: number;
-  /** Total number of pages */
   totalPages: number;
-  /** Callback when page changes */
   onPageChange: (page: number) => void;
 }
 
-/**
- * Pure UI component for organization list pagination
- *
- * Responsibilities:
- * - Renders previous/next buttons
- * - Displays current page / total
- * - Delegates navigation to parent
- */
 export function OrganizationsPagination({
   currentPage,
   totalPages,
   onPageChange,
 }: OrganizationsPaginationProps) {
-  if (totalPages <= 1) return null;
 
   return (
     <div className="mt-4 flex justify-end">

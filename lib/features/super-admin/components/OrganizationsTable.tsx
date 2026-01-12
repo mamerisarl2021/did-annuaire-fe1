@@ -132,7 +132,8 @@ export function OrganizationsTable({
                     <>
                       <Button
                         size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white border-0"
+                        className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-none"
+                        style={{ backgroundColor: "#16a34a" }} 
                         onClick={() => onValidate(org.id)}
                         disabled={isActionsDisabled}
                       >

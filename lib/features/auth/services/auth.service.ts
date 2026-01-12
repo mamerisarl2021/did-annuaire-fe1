@@ -44,8 +44,8 @@ export const authService = {
     password?: string;
     re_password?: string;
     enable_otp?: boolean;
-  }): Promise<any> {
-    const response = await httpClient.post<any>(API_ENDPOINTS.USERS.ACTIVATE, payload);
+  }): Promise<{ message?: string; [key: string]: unknown }> {
+    const response = await httpClient.post<{ message?: string; data?: { message?: string; [key: string]: unknown }; [key: string]: unknown }>(API_ENDPOINTS.USERS.ACTIVATE, payload);
     return response.data || response;
   },
 
@@ -71,7 +71,7 @@ export const authService = {
     if (!token) return null;
 
     try {
-      const decoded = jwtDecode<any>(token);
+      const decoded = jwtDecode<{ user_id?: string; sub?: string; email?: string; role?: string; organization_id?: string }>(token);
       console.log("JWT Payload:", decoded);
       console.log("Mapping role:", decoded.role);
 
@@ -83,7 +83,7 @@ export const authService = {
       if (!role) {
         try {
           console.log("Fetching user profile from /me endpoint");
-          const response = await httpClient.get<any>(API_ENDPOINTS.USERS.ME);
+          const response = await httpClient.get<{ data?: { role?: string; is_superuser?: boolean; is_staff?: boolean; email?: string }; role?: string; is_superuser?: boolean; is_staff?: boolean; email?: string }>(API_ENDPOINTS.USERS.ME);
           console.log("User Profile Response:", response);
 
           const userData = response.data || response;
@@ -105,10 +105,10 @@ export const authService = {
       }
 
       return {
-        id: userId,
-        email: email,
-        role: role,
-        organization_id: decoded.organization_id,
+        id: userId || "",
+        email: email || "",
+        role: role || "",
+        organization_id: decoded.organization_id || "",
         is_active: true,
       };
     } catch (error) {

@@ -33,7 +33,7 @@ export function PublicHeader() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Lock className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold text-foreground">DID Directory</span>
+          <span className="text-lg font-semibold text-foreground">DID Annuaire</span>
         </Link>
 
         {/* Desktop Navigation Links */}
@@ -61,7 +61,7 @@ export function PublicHeader() {
         <div className="flex items-center gap-2 md:hidden">
           {/* Show UserMenu on mobile if authenticated */}
           {isAuthenticated && <UserMenu />}
-          
+
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -90,8 +90,31 @@ export function PublicHeader() {
                 >
                   <Link href="/verify">Verify DID</Link>
                 </Button>
-                <div className="my-2 border-t border-border" />
-                {!isAuthenticated && (
+                {isAuthenticated ? (
+                  <>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      onClick={() => setIsOpen(false)}
+                      className="justify-start"
+                    >
+                      <Link href="/dashboard">Dashboard</Link>
+                    </Button>
+                    <div className="my-2 border-t border-border" />
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        authService.logout();
+                        setIsAuthenticated(false);
+                        setIsOpen(false);
+                        window.location.reload();
+                      }}
+                      className="justify-start text-destructive hover:text-destructive"
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
                   <Button
                     variant="outline"
                     asChild

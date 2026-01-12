@@ -3,17 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, Building2, FileText } from "lucide-react";
+import { Users, Building2, FileText } from "lucide-react";
 
 export function DashboardSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
   const items = [
-    {
-      title: "Overview",
-      href: "/dashboard/superuser",
-      icon: LayoutDashboard,
-      roles: ["SUPER_USER"],
-    },
     {
       title: "Organizations",
       href: "/dashboard/superuser",
