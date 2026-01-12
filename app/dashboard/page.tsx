@@ -29,8 +29,8 @@ export default function DashboardPage() {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4 p-4 text-center">
         <div className="rounded-md bg-destructive/10 p-6 text-destructive">
-          <h1 className="text-xl font-bold">Accès Non Défini</h1>
-          <p>Votre compte est authentifié mais aucun rôle n'a été détecté.</p>
+          <h1 className="text-xl font-bold">Access Undefined</h1>
+          <p>Your account is authenticated but no role was detected.</p>
           <p className="mt-2 text-xs font-mono text-muted-foreground">
             ID: {user.id}
             <br />
@@ -38,7 +38,7 @@ export default function DashboardPage() {
           </p>
           <div className="mt-4">
             <button onClick={() => router.push("/auth/login")} className="underline">
-              Retour à la connexion
+              Back to Login
             </button>
           </div>
         </div>
@@ -50,7 +50,7 @@ export default function DashboardPage() {
     <div className="flex h-[50vh] w-full items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Skeleton className="h-12 w-12 rounded-full" />
-        <p className="text-muted-foreground">Redirection en cours...</p>
+        <p className="text-muted-foreground">Redirecting...</p>
       </div>
     </div>
   );

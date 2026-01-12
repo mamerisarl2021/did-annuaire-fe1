@@ -19,14 +19,14 @@ export const ALLOWED_FILE_TYPES = [
  * File validation helper
  */
 const fileSchema = z
-  .custom<File>((val) => val instanceof File, "Fichier invalide")
+  .custom<File>((val) => val instanceof File, "Invalid file")
   .refine(
     (file) => file.size <= MAX_FILE_SIZE,
-    `La taille du fichier ne doit pas dépasser ${MAX_FILE_SIZE / (1024 * 1024)}MB`
+    `File size must not exceed ${MAX_FILE_SIZE / (1024 * 1024)}MB`
   )
   .refine(
     (file) => ALLOWED_FILE_TYPES.includes(file.type as (typeof ALLOWED_FILE_TYPES)[number]),
-    "Format de fichier non supporté. Utilisez PDF, JPEG ou PNG"
+    "Unsupported file format. Use PDF, JPEG or PNG"
   );
 
 /**
@@ -36,17 +36,17 @@ export const registerStep3Schema = z.object({
   authorization_document: fileSchema,
 
   justification_document: z
-    .custom<File | null>((val) => val === null || val instanceof File, "Fichier invalide")
+    .custom<File | null>((val) => val === null || val instanceof File, "Invalid file")
     .optional()
     .nullable()
     .refine(
       (file) => !file || file.size <= MAX_FILE_SIZE,
-      `La taille du fichier ne doit pas dépasser ${MAX_FILE_SIZE / (1024 * 1024)}MB`
+      `File size must not exceed ${MAX_FILE_SIZE / (1024 * 1024)}MB`
     )
     .refine(
       (file) =>
         !file || ALLOWED_FILE_TYPES.includes(file.type as (typeof ALLOWED_FILE_TYPES)[number]),
-      "Format de fichier non supporté. Utilisez PDF, JPEG ou PNG"
+      "Unsupported file format. Use PDF, JPEG or PNG"
     ),
 });
 

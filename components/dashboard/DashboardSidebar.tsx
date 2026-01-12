@@ -10,25 +10,25 @@ export function DashboardSidebar({ className }: { className?: string }) {
   const items = [
     {
       title: "Overview",
-      href: "/dashboard/super-user",
+      href: "/dashboard/superuser",
       icon: LayoutDashboard,
       roles: ["SUPER_USER"],
     },
     {
-      title: "Organisations",
-      href: "/dashboard/super-user/organizations",
+      title: "Organizations",
+      href: "/dashboard/superuser",
       icon: Building2,
       roles: ["SUPER_USER"],
     },
     {
       title: "Users",
-      href: "/dashboard/super-user/users",
+      href: "/dashboard/superuser/users",
       icon: Users,
       roles: ["SUPER_USER"],
     },
     {
       title: "Logs",
-      href: "/dashboard/super-user/logs",
+      href: "/dashboard/superuser/logs",
       icon: FileText,
       roles: ["SUPER_USER"],
     },
@@ -42,7 +42,7 @@ export function DashboardSidebar({ className }: { className?: string }) {
           <div className="space-y-1">
             {items.map((item) => (
               <Link
-                key={item.href}
+                key={item.title}
                 href={item.href}
                 className={cn(
                   "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",

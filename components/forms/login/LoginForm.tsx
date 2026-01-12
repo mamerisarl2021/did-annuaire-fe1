@@ -37,13 +37,13 @@ export function LoginForm({ form, onSubmit, isSubmitting = false, className }: L
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Adresse email</FormLabel>
+              <FormLabel>Email Address</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="vous@exemple.com"
+                    placeholder="you@example.com"
                     autoComplete="email"
                     className="pl-10"
                     disabled={isSubmitting}
@@ -63,9 +63,9 @@ export function LoginForm({ form, onSubmit, isSubmitting = false, className }: L
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center justify-between">
-                <FormLabel>Mot de passe</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <a href="/auth/forgot-password" className="text-sm text-primary hover:underline">
-                  Mot de passe oublié ?
+                  Forgot password?
                 </a>
               </div>
               <FormControl>
@@ -91,10 +91,10 @@ export function LoginForm({ form, onSubmit, isSubmitting = false, className }: L
           {isSubmitting ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              Connexion en cours...
+              Logging in...
             </>
           ) : (
-            "Se connecter"
+            "Login"
           )}
         </Button>
       </form>

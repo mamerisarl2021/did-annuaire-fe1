@@ -20,20 +20,20 @@ export {
 export const REGISTER_STEPS = [
   {
     id: 1,
-    title: "Organisation",
-    description: "Informations sur votre organisation",
+    title: "Organization",
+    description: "Organization Information",
     schema: registerStep1Schema,
   },
   {
     id: 2,
-    title: "Administrateur",
-    description: "Informations sur l'administrateur principal",
+    title: "Administrator",
+    description: "Main administrator information",
     schema: registerStep2Schema,
   },
   {
     id: 3,
     title: "Documents",
-    description: "Documents justificatifs",
+    description: "Supporting documents",
     schema: registerStep3Schema,
   },
 ] as const;
@@ -43,4 +43,4 @@ export const REGISTER_STEPS = [
  * - name (organization slug) uniqueness
  * - email (organization contact) uniqueness
  * - admin_email uniqueness
- */
+ */               

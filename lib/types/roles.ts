@@ -16,9 +16,9 @@ export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
  * Centralized mapping for consistent redirections
  */
 export const ROLE_DASHBOARD_ROUTES: Record<UserRoleType, string> = {
-  [UserRole.SUPER_USER]: "/dashboard/super-user",
-  [UserRole.ORG_ADMIN]: "/dashboard/org-admin",
-  [UserRole.ORG_MEMBER]: "/dashboard/org-member",
+  [UserRole.SUPER_USER]: "/dashboard/superuser",
+  [UserRole.ORG_ADMIN]: "/dashboard/orgadmin",
+  [UserRole.ORG_MEMBER]: "/dashboard/orgmember",
   [UserRole.AUDITOR]: "/dashboard/auditor",
 } as const;
 

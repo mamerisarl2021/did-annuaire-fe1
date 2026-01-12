@@ -7,7 +7,7 @@ export class ApiException extends Error {
 
   constructor(status: number, data: ApiErrorResponse | string) {
     const message =
-      typeof data === "string" ? data : data.detail || data.message || "Une erreur est survenue";
+      typeof data === "string" ? data : data.detail || data.message || "An error occurred";
     super(message);
     this.name = "ApiException";
     this.status = status;
@@ -27,9 +27,9 @@ export class ApiException extends Error {
       return error.message;
     }
     if (ApiException.isNetworkError(error)) {
-      return "Erreur de connexion. Vérifiez votre internet.";
+      return "Connection error. Check your internet.";
     }
-    return "Une erreur inattendue est survenue.";
+    return "An unexpected error occurred.";
   }
 }
 

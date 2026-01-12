@@ -112,12 +112,12 @@ export default function RegisterPage() {
       {/* Form Card */}
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl">Créer une organisation</CardTitle>
+          <CardTitle className="text-xl">Create an Organization</CardTitle>
         </CardHeader>
         <CardContent>
           {apiError && (
             <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-600 border border-red-200">
-              <p className="font-medium">Une erreur est survenue</p>
+              <p className="font-medium">An error occurred</p>
               <p>{apiError}</p>
             </div>
           )}
@@ -133,7 +133,7 @@ export default function RegisterPage() {
                   {!isFirstStep && (
                     <Button type="button" variant="outline" onClick={prev} disabled={isSubmitting}>
                       <ArrowLeft className="size-4" />
-                      Précédent
+                      Previous
                     </Button>
                   )}
                 </div>
@@ -144,18 +144,18 @@ export default function RegisterPage() {
                       {isSubmitting ? (
                         <>
                           <Loader2 className="size-4 animate-spin" />
-                          Envoi en cours...
+                          Sending...
                         </>
                       ) : (
                         <>
                           <CheckCircle className="size-4" />
-                          Finaliser
+                          Finalize
                         </>
                       )}
                     </Button>
                   ) : (
                     <Button type="button" onClick={handleNext} disabled={isSubmitting}>
-                      Suivant
+                      Next
                       <ArrowRight className="size-4" />
                     </Button>
                   )}
@@ -166,9 +166,9 @@ export default function RegisterPage() {
 
           {/* Login Link */}
           <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">Vous avez déjà un compte ? </span>
+            <span className="text-muted-foreground">Already have an account? </span>
             <Link href="/auth/login" className="font-medium text-primary hover:underline">
-              Se connecter
+              Login
             </Link>
           </div>
         </CardContent>

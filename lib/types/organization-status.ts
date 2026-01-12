@@ -32,20 +32,20 @@ export function getRegistrationSteps(status: OrganizationStatusType): Registrati
   const steps: RegistrationStep[] = [
     {
       id: 1,
-      title: "Organisation créée",
-      description: "Votre demande a été soumise",
+      title: "Organization Created",
+      description: "Your request has been submitted",
       status: "completed",
     },
     {
       id: 2,
-      title: "Validation en cours",
-      description: "Examen par un Super Admin",
+      title: "Validation in Progress",
+      description: "Review by Super Admin",
       status: status === OrganizationStatus.PENDING ? "current" : "completed",
     },
     {
       id: 3,
-      title: "Activation du compte",
-      description: "Définition du mot de passe",
+      title: "Account Activation",
+      description: "Password setup",
       status:
         status === OrganizationStatus.ACTIVE
           ? "current"
@@ -55,8 +55,8 @@ export function getRegistrationSteps(status: OrganizationStatusType): Registrati
     },
     {
       id: 4,
-      title: "Accès au dashboard",
-      description: "Gestion de votre organisation",
+      title: "Dashboard Access",
+      description: "Manage your organization",
       status: "upcoming",
     },
   ];
@@ -82,25 +82,25 @@ export interface StatusConfig {
 
 export const STATUS_CONFIG: Record<OrganizationStatusType, StatusConfig> = {
   ACTIVE: {
-    label: "Validée",
+    label: "Validated",
     color: "text-green-700",
     bgColor: "bg-green-100",
     icon: "check",
   },
   PENDING: {
-    label: "En attente",
+    label: "Pending",
     color: "text-yellow-700",
     bgColor: "bg-yellow-100",
     icon: "clock",
   },
   REFUSED: {
-    label: "Refusée",
+    label: "Refused",
     color: "text-red-700",
     bgColor: "bg-red-100",
     icon: "x",
   },
   SUSPENDED: {
-    label: "Suspendue",
+    label: "Suspended",
     color: "text-gray-700",
     bgColor: "bg-gray-100",
     icon: "pause",

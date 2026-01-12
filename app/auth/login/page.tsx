@@ -1,163 +1,125 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Shield } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LoginForm } from "@/components/forms/login";
-import { TOTPSetupForm, OTPEmailForm } from "@/components/forms/activation";
-import { useLoginForm } from "@/lib/hooks/useLoginForm";
-import { useOTPVerification } from "@/lib/hooks/useOTPVerification";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useLoginWorkflow } from "@/lib/features/auth/hooks/useLoginWorkflow";
 import { useRoleRedirect } from "@/lib/guards/useRoleRedirect";
-import type { LoginFormData } from "@/lib/schemas/login.schema";
+import { LoginFormComponent } from "@/lib/features/auth/components/LoginFormComponent";
+import { OTPForm } from "@/lib/features/auth/components/OTPForm";
+import { type AuthUser } from "@/lib/features/auth/types/auth.types";
 
-type LoginStep = "CREDENTIALS" | "OTP_TOTP" | "OTP_EMAIL";
-import { useLogin } from "@/lib/features/auth/hooks/useLogin";
-import { authService } from "@/lib/features/auth/services/auth.service";
-
+/**
+ * Login Page
+ *
+ * Route: /auth/login
+ *
+ * Flow:
+ * 1. User enters email + password
+ * 2. If 2FA enabled: Show OTP verification screen
+ * 3. On success: Redirect to role-based dashboard
+ *
+ * Architecture:
+ * - Page has NO knowledge of roles or dashboard routes
+ * - All routing logic delegated to useRoleRedirect
+ * - All login logic delegated to useLoginWorkflow
+ */
 export default function LoginPage() {
-  const router = useRouter();
-  const [loginStep, setLoginStep] = React.useState<LoginStep>("CREDENTIALS");
-
-  const { form, onSubmit, isSubmitting: isFormSubmitting } = useLoginForm();
   const { redirectToRoleDashboard } = useRoleRedirect();
 
-  const { login, isLoading: isLoginLoading, error: loginError } = useLogin();
-
-  const isSubmitting = isFormSubmitting || isLoginLoading;
-
-  const otpVerification = useOTPVerification({
-    method: "TOTP",
-    onVerified: async () => {
-      const user = await authService.getCurrentUser();
-      if (user) redirectToRoleDashboard(user.role);
-    },
-  });
-
   /**
-   * Handle login form submission
+   * Handle successful login - redirect to appropriate dashboard
    */
-  const handleLoginSubmit = async (data: LoginFormData) => {
-    try {
-      await login({ email: data.email, password: data.password });
-
-      const user = await authService.getCurrentUser();
-      console.log("Logged in user:", user);
-
-      if (user && user.role) {
-        redirectToRoleDashboard(user.role);
-        return;
-      }
-
-      console.warn("User has no role or is null", user);
-      if (user) {
-        router.push("/dashboard");
-      } else {
-        throw new Error("Impossible de récupérer le profil utilisateur.");
-      }
-    } catch (error) {
-      console.error("Login failed", error);
-      alert("Erreur: " + (error instanceof Error ? error.message : "Erreur inconnue"));
-    }
+  const handleLoginComplete = (user: AuthUser) => {
+    redirectToRoleDashboard(user.role);
   };
+
+  const {
+    currentStep,
+    form,
+    isLoggingIn,
+    isVerifyingOTP,
+    error,
+    submitCredentials,
+    verifyOTP,
+    goBackToCredentials,
+  } = useLoginWorkflow({
+    onLoginComplete: handleLoginComplete,
+  });
 
   /**
    * Render content based on login step
    */
   const renderContent = () => {
-    switch (loginStep) {
+    switch (currentStep) {
       case "CREDENTIALS":
         return (
           <Card className="shadow-lg">
             <CardHeader className="space-y-1 text-center">
-              <CardTitle className="text-2xl font-bold">Connexion</CardTitle>
-              <CardDescription>
-                Connectez-vous à votre compte pour accéder à la plateforme
-              </CardDescription>
+              <CardTitle className="text-2xl font-bold">Login</CardTitle>
+              <CardDescription>Log in to your account to access the platform</CardDescription>
             </CardHeader>
             <CardContent>
-              {loginError && (
-                <div className="mb-4 rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                  {loginError}
-                </div>
+              {/* Error Alert */}
+              {error && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
 
-              <LoginForm
+              {/* Login Form */}
+              <LoginFormComponent
                 form={form}
-                onSubmit={onSubmit(handleLoginSubmit)}
-                isSubmitting={isSubmitting}
+                onSubmit={submitCredentials}
+                isSubmitting={isLoggingIn}
               />
 
               {/* Register Link */}
               <div className="mt-6 text-center text-sm">
-                <span className="text-muted-foreground">Vous n&apos;avez pas de compte ? </span>
+                <span className="text-muted-foreground">Don&apos;t have an account? </span>
                 <Link href="/auth/register" className="font-medium text-primary hover:underline">
-                  Créer une organisation
+                  Register Organization
                 </Link>
               </div>
             </CardContent>
           </Card>
         );
 
-      case "OTP_TOTP":
+      case "OTP_REQUIRED":
         return (
           <Card className="shadow-lg">
             <CardHeader className="text-center">
-              <CardTitle className="text-xl">Vérification OTP</CardTitle>
-              <CardDescription>
-                Entrez le code de votre application d&apos;authentification
-              </CardDescription>
+              <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
+                <Shield className="size-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl">2FA Verification</CardTitle>
+              <CardDescription>Enter the code from your authenticator app</CardDescription>
             </CardHeader>
             <CardContent>
-              <TOTPSetupForm
-                form={otpVerification.form}
-                onSubmit={otpVerification.verifyOTP}
-                isVerifying={otpVerification.isVerifying}
-              />
+              {/* Error Alert */}
+              {error && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-              {/* Back to login */}
-              <div className="mt-6 text-center">
-                <button
-                  type="button"
-                  onClick={() => setLoginStep("CREDENTIALS")}
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  ← Retour à la connexion
-                </button>
-              </div>
+              {/* OTP Form */}
+              <OTPForm
+                onSubmit={verifyOTP}
+                onBack={goBackToCredentials}
+                isVerifying={isVerifyingOTP}
+              />
             </CardContent>
           </Card>
         );
 
-      case "OTP_EMAIL":
+      case "SUCCESS":
+        // This state is brief - user will be redirected
         return (
           <Card className="shadow-lg">
-            <CardHeader className="text-center">
-              <CardTitle className="text-xl">Vérification par email</CardTitle>
-              <CardDescription>
-                Vérifiez votre identité avec un code envoyé par email
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <OTPEmailForm
-                form={otpVerification.form}
-                onSubmit={otpVerification.verifyOTP}
-                onGenerateOTP={otpVerification.generateEmailOTP}
-                isGenerating={otpVerification.isGenerating}
-                isVerifying={otpVerification.isVerifying}
-                otpSent={otpVerification.otpSent}
-              />
-
-              {/* Back to login */}
-              <div className="mt-6 text-center">
-                <button
-                  type="button"
-                  onClick={() => setLoginStep("CREDENTIALS")}
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
-                  ← Retour à la connexion
-                </button>
-              </div>
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground">Redirecting...</p>
             </CardContent>
           </Card>
         );
@@ -167,5 +129,9 @@ export default function LoginPage() {
     }
   };
 
-  return renderContent();
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+      <div className="w-full max-w-md">{renderContent()}</div>
+    </div>
+  );
 }

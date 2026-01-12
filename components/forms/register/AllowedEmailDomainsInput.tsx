@@ -40,7 +40,7 @@ export function AllowedEmailDomainsInput({ form, className }: AllowedEmailDomain
     <div className={cn("space-y-3", className)}>
       <div className="flex items-center justify-between">
         <Label className="text-sm font-medium">
-          Domaines email autorisés <span className="text-destructive">*</span>
+          Allowed Email Domains <span className="text-destructive">*</span>
         </Label>
         <Button
           type="button"
@@ -50,13 +50,12 @@ export function AllowedEmailDomainsInput({ form, className }: AllowedEmailDomain
           className="gap-1"
         >
           <Plus className="size-4" />
-          Ajouter
+          Add
         </Button>
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Les utilisateurs avec ces domaines email pourront rejoindre votre organisation. Format:
-        example.com
+        Users with these email domains can join your organization. Format: example.com
       </p>
 
       {/* Domain list error */}

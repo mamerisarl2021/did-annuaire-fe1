@@ -16,36 +16,33 @@ export const slugify = (text: string): string => {
 export const registerStep1Schema = z.object({
   name: z
     .string()
-    .min(1, "Le nom de l'organisation est requis")
-    .min(2, "Le nom doit contenir au moins 2 caractères")
-    .max(100, "Le nom ne peut pas dépasser 100 caractères"),
+    .min(1, "Organization name is required")
+    .min(2, "Name must contain at least 2 characters")
+    .max(100, "Name cannot exceed 100 characters"),
 
-  org_type: z.string().min(1, "Le type d'organisation est requis"),
+  org_type: z.string().min(1, "Organization type is required"),
 
-  country: z.string().min(1, "Le pays est requis"),
+  country: z.string().min(1, "Country is required"),
 
-  email: z.email("Format d'email invalide").min(1, "L'email de contact est requis"),
+  email: z.email("Invalid email format").min(1, "Contact email is required"),
 
   phone: z
     .string()
-    .min(1, "Le numéro de téléphone est requis")
-    .min(8, "Le numéro de téléphone doit contenir au moins 8 chiffres"),
+    .min(1, "Phone number is required")
+    .min(8, "Phone number must contain at least 8 digits"),
 
-  address: z
-    .string()
-    .min(1, "L'adresse postale est requise")
-    .min(10, "L'adresse doit être plus détaillée"),
+  address: z.string().min(1, "Postal address is required").min(10, "Address must be more detailed"),
 
   allowed_email_domains: z
     .array(
       z.object({
         value: z
           .string()
-          .min(1, "Le domaine est requis")
-          .regex(emailDomainPattern, "Format de domaine invalide (ex: example.com)"),
+          .min(1, "Domain is required")
+          .regex(emailDomainPattern, "Invalid domain format (ex: example.com)"),
       })
     )
-    .min(1, "Au moins un domaine email autorisé est requis"),
+    .min(1, "At least one allowed email domain is required"),
 });
 
 export type RegisterStep1Data = z.infer<typeof registerStep1Schema>;

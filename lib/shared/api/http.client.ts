@@ -43,7 +43,7 @@ export const httpClient = {
           }
         } else {
           tokenStorage.clear();
-          throw new ApiException(401, "Session expirée");
+          throw new ApiException(401, "Session expired");
         }
       }
 
@@ -62,7 +62,7 @@ export const httpClient = {
     } catch (error) {
       if (error instanceof ApiException) throw error;
 
-      throw new ApiException(0, "Erreur réseau ou serveur indisponible");
+      throw new ApiException(0, "Network error or server unavailable");
     }
   },
 

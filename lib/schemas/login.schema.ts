@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().min(1, "L'email est requis").email("Format d'email invalide"),
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
   password: z
     .string()
-    .min(1, "Le mot de passe est requis")
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+    .min(1, "Password is required")
+    .min(8, "Password must contain at least 8 characters"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

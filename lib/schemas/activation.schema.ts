@@ -10,27 +10,27 @@ const passwordRequirements = {
 
 export const passwordSchema = z
   .string()
-  .min(1, "Le mot de passe est requis")
+  .min(1, "Password is required")
   .min(
     passwordRequirements.minLength,
-    `Le mot de passe doit contenir au moins ${passwordRequirements.minLength} caractères`
+    `Password must contain at least ${passwordRequirements.minLength} characters`
   )
-  .regex(passwordRequirements.hasUppercase, "Le mot de passe doit contenir au moins une majuscule")
-  .regex(passwordRequirements.hasLowercase, "Le mot de passe doit contenir au moins une minuscule")
-  .regex(passwordRequirements.hasNumber, "Le mot de passe doit contenir au moins un chiffre")
+  .regex(passwordRequirements.hasUppercase, "Password must contain at least one uppercase letter")
+  .regex(passwordRequirements.hasLowercase, "Password must contain at least one lowercase letter")
+  .regex(passwordRequirements.hasNumber, "Password must contain at least one number")
   .regex(
     passwordRequirements.hasSpecialChar,
-    "Le mot de passe doit contenir au moins un caractère spécial"
+    "Password must contain at least one special character"
   );
 
 export const activationSchema = z
   .object({
     password: passwordSchema,
-    password_confirm: z.string().min(1, "La confirmation du mot de passe est requise"),
+    password_confirm: z.string().min(1, "Confirm password is required"),
     enable_totp: z.boolean(),
   })
   .refine((data) => data.password === data.password_confirm, {
-    message: "Les mots de passe ne correspondent pas",
+    message: "Passwords do not match",
     path: ["password_confirm"],
   });
 
@@ -67,8 +67,8 @@ export function getPasswordStrengthLabel(score: number): {
   color: string;
 } {
   if (score === 0) return { label: "", color: "" };
-  if (score <= 2) return { label: "Faible", color: "text-destructive" };
-  if (score <= 3) return { label: "Moyen", color: "text-orange-500" };
-  if (score <= 4) return { label: "Bon", color: "text-yellow-500" };
+  if (score <= 2) return { label: "Weak", color: "text-destructive" };
+  if (score <= 3) return { label: "Medium", color: "text-orange-500" };
+  if (score <= 4) return { label: "Good", color: "text-yellow-500" };
   return { label: "Excellent", color: "text-green-500" };
 }

@@ -4,7 +4,7 @@ import * as React from "react";
 import { Upload, X, FileText, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { MAX_FILE_SIZE, ALLOWED_FILE_TYPES } from "@/lib/schemas/register.step3.schema";
+import { MAX_FILE_SIZE } from "@/lib/schemas/register.step3.schema";
 
 interface FileUploadProps {
   value?: File | null;
@@ -109,7 +109,7 @@ export function FileUpload({
       <div className="flex items-center gap-1">
         <span className="text-sm font-medium text-foreground">{label}</span>
         {required && <span className="text-destructive">*</span>}
-        {!required && <span className="text-muted-foreground text-xs">(optionnel)</span>}
+        {!required && <span className="text-muted-foreground text-xs">(optional)</span>}
       </div>
 
       {/* Description */}
@@ -133,13 +133,14 @@ export function FileUpload({
         >
           <Upload className="size-8 text-muted-foreground" />
           <div className="text-center">
-            <p className="text-sm font-medium">Glissez-déposez un fichier ici</p>
-            <p className="text-xs text-muted-foreground">ou cliquez pour sélectionner</p>
+            <p className="text-sm font-medium">Drag and drop a file here</p>
+            <p className="text-xs text-muted-foreground">or click to select</p>
           </div>
           <p className="text-xs text-muted-foreground">
             PDF, JPG, PNG • Max {formatFileSize(maxSize)}
           </p>
           <input
+            placeholder="Upload File"
             ref={inputRef}
             type="file"
             accept={accept}

@@ -1,232 +1,189 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { Suspense, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Loader2, CheckCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { authService } from "@/lib/features/auth/services/auth.service";
-import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
-import { TOTPSetupForm } from "@/components/forms/activation/TOTPSetupForm";
-import { otpSchema, type OTPFormData } from "@/lib/schemas/otp.schema";
+import { useAccountActivation } from "@/lib/features/auth/hooks/useAccountActivation";
+import { useTwoFactorSetup } from "@/lib/features/auth/hooks/useTwoFactorSetup";
+import { ActivationForm } from "@/lib/features/auth/components/ActivationForm";
+import { type ActivateAccountFormData } from "@/lib/features/auth/schemas/activate.schema";
 
-const activateSchema = z
-  .object({
-    password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
-    confirmPassword: z.string(),
-    enableOtp: z.boolean(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Les mots de passe ne correspondent pas",
-    path: ["confirmPassword"],
-  });
+/**
+ * Activation flow states
+ */
+type ActivationState = "FORM" | "SUCCESS";
 
-type ActivateFormValues = z.infer<typeof activateSchema>;
-
+/**
+ * Activation page content component
+ * Orchestrates the activation flow with proper SRP
+ */
 function ActivateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const [step, setStep] = useState<"form" | "otp_setup" | "success">("form");
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [qrCodeData, setQrCodeData] = useState<{ qr_code?: string; secret?: string } | null>(null);
+  // Activation state
+  const [activationState, setActivationState] = useState<ActivationState>("FORM");
+  const [show2FASetup, setShow2FASetup] = useState(false);
 
-  // Initial Form
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<ActivateFormValues>({
-    resolver: zodResolver(activateSchema),
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-      enableOtp: false,
+  // Account activation hook (password setup)
+  const activation = useAccountActivation({ token });
+
+  // 2FA setup hook (OTP verification)
+  const twoFactor = useTwoFactorSetup({
+    onSetupComplete: () => {
+      // 2FA verified - can now finalize
     },
   });
 
-  // OTP Form
-  const otpForm = useForm<OTPFormData>({
-    resolver: zodResolver(otpSchema),
-  });
-
-  useEffect(() => {
-    if (!token) {
-      setErrorMessage("Jeton d'activation manquant ou invalide.");
-    }
-  }, [token]);
-
-  const onFormSubmit = async (data: ActivateFormValues) => {
-    if (!token) return;
-
-    setIsLoading(true);
-    setErrorMessage("");
-
-    try {
-      const response = await authService.activateAccount({
-        token,
-        password: data.password,
-        re_password: data.confirmPassword,
-        enable_otp: data.enableOtp,
-      });
-
-      if (data.enableOtp && response?.qr_code) {
-        setQrCodeData(response);
-        setStep("otp_setup");
-      } else {
-        setStep("success");
-        setTimeout(() => router.push("/auth/login"), 3000);
+  /**
+   * Handle form submission
+   */
+  const handleSubmit = useCallback(
+    async (data: ActivateAccountFormData) => {
+      // If OTP is enabled and we already have QR but not verified
+      if (data.enableOtp && show2FASetup && !twoFactor.isVerified) {
+        // User is trying to submit without verifying OTP
+        return;
       }
-    } catch (error: any) {
-      console.error(error);
-      setErrorMessage(error.message || "Échec de l'activation. Le lien a peut-être expiré.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const onVerifyOTP = async (data: OTPFormData) => {
-    setIsLoading(true);
-    setErrorMessage("");
-    try {
-      await authService.verifyOTP(data.otp_code);
-      setStep("success");
-      setTimeout(() => router.push("/auth/login"), 3000);
-    } catch (error: any) {
-      console.error(error);
-      setErrorMessage("Code OTP invalide ou expiré.");
-      otpForm.setError("otp_code", { message: "Code invalide" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      // If OTP is enabled, verified, and we're in 2FA setup mode
+      if (data.enableOtp && twoFactor.isVerified) {
+        // Success - go to success state
+        setActivationState("SUCCESS");
+        return;
+      }
 
-  if (step === "success") {
+      // Call activation API
+      const result = await activation.activateAccount(data);
+
+      if (!result.success) {
+        return;
+      }
+
+      // If OTP was enabled and we got QR code
+      if (result.requiresOtp && result.qrCodeData) {
+        twoFactor.setQrCode(result.qrCodeData);
+        setShow2FASetup(true);
+        return;
+      }
+
+      // No OTP - direct success
+      setActivationState("SUCCESS");
+    },
+    [activation, twoFactor, show2FASetup]
+  );
+
+  /**
+   * Handle navigation to login
+   */
+  const handleGoToLogin = useCallback(() => {
+    router.push("/auth/login");
+  }, [router]);
+
+  // Invalid token state
+  if (!activation.hasValidToken) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="mx-auto bg-green-100 p-3 rounded-full w-fit mb-4">
-              <CheckCircle className="h-6 w-6 text-green-600" />
-            </div>
-            <CardTitle className="text-green-600">Compte activé !</CardTitle>
-            <CardDescription>
-              Votre compte est prêt. Vous allez être redirigé vers la page de connexion.
-            </CardDescription>
+            <CardTitle className="text-2xl text-destructive">Invalid Link</CardTitle>
+            <CardDescription>The activation link is invalid or has expired.</CardDescription>
           </CardHeader>
-          <CardFooter className="justify-center">
-            <Button onClick={() => router.push("/auth/login")}>Se connecter maintenant</Button>
-          </CardFooter>
+          <CardContent className="text-center">
+            <Button onClick={handleGoToLogin} variant="outline">
+              Back to login
+            </Button>
+          </CardContent>
         </Card>
       </div>
     );
   }
 
+  // Success state
+  if (activationState === "SUCCESS") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-8 pb-6 text-center space-y-4">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle className="size-8 text-green-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-green-700">
+                Account activated successfully!
+              </h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                Your account has been activated. You can now log in.
+              </p>
+            </div>
+            <Button onClick={handleGoToLogin} className="w-full">
+              Log in
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Form state
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
       <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl">
-            {step === "otp_setup" ? "Configuration 2FA" : "Activer votre compte"}
-          </CardTitle>
-          <CardDescription className="text-center">
-            {step === "otp_setup"
-              ? "Veuillez scanner le QR Code et entrer le code de vérification."
-              : "Veuillez définir votre mot de passe pour finaliser l'activation."}
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Activate your account</CardTitle>
+          <CardDescription>
+            {show2FASetup
+              ? "Set up Two-Factor Authentication"
+              : "Set your password to complete activation"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {errorMessage && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Erreur</AlertTitle>
-              <AlertDescription>{errorMessage}</AlertDescription>
+          {/* Error Alert */}
+          {activation.error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{activation.error}</AlertDescription>
             </Alert>
           )}
 
-          {step === "form" && (
-            <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  {...register("password")}
-                  disabled={isLoading}
-                />
-                {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="••••••••"
-                  {...register("confirmPassword")}
-                  disabled={isLoading}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-                )}
-              </div>
-
-              <div className="flex items-center space-x-2 py-2">
-                <Checkbox
-                  id="enableOtp"
-                  onCheckedChange={(checked) => setValue("enableOtp", checked as boolean)}
-                />
-                <Label htmlFor="enableOtp" className="cursor-pointer">
-                  Activer l&apos;authentification à deux facteurs (2FA)
-                </Label>
-              </div>
-
-              <Button type="submit" className="w-full" disabled={isLoading || !token}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Activer le compte
-              </Button>
-            </form>
-          )}
-
-          {step === "otp_setup" && qrCodeData && (
-            <TOTPSetupForm
-              form={otpForm}
-              onSubmit={onVerifyOTP}
-              isVerifying={isLoading}
-              qrCodeUrl={qrCodeData.qr_code}
-              secretKey={qrCodeData.secret}
-            />
-          )}
+          {/* Activation Form */}
+          <ActivationForm
+            form={activation.form}
+            onSubmit={handleSubmit}
+            isSubmitting={activation.isActivating}
+            isDisabled={!activation.hasValidToken}
+            show2FASetup={show2FASetup}
+            qrCodeData={twoFactor.qrCodeData}
+            onVerify2FA={twoFactor.verifyCode}
+            isVerifying2FA={twoFactor.isVerifying}
+            is2FAVerified={twoFactor.isVerified}
+            twoFactorError={twoFactor.error}
+          />
         </CardContent>
       </Card>
     </div>
   );
 }
 
+/**
+ * Account Activation Page
+ *
+ * Route: /activate?token=xxx
+ *
+ * Flow:
+ * 1. User enters password + optional 2FA checkbox
+ * 2. If 2FA enabled: Show QR code and verify OTP BEFORE finalizing
+ * 3. On success: Redirect to login
+ */
 export default function ActivatePage() {
   return (
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-gray-50">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+          <Loader2 className="size-8 animate-spin text-gray-500" />
         </div>
       }
     >

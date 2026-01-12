@@ -43,7 +43,7 @@ export const multipartClient = {
       return await response.json();
     } catch (error) {
       if (error instanceof ApiException) throw error;
-      throw new ApiException(0, "Erreur lors de l'upload du fichier");
+      throw new ApiException(0, "Error uploading file");
     }
   },
 };

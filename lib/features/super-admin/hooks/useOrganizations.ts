@@ -48,7 +48,7 @@ export function useOrganizations() {
       const statsData = await superAdminService.getStats();
       setStats(statsData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur chargement organisations");
+      setError(err instanceof Error ? err.message : "Error loading organizations");
     } finally {
       setIsLoading(false);
     }

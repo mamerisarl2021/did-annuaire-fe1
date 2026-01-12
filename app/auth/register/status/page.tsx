@@ -25,7 +25,7 @@ export default async function RegistrationStatusPage({
       ? statusParam
       : OrganizationStatus.PENDING;
 
-  const organizationName = "Mon Organisation";
+  const organizationName = "My Organization";
 
   const steps = getRegistrationSteps(status);
 
@@ -35,7 +35,7 @@ export default async function RegistrationStatusPage({
       <Button variant="ghost" size="sm" asChild className="gap-2">
         <Link href="/">
           <ArrowLeft className="size-4" />
-          Retour à l&apos;accueil
+          Back to Home
         </Link>
       </Button>
 
@@ -47,7 +47,7 @@ export default async function RegistrationStatusPage({
             <Building2 className="size-8 text-primary" />
           </div>
 
-          <CardTitle className="text-2xl">Suivi de votre inscription</CardTitle>
+          <CardTitle className="text-2xl">Registration Status</CardTitle>
 
           {/* Status badge */}
           <div className="mt-4 flex justify-center">
@@ -58,7 +58,7 @@ export default async function RegistrationStatusPage({
         <CardContent className="space-y-8">
           {/* Progress stepper */}
           <div className="rounded-lg border bg-muted/30 p-6">
-            <h3 className="mb-4 text-sm font-medium text-muted-foreground">Progression</h3>
+            <h3 className="mb-4 text-sm font-medium text-muted-foreground">Progress</h3>
             <RegistrationStepper steps={steps} />
           </div>
 
@@ -70,13 +70,13 @@ export default async function RegistrationStatusPage({
       {/* Help section */}
       <div className="text-center text-sm text-muted-foreground">
         <p>
-          Une question ? Consultez notre{" "}
+          Questions? Check our{" "}
           <Link href="/faq" className="text-primary hover:underline">
             FAQ
           </Link>{" "}
-          ou{" "}
+          or{" "}
           <Link href="mailto:support@did-annuaire.com" className="text-primary hover:underline">
-            contactez-nous
+            contact us
           </Link>
         </p>
       </div>

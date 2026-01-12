@@ -4,10 +4,26 @@ import { Lock, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { UserMenu } from "@/lib/features/auth/components/UserMenu";
+import { authService } from "@/lib/features/auth/services/auth.service";
 
 export function PublicHeader() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check if user is authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await authService.getCurrentUser();
+        setIsAuthenticated(!!user);
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -17,7 +33,7 @@ export function PublicHeader() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Lock className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold text-foreground">DID Annuaire</span>
+          <span className="text-lg font-semibold text-foreground">DID Directory</span>
         </Link>
 
         {/* Desktop Navigation Links */}
@@ -30,18 +46,25 @@ export function PublicHeader() {
           </Button>
         </nav>
 
-        {/* Desktop Login Button */}
+        {/* Desktop: UserMenu if authenticated, Login button if not */}
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" asChild>
-            <Link href="/auth/login">Login</Link>
-          </Button>
+          {isAuthenticated ? (
+            <UserMenu />
+          ) : (
+            <Button variant="ghost" asChild>
+              <Link href="/auth/login">Login</Link>
+            </Button>
+          )}
         </div>
 
-        {/* Mobile Menu Trigger */}
-        <div className="flex bg-background md:hidden">
+        {/* Mobile Menu */}
+        <div className="flex items-center gap-2 md:hidden">
+          {/* Show UserMenu on mobile if authenticated */}
+          {isAuthenticated && <UserMenu />}
+          
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
@@ -68,14 +91,16 @@ export function PublicHeader() {
                   <Link href="/verify">Verify DID</Link>
                 </Button>
                 <div className="my-2 border-t border-border" />
-                <Button
-                  variant="outline"
-                  asChild
-                  onClick={() => setIsOpen(false)}
-                  className="justify-start"
-                >
-                  <Link href="/auth/login">Login</Link>
-                </Button>
+                {!isAuthenticated && (
+                  <Button
+                    variant="outline"
+                    asChild
+                    onClick={() => setIsOpen(false)}
+                    className="justify-start"
+                  >
+                    <Link href="/auth/login">Login</Link>
+                  </Button>
+                )}
               </div>
             </SheetContent>
           </Sheet>

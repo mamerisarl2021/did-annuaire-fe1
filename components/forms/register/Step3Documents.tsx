@@ -19,19 +19,19 @@ export function Step3Documents({ form, className }: Step3DocumentsProps) {
   return (
     <div className={cn("space-y-6", className)}>
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold text-foreground">Documents justificatifs</h2>
+        <h2 className="text-xl font-semibold text-foreground">Supporting Documents</h2>
         <p className="text-sm text-muted-foreground">
-          Veuillez fournir les documents nécessaires pour valider votre demande d&apos;inscription.
-          Ces documents seront examinés par notre équipe.
+          Please provide the necessary documents to validate your registration request. These
+          documents will be reviewed by our team.
         </p>
       </div>
 
       {/* Info Notice */}
       <div className="rounded-lg border border-muted bg-muted/50 p-4">
         <p className="text-sm text-muted-foreground">
-          <strong>Formats acceptés :</strong> PDF, JPEG, PNG
+          <strong>Accepted formats:</strong> PDF, JPEG, PNG
           <br />
-          <strong>Taille maximale :</strong> 5 Mo par fichier
+          <strong>Maximum size:</strong> 5 MB per file
         </p>
       </div>
 
@@ -45,8 +45,8 @@ export function Step3Documents({ form, className }: Step3DocumentsProps) {
               value={field.value}
               onChange={field.onChange}
               onBlur={field.onBlur}
-              label="Document d'autorisation"
-              description="Document officiel autorisant la création du compte (arrêté, décision, lettre officielle...)"
+              label="Authorization Document"
+              description="Official document authorizing account creation (decree, decision, official letter...)"
               required={true}
               error={fieldState.error?.message}
             />
@@ -62,8 +62,8 @@ export function Step3Documents({ form, className }: Step3DocumentsProps) {
               value={field.value}
               onChange={field.onChange}
               onBlur={field.onBlur}
-              label="Document justificatif supplémentaire"
-              description="Tout document complémentaire pouvant appuyer votre demande"
+              label="Additional Supporting Document"
+              description="Any additional document that can support your request"
               required={false}
               error={fieldState.error?.message}
             />

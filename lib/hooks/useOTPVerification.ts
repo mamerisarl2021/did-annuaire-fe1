@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useForm, type UseFormReturn } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { otpSchema, type OTPFormData } from "@/lib/schemas/otp.schema";
+import { useCallback } from "react";
+import { type UseFormReturn } from "react-hook-form";
+import { type OTPFormData } from "@/lib/schemas/otp.schema";
 import { OTPMethod, type OTPMethodType } from "@/lib/types/activation";
-import { authService } from "@/lib/features/auth/services/auth.service";
+import { useOTPForm } from "@/lib/features/auth/hooks/useOTPForm";
+import { useOTPActions } from "@/lib/features/auth/hooks/useOTPActions";
 
 interface UseOTPVerificationOptions {
   method: OTPMethodType;
@@ -14,38 +14,40 @@ interface UseOTPVerificationOptions {
 
 interface UseOTPVerificationReturn {
   form: UseFormReturn<OTPFormData>;
-
   method: OTPMethodType;
   isGenerating: boolean;
   isVerifying: boolean;
   otpSent: boolean;
   error: string | null;
-
   generateEmailOTP: () => Promise<void>;
   verifyOTP: (data: OTPFormData) => Promise<void>;
   reset: () => void;
 }
 
 /**
- * Hook for OTP verification
- * Handles both TOTP and Email OTP methods
+ * Composite hook for OTP verification flow
+ *
+ * Single Responsibility: Orchestrates OTP verification by composing:
+ * - useOTPForm: Form state management
+ * - useOTPActions: API calls and loading states
+ *
+ * This is a facade hook that combines lower-level hooks
+ * for backward compatibility with existing consumers.
  */
 export function useOTPVerification({
   method,
   onVerified,
 }: UseOTPVerificationOptions): UseOTPVerificationReturn {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const form = useForm<OTPFormData>({
-    resolver: zodResolver(otpSchema),
-    defaultValues: {
-      otp_code: "",
-    },
-    mode: "onBlur",
-  });
+  const { form, reset: resetForm, setFieldError } = useOTPForm();
+  const {
+    isGenerating,
+    isVerifying,
+    otpSent,
+    error,
+    generateEmailOTP: generateOTP,
+    verifyOTP: verifyCode,
+    reset: resetActions,
+  } = useOTPActions();
 
   /**
    * Generate OTP via email
@@ -53,54 +55,31 @@ export function useOTPVerification({
    */
   const generateEmailOTP = useCallback(async () => {
     if (method !== OTPMethod.EMAIL) return;
-
-    setIsGenerating(true);
-    setError(null);
-
-    try {
-      await authService.generateEmailOTP();
-      setOtpSent(true);
-      console.log("OTP email sent");
-    } catch (err) {
-      console.error("Failed to generate OTP:", err);
-      setError("Erreur lors de l'envoi du code OTP");
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [method]);
+    await generateOTP();
+  }, [method, generateOTP]);
 
   /**
-   * Verify the OTP code
+   * Verify the OTP code and trigger callback on success
    */
   const verifyOTP = useCallback(
     async (data: OTPFormData) => {
-      setIsVerifying(true);
-      setError(null);
-
-      try {
-        await authService.verifyOTP(data.otp_code);
-
-        console.log("OTP verified:", data.otp_code);
+      const success = await verifyCode(data.otp_code);
+      if (success) {
         onVerified?.();
-      } catch (err) {
-        console.error("Failed to verify OTP:", err);
-        setError("Code OTP invalide");
-        form.setError("otp_code", { message: "Code OTP invalide" });
-      } finally {
-        setIsVerifying(false);
+      } else {
+        setFieldError("Code OTP invalide");
       }
     },
-    [form, onVerified]
+    [verifyCode, onVerified, setFieldError]
   );
 
   /**
-   * Reset the OTP state
+   * Reset all state
    */
   const reset = useCallback(() => {
-    form.reset();
-    setOtpSent(false);
-    setError(null);
-  }, [form]);
+    resetForm();
+    resetActions();
+  }, [resetForm, resetActions]);
 
   return {
     form,

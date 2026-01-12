@@ -44,11 +44,9 @@ export function Step1Organization({ form, className }: Step1OrganizationProps) {
   return (
     <div className={cn("space-y-6", className)}>
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold text-foreground">
-          Informations de l&apos;organisation
-        </h2>
+        <h2 className="text-xl font-semibold text-foreground">Organization Information</h2>
         <p className="text-sm text-muted-foreground">
-          Renseignez les informations générales de votre organisation.
+          Enter general information about your organization.
         </p>
       </div>
 
@@ -59,9 +57,9 @@ export function Step1Organization({ form, className }: Step1OrganizationProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nom de l&apos;organisation *</FormLabel>
+              <FormLabel>Organization Name *</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Ministère de la Santé" {...field} />
+                <Input placeholder="Ex: Ministry of Health" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -76,11 +74,11 @@ export function Step1Organization({ form, className }: Step1OrganizationProps) {
             name="org_type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Type d&apos;organisation *</FormLabel>
+                <FormLabel>Organization Type *</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Sélectionner un type" />
+                      <SelectValue placeholder="Select a type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -102,7 +100,7 @@ export function Step1Organization({ form, className }: Step1OrganizationProps) {
             name="country"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Pays *</FormLabel>
+                <FormLabel>Country *</FormLabel>
                 <FormControl>
                   <CountrySelect
                     countries={countries}
@@ -127,12 +125,12 @@ export function Step1Organization({ form, className }: Step1OrganizationProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email de contact *</FormLabel>
+              <FormLabel>Contact Email *</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="contact@organisation.com" {...field} />
               </FormControl>
               <FormDescription>
-                Cet email sera utilisé pour les communications officielles.
+                This email will be used for official communications.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -145,7 +143,7 @@ export function Step1Organization({ form, className }: Step1OrganizationProps) {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Téléphone *</FormLabel>
+              <FormLabel>Phone *</FormLabel>
               <FormControl>
                 <Input type="tel" placeholder="+229 XX XX XX XX" {...field} />
               </FormControl>
@@ -160,7 +158,7 @@ export function Step1Organization({ form, className }: Step1OrganizationProps) {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Adresse postale *</FormLabel>
+              <FormLabel>Postal Address *</FormLabel>
               <FormControl>
                 <Textarea placeholder="Ex: 01 BP 1234, Cotonou, Bénin" rows={3} {...field} />
               </FormControl>

@@ -1,0 +1,218 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
+
+import { useOrganizations } from "@/lib/features/super-admin/hooks/useOrganizations";
+import { useOrganizationActions } from "@/lib/features/super-admin/hooks/useOrganizationActions";
+import { StatsCardsRow } from "@/lib/features/super-admin/components/StatsCardsRow";
+import { OrganizationFilters } from "@/lib/features/super-admin/components/OrganizationFilters";
+import { OrganizationsTable } from "@/lib/features/super-admin/components/OrganizationsTable";
+import { OrganizationsPagination } from "@/lib/features/super-admin/components/OrganizationsPagination";
+import { OrganizationDetailsDialog } from "@/lib/features/super-admin/components/OrganizationDetailsDialog";
+import { RefuseOrganizationDialog } from "@/lib/features/super-admin/components/RefuseOrganizationDialog";
+import { DeleteOrganizationDialog } from "@/lib/features/super-admin/components/DeleteOrganizationDialog";
+import {
+  type OrganizationListItem,
+  type OrganizationStatus,
+} from "@/lib/features/super-admin/types/organization.types";
+
+/**
+ * Super User Dashboard Page
+ *
+ * Role: Route entry point for /dashboard/superuser
+ * Responsibilities:
+ * - Orchestrates organizations list view
+ * - Manages dialog visibility state
+ * - Coordinates data fetching and actions hooks
+ * - Composes pure UI components
+ */
+export default function SuperUserDashboardPage() {
+  // Data fetching
+  const { organizations, stats, pagination, error, isLoading, refresh, filters } =
+    useOrganizations();
+
+  // Actions
+  const actions = useOrganizationActions();
+
+  // UI State - Dialog management
+  const [selectedOrg, setSelectedOrg] = useState<OrganizationListItem | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showRefuse, setShowRefuse] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+
+  // Derived state
+  const currentStatus = filters.status || "all";
+  const totalPages = pagination ? Math.ceil(pagination.count / pagination.pageSize) : 1;
+  const currentPage = pagination?.page || 1;
+
+  // Handlers
+  const handleStatusChange = useCallback(
+    (newStatus: string | undefined) => {
+      filters.setStatus(newStatus as OrganizationStatus | undefined);
+      filters.setSearch("");
+      pagination?.setPage(1);
+    },
+    [filters, pagination]
+  );
+
+  const handleValidate = useCallback(
+    async (orgId: string) => {
+      const success = await actions.validateOrganization(orgId);
+      if (success) {
+        setShowDetails(false);
+        refresh();
+      }
+    },
+    [actions, refresh]
+  );
+
+  const handleRefuse = useCallback(
+    async (reason: string) => {
+      if (!selectedOrg) return;
+      const success = await actions.refuseOrganization(selectedOrg.id, reason);
+      if (success) {
+        setShowRefuse(false);
+        setShowDetails(false);
+        setSelectedOrg(null);
+        refresh();
+      }
+    },
+    [selectedOrg, actions, refresh]
+  );
+
+  const handleToggle = useCallback(
+    async (orgId: string) => {
+      const success = await actions.toggleOrganizationStatus(orgId);
+      if (success) {
+        refresh();
+      }
+    },
+    [actions, refresh]
+  );
+
+  const handleDelete = useCallback(async () => {
+    if (!selectedOrg) return;
+    const success = await actions.deleteOrganization(selectedOrg.id);
+    if (success) {
+      setShowDelete(false);
+      setSelectedOrg(null);
+      refresh();
+    }
+  }, [selectedOrg, actions, refresh]);
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      if (newPage >= 1 && newPage <= totalPages) {
+        pagination?.setPage(newPage);
+      }
+    },
+    [pagination, totalPages]
+  );
+
+  const openDetailsDialog = useCallback((org: OrganizationListItem) => {
+    setSelectedOrg(org);
+    setShowDetails(true);
+  }, []);
+
+  const openRefuseDialog = useCallback((org: OrganizationListItem) => {
+    setSelectedOrg(org);
+    setShowRefuse(true);
+  }, []);
+
+  const openDeleteDialog = useCallback((org: OrganizationListItem) => {
+    setSelectedOrg(org);
+    setShowDelete(true);
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
+        <Button onClick={refresh} variant="outline" disabled={isLoading}>
+          <RefreshCw className={`mr-2 size-4 ${isLoading ? "animate-spin" : ""}`} />
+          Refresh
+        </Button>
+      </div>
+
+      {/* Stats Cards */}
+      <StatsCardsRow
+        stats={stats}
+        activeStatus={currentStatus}
+        onStatusClick={handleStatusChange}
+      />
+
+      {/* Content Card */}
+      <Card>
+        <CardContent className="pt-6">
+          {/* Filters */}
+          <OrganizationFilters
+            search={filters.search}
+            onSearchChange={filters.setSearch}
+            status={currentStatus as OrganizationStatus | "all"}
+            onStatusChange={(v) => handleStatusChange(v === "all" ? undefined : v)}
+            totalCount={pagination?.count || 0}
+          />
+
+          {/* Content */}
+          {isLoading ? (
+            <div className="text-center py-10 text-muted-foreground">Loading...</div>
+          ) : error ? (
+            <div className="text-center py-10 text-destructive">{error}</div>
+          ) : (
+            <>
+              <OrganizationsTable
+                organizations={organizations}
+                onRowClick={openDetailsDialog}
+                onView={openDetailsDialog}
+                onValidate={handleValidate}
+                onRefuse={openRefuseDialog}
+                onToggle={handleToggle}
+                onDelete={openDeleteDialog}
+                isActionsDisabled={actions.isLoading}
+              />
+
+              <OrganizationsPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Dialogs */}
+      <OrganizationDetailsDialog
+        organization={selectedOrg}
+        open={showDetails}
+        onOpenChange={setShowDetails}
+        onValidate={handleValidate}
+        onRefuse={() => {
+          setShowDetails(false);
+          setShowRefuse(true);
+        }}
+        isActionsDisabled={actions.isLoading}
+      />
+
+      <RefuseOrganizationDialog
+        organizationName={selectedOrg?.name}
+        open={showRefuse}
+        onOpenChange={setShowRefuse}
+        onConfirm={handleRefuse}
+        isLoading={actions.isLoading}
+      />
+
+      <DeleteOrganizationDialog
+        organizationName={selectedOrg?.name}
+        open={showDelete}
+        onOpenChange={setShowDelete}
+        onConfirm={handleDelete}
+        isLoading={actions.isLoading}
+      />
+    </div>
+  );
+}

@@ -29,21 +29,18 @@ export function Step2Admin({ form, className }: Step2AdminProps) {
   return (
     <div className={cn("space-y-6", className)}>
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold text-foreground">
-          Administrateur de l&apos;organisation
-        </h2>
+        <h2 className="text-xl font-semibold text-foreground">Organization Administrator</h2>
         <p className="text-sm text-muted-foreground">
-          L&apos;administrateur principal aura le contrôle total de l&apos;organisation.
-          Assurez-vous d&apos;utiliser une adresse email valide et accessible.
+          The main administrator will have full control over the organization. Make sure to use a
+          valid and accessible email address.
         </p>
       </div>
 
       {/* Important Notice */}
       <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
         <p className="text-sm text-foreground">
-          <strong>Important :</strong> L&apos;administrateur recevra les identifiants de connexion
-          et sera responsable de la gestion des utilisateurs et des paramètres de
-          l&apos;organisation.
+          <strong>Important :</strong> The administrator will receive login credentials and will be
+          responsible for managing users and organization settings.
         </p>
       </div>
 
@@ -54,20 +51,20 @@ export function Step2Admin({ form, className }: Step2AdminProps) {
           name="admin_email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email de l&apos;administrateur *</FormLabel>
+              <FormLabel>Administrator Email *</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="admin@organisation.com"
+                    placeholder="admin@organization.com"
                     className="pl-10"
                     {...field}
                   />
                 </div>
               </FormControl>
               <FormDescription>
-                Cet email sera utilisé pour la connexion et la récupération du compte.
+                This email will be used for login and account recovery.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -81,11 +78,11 @@ export function Step2Admin({ form, className }: Step2AdminProps) {
             name="admin_first_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Prénom *</FormLabel>
+                <FormLabel>First Name *</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input placeholder="Jean" className="pl-10" {...field} />
+                    <Input placeholder="John" className="pl-10" {...field} />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -98,9 +95,9 @@ export function Step2Admin({ form, className }: Step2AdminProps) {
             name="admin_last_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nom *</FormLabel>
+                <FormLabel>Last Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Dupont" {...field} />
+                  <Input placeholder="Doe" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -114,7 +111,7 @@ export function Step2Admin({ form, className }: Step2AdminProps) {
           name="admin_phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Téléphone *</FormLabel>
+              <FormLabel>Phone *</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -132,20 +129,14 @@ export function Step2Admin({ form, className }: Step2AdminProps) {
           name="functions"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Fonction dans l&apos;organisation *</FormLabel>
+              <FormLabel>Role in Organization *</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Briefcase className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Ex: Directeur des Systèmes d'Information"
-                    className="pl-10"
-                    {...field}
-                  />
+                  <Input placeholder="Ex: Chief Information Officer" className="pl-10" {...field} />
                 </div>
               </FormControl>
-              <FormDescription>
-                Le titre ou la fonction officielle de l&apos;administrateur.
-              </FormDescription>
+              <FormDescription>The title or official role of the administrator.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

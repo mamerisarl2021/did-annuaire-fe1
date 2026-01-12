@@ -35,10 +35,10 @@ export function OrganizationTable({ data, isLoading, pagination }: OrganizationT
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nom</TableHead>
+                <TableHead>Name</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead>Pays</TableHead>
-                <TableHead>Statut</TableHead>
+                <TableHead>Country</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Admin</TableHead>
               </TableRow>
             </TableHeader>
@@ -88,7 +88,7 @@ export function OrganizationTable({ data, isLoading, pagination }: OrganizationT
             {data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center">
-                  Aucune organisation trouvée via l&apos;API.
+                  No organizations found via API.
                 </TableCell>
               </TableRow>
             ) : (
@@ -103,7 +103,7 @@ export function OrganizationTable({ data, isLoading, pagination }: OrganizationT
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">{org.adminEmail}</TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {new Date(org.createdAt).toLocaleDateString("fr-FR")}
+                    {new Date(org.createdAt).toLocaleDateString("en-US")}
                   </TableCell>
                 </TableRow>
               ))
@@ -131,7 +131,7 @@ export function OrganizationTable({ data, isLoading, pagination }: OrganizationT
             {/* Simple Page Indicator */}
             <PaginationItem>
               <span className="text-sm px-4">
-                Page {pagination.page} sur {pagination.totalPages}
+                Page {pagination.page} of {pagination.totalPages}
               </span>
             </PaginationItem>
 

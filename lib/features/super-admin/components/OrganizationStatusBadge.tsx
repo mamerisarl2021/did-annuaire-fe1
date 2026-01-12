@@ -35,9 +35,9 @@ export function OrganizationStatusBadge({ status }: StatusBadgeProps) {
 
   const label = {
     ACTIVE: "Active",
-    PENDING: "En attente",
-    REFUSED: "Refusée",
-    SUSPENDED: "Suspendue",
+    PENDING: "Pending",
+    REFUSED: "Refused",
+    SUSPENDED: "Suspended",
   }[status];
 
   return (
