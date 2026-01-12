@@ -29,7 +29,7 @@ import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  searchKey?: string; // Field to filter by
+  searchKey?: string;
 }
 
 export function DataTable<TData, TValue>({

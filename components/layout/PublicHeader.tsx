@@ -23,7 +23,7 @@ export function PublicHeader() {
         {/* Desktop Navigation Links */}
         <nav className="hidden items-center gap-1 md:flex">
           <Button variant="ghost" asChild>
-            <Link href="/register">Register Organization</Link>
+            <Link href="/auth/register">Register Organization</Link>
           </Button>
           <Button variant="ghost" asChild>
             <Link href="/verify">Verify DID</Link>
@@ -33,7 +33,7 @@ export function PublicHeader() {
         {/* Desktop Login Button */}
         <div className="hidden items-center gap-2 md:flex">
           <Button variant="ghost" asChild>
-            <Link href="/login">Login</Link>
+            <Link href="/auth/login">Login</Link>
           </Button>
         </div>
 
@@ -57,7 +57,7 @@ export function PublicHeader() {
                   onClick={() => setIsOpen(false)}
                   className="justify-start"
                 >
-                  <Link href="/register">Register Organization</Link>
+                  <Link href="/auth/register">Register Organization</Link>
                 </Button>
                 <Button
                   variant="ghost"
@@ -74,7 +74,7 @@ export function PublicHeader() {
                   onClick={() => setIsOpen(false)}
                   className="justify-start"
                 >
-                  <Link href="/login">Login</Link>
+                  <Link href="/auth/login">Login</Link>
                 </Button>
               </div>
             </SheetContent>

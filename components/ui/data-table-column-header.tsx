@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  Maximize2,
-  Minimize2, // Replaced CaretSortIcon with standard Lucide icons
-} from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, Maximize2, Minimize2 } from "lucide-react";
 import { Column } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
@@ -43,7 +38,7 @@ export function DataTableColumnHeader<TData, TValue>({
             ) : column.getIsSorted() === "asc" ? (
               <ArrowUpIcon className="ml-2 h-4 w-4" />
             ) : (
-              <Maximize2 className="ml-2 h-4 w-4 rotate-90" /> // Placeholder for CaretSort
+              <Maximize2 className="ml-2 h-4 w-4 rotate-90" />
             )}
           </Button>
         </DropdownMenuTrigger>
@@ -58,7 +53,7 @@ export function DataTableColumnHeader<TData, TValue>({
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <Minimize2 className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" /> // Placeholder for
+            <Minimize2 className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             EyeNone Hide
           </DropdownMenuItem>
         </DropdownMenuContent>
