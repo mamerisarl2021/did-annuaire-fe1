@@ -36,6 +36,7 @@ export function DashboardSidebar({ className }: { className?: string }) {
       icon: FileText,
       roles: ["SUPER_USER"],
     },
+
     // Org Admin Items
     {
       title: "Overview",
@@ -47,12 +48,6 @@ export function DashboardSidebar({ className }: { className?: string }) {
       title: "Organizations",
       href: "/dashboard/orgadmin/organizations",
       icon: Building2,
-      roles: ["ORG_ADMIN"],
-    },
-    {
-      title: "Applications",
-      href: "/dashboard/orgadmin/applications",
-      icon: AppWindow,
       roles: ["ORG_ADMIN"],
     },
   ];
