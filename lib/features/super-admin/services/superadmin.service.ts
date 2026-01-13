@@ -1,5 +1,6 @@
 import { httpClient } from "@/lib/shared/api/http.client";
 import {
+  type OrganizationListItem,
   type OrganizationListResponse,
   type OrganizationListParams,
   type OrganizationStats,
@@ -9,6 +10,7 @@ import { organizationMapper } from "../mappers/organization.mapper";
 const SUPERADMIN_Endpoints = {
   LIST: "/api/superadmin/organizations",
   STATS: "/api/superadmin/organizations/stats",
+  DETAILS: (id: string) => `/api/superadmin/organizations/${id}`,
 };
 
 export const superAdminService = {
@@ -60,6 +62,12 @@ export const superAdminService = {
 
   async toggleOrganizationStatus(id: string): Promise<void> {
     await httpClient.patch(`/api/superadmin/organizations/${id}/toggle-activation`);
+  },
+
+  async getOrganizationDetails(id: string): Promise<OrganizationListItem> {
+    const response = await httpClient.get<any>(SUPERADMIN_Endpoints.DETAILS(id));
+    const rawData = response.data || response;
+    return organizationMapper.toDomain(rawData);
   },
 
   async deleteOrganization(id: string): Promise<void> {

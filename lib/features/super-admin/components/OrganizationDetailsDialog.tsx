@@ -9,22 +9,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Download, ExternalLink, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OrganizationStatusBadge } from "./OrganizationStatusBadge";
 import { type OrganizationListItem } from "../types/organization.types";
 
 interface OrganizationDetailsDialogProps {
-  /** The organization to display */
   organization: OrganizationListItem | null;
-  /** Whether the dialog is open */
   open: boolean;
-  /** Callback when dialog should close */
   onOpenChange: (open: boolean) => void;
-  /** Callback when validate is clicked (only for PENDING) */
   onValidate?: (orgId: string) => void;
-  /** Callback when refuse is clicked (only for PENDING) */
   onRefuse?: () => void;
-  /** Whether actions are disabled */
   isActionsDisabled?: boolean;
 }
 
@@ -67,7 +62,7 @@ export function OrganizationDetailsDialog({
               <div className="font-medium">{organization.country}</div>
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">Email Org</Label>
+              <Label className="text-xs text-muted-foreground">Email Organization</Label>
               <div className="font-medium break-all">{organization.email}</div>
             </div>
             <div>
@@ -75,11 +70,11 @@ export function OrganizationDetailsDialog({
               <div className="font-medium break-all">{organization.adminEmail}</div>
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">Phone</Label>
-              <div className="font-medium">{organization.phone || "-"}</div>
+              <Label className="text-xs text-muted-foreground">Slug</Label>
+              <div className="font-medium">{organization.slug}</div>
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">Created at</Label>
+              <Label className="text-xs text-muted-foreground">Created Date</Label>
               <div className="font-medium">
                 {new Date(organization.createdAt).toLocaleDateString()}
               </div>
@@ -88,6 +83,58 @@ export function OrganizationDetailsDialog({
               <Label className="text-xs text-muted-foreground">Status</Label>
               <div className="mt-1">
                 <OrganizationStatusBadge status={organization.status} />
+              </div>
+            </div>
+
+            {/* Documents Section */}
+            <div className="col-span-2 space-y-3 pt-2">
+              <Label className="text-xs text-muted-foreground">Documents</Label>
+              <div className="grid grid-cols-1 gap-2">
+                {[
+                  {
+                    name: "Authorization Document",
+                    url: organization.authorization_document,
+                    id: "auth-doc",
+                  },
+                  {
+                    name: "Justification Document",
+                    url: organization.justification_document,
+                    id: "just-doc",
+                  },
+                ]
+                  .filter((doc) => doc.url)
+                  .map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-center justify-between p-2 rounded-md border bg-muted/20"
+                    >
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <FileText className="size-4 text-primary shrink-0" />
+                        <span className="text-sm font-medium truncate">{doc.name}</span>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        <Button variant="ghost" size="icon" className="size-8" asChild title="View">
+                          <a href={doc.url} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="size-4" />
+                          </a>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-8"
+                          asChild
+                          title="Download"
+                        >
+                          <a href={doc.url} download>
+                            <Download className="size-4" />
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                {!organization.authorization_document && !organization.justification_document && (
+                  <p className="text-sm text-muted-foreground italic">No documents provided</p>
+                )}
               </div>
             </div>
           </div>

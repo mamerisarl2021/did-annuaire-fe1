@@ -40,7 +40,7 @@ export function useTwoFactorSetup({
   }, []);
 
   /**
-   * Verify the OTP code
+   * Verify the TOTP code from authenticator app
    */
   const verifyCode = useCallback(
     async (code: string): Promise<boolean> => {
@@ -53,7 +53,8 @@ export function useTwoFactorSetup({
       setError(null);
 
       try {
-        await authService.verifyOTP(code);
+        // Use OTP verification (no auth required, body: { otp } only)
+        await authService.verifyActivationOTP(code);
         setIsVerified(true);
         setIsSettingUp(false);
         onSetupComplete?.();

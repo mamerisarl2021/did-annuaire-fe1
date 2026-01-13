@@ -112,10 +112,18 @@ export default function SuperUserDashboardPage() {
     [pagination, totalPages]
   );
 
-  const openDetailsDialog = useCallback((org: OrganizationListItem) => {
+  const openDetailsDialog = useCallback(async (org: OrganizationListItem) => {
     setSelectedOrg(org);
     setShowDetails(true);
-  }, []);
+    try {
+      const fullOrg = await actions.getOrganizationDetails(org.id);
+      if (fullOrg) {
+        setSelectedOrg(fullOrg);
+      }
+    } catch (error) {
+      console.error("Failed to fetch organization details:", error);
+    }
+  }, [actions]);
 
   const openRefuseDialog = useCallback((org: OrganizationListItem) => {
     setSelectedOrg(org);

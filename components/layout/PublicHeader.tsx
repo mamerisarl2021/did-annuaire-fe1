@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock, Menu } from "lucide-react";
+import { Home, Lock, LogIn, LogOut, Menu, Search, UserPlus, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
@@ -29,20 +29,32 @@ export function PublicHeader() {
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo / Brand */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Lock className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold text-foreground">DID Annuaire</span>
+          <span className="text-lg font-semibold text-foreground tracking-tight">DID Annuaire</span>
         </Link>
 
         {/* Desktop Navigation Links */}
         <nav className="hidden items-center gap-1 md:flex">
-          <Button variant="ghost" asChild>
-            <Link href="/auth/register">Register Organization</Link>
+          <Button variant="ghost" asChild className="gap-2">
+            <Link href="/">
+              <Home className="size-4" />
+              Home
+            </Link>
           </Button>
-          <Button variant="ghost" asChild>
-            <Link href="/verify">Verify DID</Link>
+          <Button variant="ghost" asChild className="gap-2">
+            <Link href="/auth/register">
+              <UserPlus className="size-4" />
+              Register
+            </Link>
+          </Button>
+          <Button variant="ghost" asChild className="gap-2">
+            <Link href="/verify">
+              <Search className="size-4" />
+              Verify DID
+            </Link>
           </Button>
         </nav>
 
@@ -51,8 +63,11 @@ export function PublicHeader() {
           {isAuthenticated ? (
             <UserMenu />
           ) : (
-            <Button variant="ghost" asChild>
-              <Link href="/auth/login">Login</Link>
+            <Button variant="outline" asChild className="gap-2">
+              <Link href="/auth/login">
+                <LogIn className="size-4" />
+                Login
+              </Link>
             </Button>
           )}
         </div>
@@ -64,64 +79,95 @@ export function PublicHeader() {
 
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <SheetHeader>
-                <SheetTitle className="text-left">Menu</SheetTitle>
+                <SheetTitle className="text-left flex items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
+                    <Lock className="h-3 w-3 text-primary-foreground" />
+                  </div>
+                  Navigation
+                </SheetTitle>
               </SheetHeader>
-              <div className="mt-8 flex flex-col gap-4">
+              <div className="mt-8 flex flex-col gap-2">
                 <Button
                   variant="ghost"
                   asChild
                   onClick={() => setIsOpen(false)}
-                  className="justify-start"
+                  className="justify-start gap-3 h-11"
                 >
-                  <Link href="/auth/register">Register Organization</Link>
+                  <Link href="/">
+                    <Home className="size-4 text-muted-foreground" />
+                    <span>Home</span>
+                  </Link>
                 </Button>
                 <Button
                   variant="ghost"
                   asChild
                   onClick={() => setIsOpen(false)}
-                  className="justify-start"
+                  className="justify-start gap-3 h-11"
                 >
-                  <Link href="/verify">Verify DID</Link>
+                  <Link href="/auth/register">
+                    <UserPlus className="size-4 text-muted-foreground" />
+                    <span>Register Organization</span>
+                  </Link>
                 </Button>
+                <Button
+                  variant="ghost"
+                  asChild
+                  onClick={() => setIsOpen(false)}
+                  className="justify-start gap-3 h-11"
+                >
+                  <Link href="/verify">
+                    <Search className="size-4 text-muted-foreground" />
+                    <span>Verify DID</span>
+                  </Link>
+                </Button>
+
+                <div className="my-2 border-t border-border" />
+
                 {isAuthenticated ? (
                   <>
                     <Button
                       variant="ghost"
                       asChild
                       onClick={() => setIsOpen(false)}
-                      className="justify-start"
+                      className="justify-start gap-3 h-11"
                     >
-                      <Link href="/dashboard">Dashboard</Link>
+                      <Link href="/dashboard">
+                        <LayoutDashboard className="size-4 text-muted-foreground" />
+                        <span>Dashboard</span>
+                      </Link>
                     </Button>
-                    <div className="my-2 border-t border-border" />
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       onClick={() => {
                         authService.logout();
                         setIsAuthenticated(false);
                         setIsOpen(false);
                         window.location.reload();
                       }}
-                      className="justify-start text-destructive hover:text-destructive"
+                      className="justify-start gap-3 h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
-                      Logout
+                      <LogOut className="size-4" />
+                      <span>Logout</span>
                     </Button>
                   </>
                 ) : (
                   <Button
-                    variant="outline"
+                    variant="default"
                     asChild
                     onClick={() => setIsOpen(false)}
-                    className="justify-start"
+                    className="justify-start gap-3 h-11"
                   >
-                    <Link href="/auth/login">Login</Link>
+                    <Link href="/auth/login">
+                      <LogIn className="size-4" />
+                      <span>Login to Account</span>
+                    </Link>
                   </Button>
                 )}
               </div>

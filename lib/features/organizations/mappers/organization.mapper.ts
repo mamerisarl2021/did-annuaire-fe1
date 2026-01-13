@@ -1,6 +1,35 @@
-import { type OrgCreatePayload } from "../types/organization.types";
+import {
+  type OrgCreatePayload,
+  type OrganizationListItem,
+  type OrganizationStats,
+} from "../types/organization.types";
+import { type OrganizationStatusType } from "@/lib/types/organization-status";
 
 export const organizationMapper = {
+  toDomain(raw: any): OrganizationListItem {
+    return {
+      id: raw.id,
+      name: raw.name || "N/A",
+      type: raw.org_type || raw.type || "N/A",
+      country: raw.country || "N/A",
+      email: raw.email || "N/A",
+      slug: raw.slug || "",
+      status: raw.status as OrganizationStatusType,
+      createdAt: raw.created_at,
+      adminEmail: raw.admin?.email || raw.admin_email || "N/A",
+      authorization_document: raw.documents?.authorization_document_url || raw.authorization_document,
+      justification_document: raw.documents?.justification_document_url || raw.justification_document,
+    };
+  },
+
+  toStats(raw: any): OrganizationStats {
+    return {
+      all: raw.all || 0,
+      active: raw.active || 0,
+      suspended: raw.suspended || 0,
+    };
+  },
+
   toFormData(payload: OrgCreatePayload): FormData {
     const formData = new FormData();
 

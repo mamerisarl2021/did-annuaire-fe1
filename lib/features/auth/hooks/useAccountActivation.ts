@@ -9,9 +9,9 @@ import {
   type QRCodeData,
 } from "../schemas/activate.schema";
 import { authService } from "../services/auth.service";
+import { ApiException } from "@/lib/shared/api/api.errors";
 
 interface UseAccountActivationOptions {
-  /** Activation token from URL */
   token: string | null;
 }
 
@@ -22,26 +22,15 @@ interface ActivationResult {
 }
 
 interface UseAccountActivationReturn {
-  /** Form instance for password setup */
   form: UseFormReturn<ActivateAccountFormData>;
-  /** Whether the token is valid */
   hasValidToken: boolean;
-  /** Whether activation is in progress */
   isActivating: boolean;
-  /** Error message */
   error: string | null;
-  /** Activate the account with password and optional OTP */
   activateAccount: (data: ActivateAccountFormData) => Promise<ActivationResult>;
-  /** Clear error state */
   clearError: () => void;
 }
 
-/**
- * Hook for account activation (password setup only)
- *
- * Single Responsibility: Account activation API call
- * Does NOT handle 2FA setup - that's useTwoFactorSetup's job
- */
+
 export function useAccountActivation({
   token,
 }: UseAccountActivationOptions): UseAccountActivationReturn {
@@ -79,25 +68,35 @@ export function useAccountActivation({
           token,
           password: data.password,
           re_password: data.confirmPassword,
-          enable_otp: data.enableOtp,
+          enable_totp: data.enableOtp, // Mapping enableOtp from form to enable_totp for API
+          code: data.code,
         });
 
-        // Check if OTP was enabled and QR code was returned
-        if (data.enableOtp && response?.qr_code) {
+        if (data.enableOtp && (response?.code === "TOTP_REQUIRED" || response?.totp_qr) && !data.code) {
+          console.log("2FA Setup phase: QR code received, awaiting verification code.");
           return {
             success: true,
             requiresOtp: true,
             qrCodeData: {
-              qr_code: response.qr_code,
-              secret: response.secret,
+              qr_code: response.totp_qr,
+              secret: response.secret as string | undefined,
             },
           };
         }
 
+        console.log("Activation finalized successfully.");
         return { success: true, requiresOtp: false, qrCodeData: null };
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Activation failed. The link may have expired.";
+        let message = "Activation failed. The link may have expired.";
+        if (err instanceof ApiException) {
+          if (err.code === "INVITE_EXPIRED") {
+            message = "This invitation link has expired. Please contact your administrator.";
+          } else if (err.code === "TOTP_INVALID") {
+            message = "Invalid verification code. Please check your authenticator app.";
+          } else {
+            message = err.message;
+          }
+        }
         setError(message);
         return { success: false, requiresOtp: false, qrCodeData: null };
       } finally {

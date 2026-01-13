@@ -15,21 +15,13 @@ import { OrganizationStatusBadge } from "./OrganizationStatusBadge";
 import { type OrganizationListItem } from "../types/organization.types";
 
 interface OrganizationsTableProps {
-  /** List of organizations to display */
   organizations: OrganizationListItem[];
-  /** Callback when row is clicked */
   onRowClick: (org: OrganizationListItem) => void;
-  /** Callback when view button is clicked */
   onView: (org: OrganizationListItem) => void;
-  /** Callback when validate button is clicked */
   onValidate: (orgId: string) => void;
-  /** Callback when refuse button is clicked */
   onRefuse: (org: OrganizationListItem) => void;
-  /** Callback when toggle button is clicked */
   onToggle: (orgId: string) => void;
-  /** Callback when delete button is clicked */
   onDelete: (org: OrganizationListItem) => void;
-  /** Whether actions are disabled */
   isActionsDisabled?: boolean;
 }
 
@@ -133,7 +125,7 @@ export function OrganizationsTable({
                       <Button
                         size="sm"
                         className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-none"
-                        style={{ backgroundColor: "#16a34a" }} 
+
                         onClick={() => onValidate(org.id)}
                         disabled={isActionsDisabled}
                       >

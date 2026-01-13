@@ -19,9 +19,37 @@ export interface OrgCreatePayload {
   justification_document?: File;
 }
 
-export interface OrgCreateResponse {
+export interface OrganizationListItem {
   id: string;
   name: string;
+  type: string;
+  country: string;
+  email: string;
+  slug: string;
   status: OrganizationStatusType;
-  created_at: string;
+  createdAt: string;
+  adminEmail?: string;
+  authorization_document?: string;
+  justification_document?: string;
+}
+
+export interface OrganizationStats {
+  all: number;
+  active: number;
+  suspended: number;
+}
+
+export interface OrganizationListResponse {
+  results: OrganizationListItem[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+  stats?: OrganizationStats;
+}
+
+export interface OrganizationListParams {
+  page?: number;
+  page_size?: number;
+  status?: OrganizationStatusType | "all";
+  search?: string;
 }

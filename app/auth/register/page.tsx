@@ -75,7 +75,7 @@ export default function RegisterPage() {
 
       await createOrganization(payload);
 
-      router.push("/auth/register/status");
+      router.push(`/auth/register/status?organizationName=${encodeURIComponent(data.name)}`);
     } catch (error) {
       console.error("Registration failed", error);
     }

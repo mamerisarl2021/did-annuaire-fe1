@@ -11,7 +11,12 @@ import { ApiException } from "@/lib/shared/api/api.errors";
 /**
  * Login flow states
  */
-export type LoginFlowStep = "CREDENTIALS" | "OTP_REQUIRED" | "SUCCESS";
+export type LoginFlowStep = "CREDENTIALS" | "EMAIL_OTP_REQUIRED" | "TOTP_REQUIRED" | "SUCCESS";
+
+/**
+ * OTP method types
+ */
+export type OTPMethod = "email" | "totp" | null;
 
 interface UseLoginWorkflowOptions {
   /** Called when login is fully complete (including OTP if required) */
@@ -27,12 +32,20 @@ interface UseLoginWorkflowReturn {
   user: AuthUser | null;
   /** Whether login is in progress */
   isLoggingIn: boolean;
+  /** Whether OTP generation is in progress */
+  isGeneratingOTP: boolean;
+  /** Whether OTP has been sent */
+  otpSent: boolean;
   /** Whether OTP verification is in progress */
   isVerifyingOTP: boolean;
   /** Error message */
   error: string | null;
+  /** OTP method required */
+  otpMethod: OTPMethod;
   /** Submit credentials */
   submitCredentials: (data: LoginFormData) => Promise<void>;
+  /** Generate email OTP */
+  generateEmailOTP: () => Promise<void>;
   /** Verify OTP code */
   verifyOTP: (code: string) => Promise<void>;
   /** Go back to credentials step */
@@ -46,7 +59,8 @@ interface UseLoginWorkflowReturn {
  *
  * Single Responsibility: Login flow orchestration
  * - Handles credential submission
- * - Detects if OTP is required
+ * - Detects if OTP is required (email or TOTP)
+ * - Handles OTP generation (for email method)
  * - Handles OTP verification
  * - Returns authenticated user on success
  */
@@ -56,8 +70,11 @@ export function useLoginWorkflow({
   const [currentStep, setCurrentStep] = useState<LoginFlowStep>("CREDENTIALS");
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isGeneratingOTP, setIsGeneratingOTP] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
   const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [otpMethod, setOtpMethod] = useState<OTPMethod>(null);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -91,15 +108,20 @@ export function useLoginWorkflow({
         }
 
         // Check if response indicates OTP is required
-        // This depends on your API - adjust as needed
         const otpRequired = "otp_required" in response && response.otp_required === true;
-
+        const method = response.otp_method || "email";
         if (otpRequired) {
-          setCurrentStep("OTP_REQUIRED");
+          setOtpMethod(method);
+          if (method === "totp") {
+            setCurrentStep("TOTP_REQUIRED");
+          } else {
+            setCurrentStep("EMAIL_OTP_REQUIRED");
+            await generateEmailOTP();
+          }
           return;
         }
 
-        // Login complete
+        // Login complete (no OTP required)
         setUser(currentUser);
         setCurrentStep("SUCCESS");
         onLoginComplete?.(currentUser);
@@ -112,6 +134,24 @@ export function useLoginWorkflow({
     },
     [onLoginComplete]
   );
+
+  /**
+   * Generate email OTP (for email method)
+   */
+  const generateEmailOTP = useCallback(async () => {
+    setIsGeneratingOTP(true);
+    setError(null);
+
+    try {
+      await authService.generateEmailOTP();
+      setOtpSent(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to send OTP code.";
+      setError(message);
+    } finally {
+      setIsGeneratingOTP(false);
+    }
+  }, []);
 
   /**
    * Verify OTP code (step 2, if required)
@@ -155,6 +195,8 @@ export function useLoginWorkflow({
   const goBackToCredentials = useCallback(() => {
     setCurrentStep("CREDENTIALS");
     setError(null);
+    setOtpSent(false);
+    setOtpMethod(null);
   }, []);
 
   /**
@@ -169,9 +211,13 @@ export function useLoginWorkflow({
     form,
     user,
     isLoggingIn,
+    isGeneratingOTP,
+    otpSent,
     isVerifyingOTP,
     error,
+    otpMethod,
     submitCredentials,
+    generateEmailOTP,
     verifyOTP,
     goBackToCredentials,
     clearError,

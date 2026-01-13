@@ -9,7 +9,9 @@ export const API_ENDPOINTS = {
   },
   ORGANIZATIONS: {
     CREATE: "/api/organizations/",
-    STATUS: (id: string) => `/api/organizations/${id}/status`,
+    DETAILS: (id: string) => `/api/organizations/id/${id}`,
+    LIST: "/api/organizations/",
+    STATS: "/api/organizations/stats",
   },
   USERS: {
     ACTIVATE: "/api/users/activate",

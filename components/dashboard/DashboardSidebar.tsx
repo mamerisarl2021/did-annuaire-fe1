@@ -3,11 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Users, Building2, FileText } from "lucide-react";
+import { Users, Building2, FileText, AppWindow, LayoutDashboard } from "lucide-react";
+import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 
 export function DashboardSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
-  const items = [
+  const { user } = useAuth();
+
+  const allItems = [
+    // Super User Items
+    {
+      title: "Overview",
+      href: "/dashboard/superuser",
+      icon: LayoutDashboard,
+      roles: ["SUPER_USER"],
+    },
     {
       title: "Organizations",
       href: "/dashboard/superuser",
@@ -26,27 +36,58 @@ export function DashboardSidebar({ className }: { className?: string }) {
       icon: FileText,
       roles: ["SUPER_USER"],
     },
+    // Org Admin Items
+    {
+      title: "Overview",
+      href: "/dashboard/orgadmin",
+      icon: LayoutDashboard,
+      roles: ["ORG_ADMIN"],
+    },
+    {
+      title: "Organizations",
+      href: "/dashboard/orgadmin/organizations",
+      icon: Building2,
+      roles: ["ORG_ADMIN"],
+    },
+    {
+      title: "Applications",
+      href: "/dashboard/orgadmin/applications",
+      icon: AppWindow,
+      roles: ["ORG_ADMIN"],
+    },
   ];
 
+  // Filter items based on user role
+  const items = allItems.filter(item =>
+    !user?.role || item.roles.includes(user.role as any)
+  );
+
   return (
-    <div className={cn("pb-12 min-h-screen border-r bg-background", className)}>
+    <div className={cn("pb-12 min-h-[calc(100vh-64px)] border-r bg-background", className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">Administration</h2>
+          <h2 className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Administration
+          </h2>
           <div className="space-y-1">
-            {items.map((item) => (
-              <Link
-                key={item.title}
-                href={item.href}
-                className={cn(
-                  "flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                  pathname === item.href ? "bg-accent text-accent-foreground" : "transparent"
-                )}
-              >
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
-              </Link>
-            ))}
+            {items.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={`${item.title}-${item.href}`}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                    isActive
+                      ? "bg-primary/10 text-primary shadow-sm"
+                      : "text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  <item.icon className={cn("mr-2 h-4 w-4", isActive ? "text-primary" : "text-muted-foreground")} />
+                  {item.title}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

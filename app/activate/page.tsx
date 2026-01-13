@@ -32,7 +32,7 @@ function ActivateContent() {
   // Account activation hook (password setup)
   const activation = useAccountActivation({ token });
 
-  // 2FA setup hook (OTP verification)
+  // 2FA setup hook
   const twoFactor = useTwoFactorSetup({
     onSetupComplete: () => {
       // 2FA verified - can now finalize
@@ -44,20 +44,12 @@ function ActivateContent() {
    */
   const handleSubmit = useCallback(
     async (data: ActivateAccountFormData) => {
-      // If OTP is enabled and we already have QR but not verified
-      if (data.enableOtp && show2FASetup && !twoFactor.isVerified) {
-        // User is trying to submit without verifying OTP
+      // If OTP is enabled and we are in setup mode, but no code is provided yet
+      if (data.enableOtp && show2FASetup && !data.code) {
         return;
       }
 
-      // If OTP is enabled, verified, and we're in 2FA setup mode
-      if (data.enableOtp && twoFactor.isVerified) {
-        // Success - go to success state
-        setActivationState("SUCCESS");
-        return;
-      }
-
-      // Call activation API
+      // Call activation API (it handles both first step and second step with code)
       const result = await activation.activateAccount(data);
 
       if (!result.success) {
@@ -157,8 +149,6 @@ function ActivateContent() {
             isDisabled={!activation.hasValidToken}
             show2FASetup={show2FASetup}
             qrCodeData={twoFactor.qrCodeData}
-            onVerify2FA={twoFactor.verifyCode}
-            isVerifying2FA={twoFactor.isVerifying}
             is2FAVerified={twoFactor.isVerified}
             twoFactorError={twoFactor.error}
           />

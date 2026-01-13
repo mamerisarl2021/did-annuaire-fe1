@@ -1,11 +1,12 @@
 import { z } from "zod";
 
-const passwordRequirements = {
-  minLength: 8,
+export const passwordRequirements = {
+  minLength: 12,
   hasUppercase: /[A-Z]/,
   hasLowercase: /[a-z]/,
   hasNumber: /[0-9]/,
-  hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/,
+  hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+  NoSpace: /^(?!\s).+$/,
 };
 
 export const passwordSchema = z
@@ -21,7 +22,8 @@ export const passwordSchema = z
   .regex(
     passwordRequirements.hasSpecialChar,
     "Password must contain at least one special character"
-  );
+  )
+  .regex(passwordRequirements.NoSpace, "Password must not contain spaces");
 
 export const activationSchema = z
   .object({
@@ -44,6 +46,7 @@ export function getPasswordStrength(password: string): {
     hasLowercase: boolean;
     hasNumber: boolean;
     hasSpecialChar: boolean;
+    NoSpace: boolean;
   };
 } {
   const requirements = {
@@ -52,6 +55,7 @@ export function getPasswordStrength(password: string): {
     hasLowercase: passwordRequirements.hasLowercase.test(password),
     hasNumber: passwordRequirements.hasNumber.test(password),
     hasSpecialChar: passwordRequirements.hasSpecialChar.test(password),
+    NoSpace: passwordRequirements.NoSpace.test(password),
   };
 
   const score = Object.values(requirements).filter(Boolean).length;

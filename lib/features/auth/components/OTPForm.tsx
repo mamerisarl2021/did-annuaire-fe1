@@ -92,13 +92,15 @@ export function OTPForm({
 
       {onBack && (
         <div className="text-center">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onBack}
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground"
           >
             Back to Login
-          </button>
+          </Button>
         </div>
       )}
     </form>

@@ -6,6 +6,7 @@ import { type OrganizationStatusType, STATUS_CONFIG } from "@/lib/types/organiza
 interface StatusBadgeProps {
   status: OrganizationStatusType;
   className?: string;
+  organizationName: string;
 }
 
 const ICON_MAP = {
@@ -19,9 +20,10 @@ const ICON_MAP = {
  * Status Badge Component
  * Displays the organization status with icon and color
  */
-export function StatusBadge({ status, className }: StatusBadgeProps) {
+export function StatusBadge({ status, organizationName, className }: StatusBadgeProps) {
   const config = STATUS_CONFIG[status];
   const Icon = ICON_MAP[config.icon];
+  
 
   return (
     <span
@@ -33,7 +35,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       )}
     >
       <Icon className="size-4" />
-      {config.label}
+      {config.label.replace("{organizationName}", organizationName)}
     </span>
   );
 }

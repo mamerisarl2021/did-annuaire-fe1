@@ -11,7 +11,7 @@ import {
 } from "@/lib/types/organization-status";
 
 interface RegistrationStatusPageProps {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string , organizationName?: string }>;
 }
 
 export default async function RegistrationStatusPage({
@@ -25,7 +25,7 @@ export default async function RegistrationStatusPage({
       ? statusParam
       : OrganizationStatus.PENDING;
 
-  const organizationName = "My Organization";
+  const organizationName = params.organizationName || "My Organization";
 
   const steps = getRegistrationSteps(status);
 
@@ -51,7 +51,7 @@ export default async function RegistrationStatusPage({
 
           {/* Status badge */}
           <div className="mt-4 flex justify-center">
-            <StatusBadge status={status} />
+            <StatusBadge status={status} organizationName={organizationName} />
           </div>
         </CardHeader>
 

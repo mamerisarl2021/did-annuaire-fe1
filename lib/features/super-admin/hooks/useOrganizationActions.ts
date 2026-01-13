@@ -2,12 +2,15 @@
 
 import { useState, useCallback } from "react";
 import { superAdminService } from "../services/superadmin.service";
+import { type OrganizationListItem } from "../types/organization.types";
 
 interface UseOrganizationActionsReturn {
   /** Whether an action is in progress */
   isLoading: boolean;
   /** Error message if any */
   error: string | null;
+  /** Fetch full organization details */
+  getOrganizationDetails: (orgId: string) => Promise<OrganizationListItem | null>;
   /** Validate a pending organization */
   validateOrganization: (orgId: string) => Promise<boolean>;
   /** Refuse a pending organization with reason */
@@ -102,6 +105,20 @@ export function useOrganizationActions(): UseOrganizationActionsReturn {
     }
   }, []);
 
+  const getOrganizationDetails = useCallback(async (orgId: string): Promise<OrganizationListItem | null> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await superAdminService.getOrganizationDetails(orgId);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error fetching details";
+      setError(message);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
@@ -109,6 +126,7 @@ export function useOrganizationActions(): UseOrganizationActionsReturn {
   return {
     isLoading,
     error,
+    getOrganizationDetails,
     validateOrganization,
     refuseOrganization,
     toggleOrganizationStatus,

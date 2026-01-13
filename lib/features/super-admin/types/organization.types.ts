@@ -6,10 +6,12 @@ export interface OrganizationListItem {
   type: string;
   country: string;
   email: string;
-  phone: string;
+  slug: string;
   status: OrganizationStatus;
   createdAt: string;
   adminEmail: string;
+  authorization_document?: string;
+  justification_document?: string;
 }
 
 export interface OrganizationStats {

@@ -18,39 +18,18 @@ import {
 import { type ActivateAccountFormData, type QRCodeData } from "../schemas/activate.schema";
 
 interface ActivationFormProps {
-  /** Form instance from react-hook-form */
   form: UseFormReturn<ActivateAccountFormData>;
-  /** Submit handler for password setup */
   onSubmit: (data: ActivateAccountFormData) => void;
-  /** Whether form is submitting */
   isSubmitting?: boolean;
-  /** Whether form should be disabled (e.g., invalid token) */
   isDisabled?: boolean;
-  /** Whether 2FA setup is required (checkbox checked) */
   show2FASetup?: boolean;
-  /** QR code data for 2FA setup */
   qrCodeData?: QRCodeData | null;
-  /** Handler for 2FA verification */
-  onVerify2FA?: (code: string) => Promise<boolean>;
-  /** Whether 2FA verification is in progress */
-  isVerifying2FA?: boolean;
-  /** Whether 2FA has been verified */
   is2FAVerified?: boolean;
-  /** 2FA error message */
   twoFactorError?: string | null;
-  /** Additional CSS classes */
   className?: string;
 }
 
-/**
- * Unified Activation Form Component
- *
- * Single Responsibility: Render activation form UI
- * - Password and confirmation fields
- * - OTP opt-in checkbox
- * - Conditional 2FA setup form when checkbox is checked and QR received
- * - Submit button blocked until 2FA verified (if enabled)
- */
+
 export function ActivationForm({
   form,
   onSubmit,
@@ -58,8 +37,6 @@ export function ActivationForm({
   isDisabled = false,
   show2FASetup = false,
   qrCodeData = null,
-  onVerify2FA,
-  isVerifying2FA = false,
   is2FAVerified = false,
   twoFactorError,
   className,
@@ -76,9 +53,9 @@ export function ActivationForm({
   } = form;
 
   const enableOtp = watch("enableOtp");
+  const code = watch("code");
 
-  // Block submit if OTP is enabled but not verified
-  const canSubmit = !enableOtp || (enableOtp && is2FAVerified);
+  const canSubmit = !enableOtp || !show2FASetup || (show2FASetup && code?.length === 6);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={cn("space-y-6", className)}>
@@ -94,7 +71,7 @@ export function ActivationForm({
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               className="pl-10 pr-10"
-              disabled={isSubmitting || isDisabled}
+              disabled={isSubmitting || isDisabled || show2FASetup}
               {...register("password")}
             />
             <button
@@ -102,6 +79,7 @@ export function ActivationForm({
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               tabIndex={-1}
+              disabled={isSubmitting || isDisabled || show2FASetup}
             >
               {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
@@ -119,7 +97,7 @@ export function ActivationForm({
               type={showConfirm ? "text" : "password"}
               placeholder="••••••••"
               className="pl-10 pr-10"
-              disabled={isSubmitting || isDisabled}
+              disabled={isSubmitting || isDisabled || show2FASetup}
               {...register("confirmPassword")}
             />
             <button
@@ -127,6 +105,7 @@ export function ActivationForm({
               onClick={() => setShowConfirm(!showConfirm)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               tabIndex={-1}
+              disabled={isSubmitting || isDisabled || show2FASetup}
             >
               {showConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
@@ -142,8 +121,10 @@ export function ActivationForm({
         <Checkbox
           id="enableOtp"
           checked={enableOtp}
-          onCheckedChange={(checked) => setValue("enableOtp", checked === true)}
-          disabled={isSubmitting || isDisabled}
+          onCheckedChange={(checked) => {
+            setValue("enableOtp", checked === true, { shouldDirty: true, shouldValidate: true });
+          }}
+          disabled={isSubmitting || isDisabled || show2FASetup}
         />
         <div className="flex-1">
           <Label
@@ -158,11 +139,12 @@ export function ActivationForm({
       </div>
 
       {/* Conditional 2FA Setup - Shown when checkbox is checked AND we have QR data */}
-      {show2FASetup && qrCodeData && onVerify2FA && (
+      {show2FASetup && qrCodeData && (
         <TwoFactorSetupSection
+          form={form}
           qrCodeData={qrCodeData}
-          onVerify={onVerify2FA}
-          isVerifying={isVerifying2FA}
+          onSubmitAction={() => handleSubmit(onSubmit)()}
+          isVerifying={isSubmitting} // Use main isSubmitting for the secondary button too
           isVerified={is2FAVerified}
           error={twoFactorError}
         />
@@ -200,26 +182,27 @@ export function ActivationForm({
   );
 }
 
-/**
- * Inline 2FA Setup Section
- * Displays QR code and OTP verification input
- */
+
 function TwoFactorSetupSection({
+  form,
   qrCodeData,
-  onVerify,
+  onSubmitAction,
   isVerifying,
   isVerified,
   error,
 }: {
+  form: UseFormReturn<ActivateAccountFormData>;
   qrCodeData: QRCodeData;
-  onVerify: (code: string) => Promise<boolean>;
+  onSubmitAction: () => void;
   isVerifying: boolean;
   isVerified: boolean;
   error?: string | null;
 }) {
   const [copied, setCopied] = useState(false);
-  const [otpValue, setOtpValue] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
+
+  const otpValue = form.watch("code") || "";
+  const setOtpValue = (val: string) => form.setValue("code", val, { shouldValidate: true });
 
   const handleCopySecret = async () => {
     if (qrCodeData.secret) {
@@ -235,13 +218,9 @@ function TwoFactorSetupSection({
       return;
     }
     setLocalError(null);
-    const success = await onVerify(otpValue);
-    if (!success) {
-      setOtpValue("");
-    }
+    onSubmitAction();
   };
 
-  // Show success state
   if (isVerified) {
     return (
       <div className="border rounded-lg p-4 bg-green-50 text-center space-y-2">
@@ -295,13 +274,19 @@ function TwoFactorSetupSection({
             <code className="font-mono text-xs bg-background px-2 py-1 rounded">
               {qrCodeData.secret}
             </code>
-            <button type="button" onClick={handleCopySecret} className="p-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={handleCopySecret}
+              className="size-7"
+            >
               {copied ? (
-                <Check className="size-3 text-green-600" />
+                <Check className="size-4 text-green-600" />
               ) : (
-                <Copy className="size-3 text-muted-foreground" />
+                <Copy className="size-4 text-muted-foreground" />
               )}
-            </button>
+            </Button>
           </div>
         </div>
       )}

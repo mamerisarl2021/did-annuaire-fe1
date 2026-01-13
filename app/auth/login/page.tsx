@@ -1,47 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { Shield } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Shield, Mail } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLoginWorkflow } from "@/lib/features/auth/hooks/useLoginWorkflow";
-import { useRoleRedirect } from "@/lib/guards/useRoleRedirect";
 import { LoginFormComponent } from "@/lib/features/auth/components/LoginFormComponent";
 import { OTPForm } from "@/lib/features/auth/components/OTPForm";
-import { type AuthUser } from "@/lib/features/auth/types/auth.types";
+import { EmailOTPForm } from "@/lib/features/auth/components/EmailOTPForm";
 
-/**
- * Login Page
- *
- * Route: /auth/login
- *
- * Flow:
- * 1. User enters email + password
- * 2. If 2FA enabled: Show OTP verification screen
- * 3. On success: Redirect to role-based dashboard
- *
- * Architecture:
- * - Page has NO knowledge of roles or dashboard routes
- * - All routing logic delegated to useRoleRedirect
- * - All login logic delegated to useLoginWorkflow
- */
+
 export default function LoginPage() {
-  const { redirectToRoleDashboard } = useRoleRedirect();
+  const router = useRouter();
 
   /**
-   * Handle successful login - redirect to appropriate dashboard
+   * Handle successful login - redirect to landing page
    */
-  const handleLoginComplete = (user: AuthUser) => {
-    redirectToRoleDashboard(user.role);
+  const handleLoginComplete = () => {
+    router.push("/");
   };
 
   const {
     currentStep,
     form,
     isLoggingIn,
+    isGeneratingOTP,
+    otpSent,
     isVerifyingOTP,
     error,
     submitCredentials,
+    generateEmailOTP,
     verifyOTP,
     goBackToCredentials,
   } = useLoginWorkflow({
@@ -86,7 +75,7 @@ export default function LoginPage() {
           </Card>
         );
 
-      case "OTP_REQUIRED":
+      case "TOTP_REQUIRED":
         return (
           <Card className="shadow-lg">
             <CardHeader className="text-center">
@@ -104,11 +93,40 @@ export default function LoginPage() {
                 </Alert>
               )}
 
-              {/* OTP Form */}
+              {/* OTP Form (for TOTP/authenticator app) */}
               <OTPForm
                 onSubmit={verifyOTP}
                 onBack={goBackToCredentials}
                 isVerifying={isVerifyingOTP}
+              />
+            </CardContent>
+          </Card>
+        );
+
+      case "EMAIL_OTP_REQUIRED":
+        return (
+          <Card className="shadow-lg">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
+                <Mail className="size-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl">Email Verification</CardTitle>
+              <CardDescription>
+                {otpSent
+                  ? "Enter the code sent to your email"
+                  : "Verify your identity via email"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Email OTP Form with generate + verify flow */}
+              <EmailOTPForm
+                onGenerateOTP={generateEmailOTP}
+                onSubmit={verifyOTP}
+                onBack={goBackToCredentials}
+                isGenerating={isGeneratingOTP}
+                otpSent={otpSent}
+                isVerifying={isVerifyingOTP}
+                error={error}
               />
             </CardContent>
           </Card>

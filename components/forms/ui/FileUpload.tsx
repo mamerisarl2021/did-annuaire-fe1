@@ -140,7 +140,7 @@ export function FileUpload({
             PDF, JPG, PNG • Max {formatFileSize(maxSize)}
           </p>
           <input
-            placeholder="Upload File"
+            title="Upload File"
             ref={inputRef}
             type="file"
             accept={accept}
