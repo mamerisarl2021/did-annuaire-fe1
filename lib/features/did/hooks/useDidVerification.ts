@@ -32,7 +32,7 @@ export function useDidVerification() {
       setState({
         status: "success",
         data: {
-          did: (document as any).id ?? input,
+          did: (document as { id?: string }).id ?? input,
           document,
           url,
         },

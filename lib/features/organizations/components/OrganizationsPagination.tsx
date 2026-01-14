@@ -19,7 +19,6 @@ export function OrganizationsPagination({
   totalPages,
   onPageChange,
 }: OrganizationsPaginationProps) {
-
   return (
     <div className="mt-4 flex justify-end">
       <Pagination>

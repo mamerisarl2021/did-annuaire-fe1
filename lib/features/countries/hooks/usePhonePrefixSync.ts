@@ -1,4 +1,4 @@
-import { type UseFormReturn } from "react-hook-form";
+import { type UseFormReturn, type Path, type PathValue } from "react-hook-form";
 import type { Country } from "../types/country.types";
 
 interface UsePhonePrefixSyncParams<T extends { phone?: string }> {
@@ -11,7 +11,7 @@ export function usePhonePrefixSync<T extends { phone?: string }>({
   countries,
 }: UsePhonePrefixSyncParams<T>) {
   const syncPhonePrefix = (newCountry: Country, oldCountryCode?: string) => {
-    const currentPhone = String(form.getValues("phone" as any) || "");
+    const currentPhone = String(form.getValues("phone" as Path<T>) || "");
     const oldCountry = countries.find((c) => c.code === oldCountryCode);
     const oldPrefix = oldCountry?.phonePrefix;
 
@@ -19,7 +19,10 @@ export function usePhonePrefixSync<T extends { phone?: string }>({
       !currentPhone.trim() || (oldPrefix && currentPhone.trim() === oldPrefix.trim());
 
     if (isUnmodified) {
-      form.setValue("phone" as any, `${newCountry.phonePrefix} ` as any);
+      form.setValue(
+        "phone" as Path<T>,
+        `${newCountry.phonePrefix} ` as PathValue<T, Path<T>>
+      );
     }
   };
 

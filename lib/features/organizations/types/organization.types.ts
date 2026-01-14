@@ -1,5 +1,7 @@
 import { type OrganizationStatusType } from "@/lib/types/organization-status";
 
+export type OrganizationStatus = OrganizationStatusType;
+
 export interface OrgCreatePayload {
   name: string;
   org_type: string;
@@ -37,6 +39,8 @@ export interface OrganizationStats {
   all: number;
   active: number;
   suspended: number;
+  pending: number;
+  refused: number;
 }
 
 export interface OrganizationListResponse {

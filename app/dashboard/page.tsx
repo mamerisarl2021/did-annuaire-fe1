@@ -6,10 +6,6 @@ import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 import { useRoleRedirect } from "@/lib/guards/useRoleRedirect";
 import { Skeleton } from "@/components/ui/skeleton";
 
-/**
- * Dashboard Dispatcher Page
- * Redirects user to their specific dashboard based on role
- */
 export default function DashboardPage() {
   const { user, loading } = useAuth();
   const { redirectToRoleDashboard } = useRoleRedirect();

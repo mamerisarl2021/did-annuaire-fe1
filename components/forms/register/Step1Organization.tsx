@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -38,7 +37,7 @@ interface Step1OrganizationProps {
  * Pure UI component - receives form from parent
  */
 export function Step1Organization({ form, className }: Step1OrganizationProps) {
-  const { countries, loading, error } = useCountries();
+  const { countries, loading } = useCountries();
   const { syncPhonePrefix } = usePhonePrefixSync({ form, countries });
 
   return (

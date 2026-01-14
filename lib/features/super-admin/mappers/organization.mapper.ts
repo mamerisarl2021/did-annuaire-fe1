@@ -1,23 +1,31 @@
-import { type OrganizationListItem, type OrganizationStatus } from "../types/organization.types";
+import {
+  type OrganizationListItem,
+  type OrganizationStatus,
+} from "../../organizations/types/organization.types";
 
 export const organizationMapper = {
-  toDomain(raw: any): OrganizationListItem {
+  toDomain(raw: Record<string, unknown>): OrganizationListItem {
+    const admin = raw.admin as Record<string, unknown> | undefined;
+    const documents = raw.documents as Record<string, unknown> | undefined;
+
     return {
-      id: raw.id,
-      name: raw.name,
-      type: raw.type || raw.org_type,
-      country: raw.country,
-      email: raw.email,
-      slug: raw.slug || "",
+      id: raw.id as string,
+      name: raw.name as string,
+      type: (raw.type as string) || (raw.org_type as string),
+      country: raw.country as string,
+      email: raw.email as string,
+      slug: (raw.slug as string) || "",
       status: raw.status as OrganizationStatus,
-      createdAt: raw.created_at,
-      adminEmail: raw.admin?.email || raw.admin_email || "N/A",
-      authorization_document: raw.documents?.authorization_document_url || raw.authorization_document,
-      justification_document: raw.documents?.justification_document_url || raw.justification_document,
+      createdAt: raw.created_at as string,
+      adminEmail: (admin?.email as string) || (raw.admin_email as string) || "N/A",
+      authorization_document:
+        (documents?.authorization_document_url as string) || (raw.authorization_document as string),
+      justification_document:
+        (documents?.justification_document_url as string) || (raw.justification_document as string),
     };
   },
 
-  toDomainList(rawList: any[]): OrganizationListItem[] {
+  toDomainList(rawList: Record<string, unknown>[]): OrganizationListItem[] {
     return rawList.map((item) => this.toDomain(item));
   },
 };

@@ -9,7 +9,10 @@ export const loginSchema = z.object({
     .regex(passwordRequirements.hasUppercase, "Password must contain at least one uppercase letter")
     .regex(passwordRequirements.hasLowercase, "Password must contain at least one lowercase letter")
     .regex(passwordRequirements.hasNumber, "Password must contain at least one number")
-    .regex(passwordRequirements.hasSpecialChar, "Password must contain at least one special character")
+    .regex(
+      passwordRequirements.hasSpecialChar,
+      "Password must contain at least one special character"
+    )
     .regex(passwordRequirements.NoSpace, "Password must not contain spaces"),
 });
 

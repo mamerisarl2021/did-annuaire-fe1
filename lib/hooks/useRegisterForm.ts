@@ -73,8 +73,9 @@ export function useRegisterForm(): UseRegisterFormReturn {
       const stepErrors: FieldErrors<RegisterFormData> = {};
 
       fields.forEach((field) => {
-        if (allErrors[field]) {
-          stepErrors[field] = allErrors[field] as any;
+        const error = allErrors[field];
+        if (error) {
+          (stepErrors as Record<string, unknown>)[field] = error;
         }
       });
 

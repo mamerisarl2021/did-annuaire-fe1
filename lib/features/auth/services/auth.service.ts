@@ -69,12 +69,16 @@ export const authService = {
       };
       access?: string;
       refresh?: string;
-    }>(API_ENDPOINTS.USERS.ACTIVATE, {
-      token: payload.token,
-      password: payload.password,
-      enable_totp: payload.enable_totp ?? false,
-      code: payload.code,
-    }, { requiresAuth: false });
+    }>(
+      API_ENDPOINTS.USERS.ACTIVATE,
+      {
+        token: payload.token,
+        password: payload.password,
+        enable_totp: payload.enable_totp ?? false,
+        code: payload.code,
+      },
+      { requiresAuth: false }
+    );
 
     // Extract QR code from nested data if present
     const data = response.data;
@@ -102,10 +106,7 @@ export const authService = {
    * Body: { otp: string } only
    */
   async verifyActivationOTP(code: string): Promise<void> {
-    await httpClient.post(
-      API_ENDPOINTS.USERS.OTP_VERIFY,
-      { code: code },
-    );
+    await httpClient.post(API_ENDPOINTS.USERS.OTP_VERIFY, { code: code });
   },
 
   /**
@@ -132,7 +133,13 @@ export const authService = {
     if (!token) return null;
 
     try {
-      const decoded = jwtDecode<{ user_id?: string; sub?: string; email?: string; role?: string; organization_id?: string }>(token);
+      const decoded = jwtDecode<{
+        user_id?: string;
+        sub?: string;
+        email?: string;
+        role?: string;
+        organization_id?: string;
+      }>(token);
       console.log("JWT Payload:", decoded);
       console.log("Mapping role:", decoded.role);
 
@@ -144,7 +151,13 @@ export const authService = {
       if (!role) {
         try {
           console.log("Fetching user profile from /me endpoint");
-          const response = await httpClient.get<{ data?: { role?: string; is_superuser?: boolean; is_staff?: boolean; email?: string }; role?: string; is_superuser?: boolean; is_staff?: boolean; email?: string }>(API_ENDPOINTS.USERS.ME);
+          const response = await httpClient.get<{
+            data?: { role?: string; is_superuser?: boolean; is_staff?: boolean; email?: string };
+            role?: string;
+            is_superuser?: boolean;
+            is_staff?: boolean;
+            email?: string;
+          }>(API_ENDPOINTS.USERS.ME);
           console.log("User Profile Response:", response);
 
           const userData = response.data || response;

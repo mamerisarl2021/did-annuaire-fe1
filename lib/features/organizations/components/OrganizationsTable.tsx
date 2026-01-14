@@ -18,10 +18,10 @@ interface OrganizationsTableProps {
   organizations: OrganizationListItem[];
   onRowClick: (org: OrganizationListItem) => void;
   onView: (org: OrganizationListItem) => void;
-  onValidate: (orgId: string) => void;
-  onRefuse: (org: OrganizationListItem) => void;
-  onToggle: (orgId: string) => void;
-  onDelete: (org: OrganizationListItem) => void;
+  onValidate?: (orgId: string) => void;
+  onRefuse?: (org: OrganizationListItem) => void;
+  onToggle?: (orgId: string) => void;
+  onDelete?: (org: OrganizationListItem) => void;
   isActionsDisabled?: boolean;
 }
 
@@ -102,7 +102,7 @@ export function OrganizationsTable({
                     <Button
                       size="sm"
                       className="bg-blue-600 hover:bg-blue-700 text-white border-0"
-                      onClick={() => onToggle(org.id)}
+                      onClick={() => onToggle?.(org.id)}
                       disabled={isActionsDisabled}
                     >
                       <RefreshCw className="size-4" />
@@ -113,7 +113,7 @@ export function OrganizationsTable({
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => onDelete(org)}
+                    onClick={() => onDelete?.(org)}
                     disabled={isActionsDisabled}
                   >
                     <Trash2 className="size-4" />
@@ -125,8 +125,7 @@ export function OrganizationsTable({
                       <Button
                         size="sm"
                         className="bg-green-600 hover:bg-green-700 text-white border-0 shadow-none"
-
-                        onClick={() => onValidate(org.id)}
+                        onClick={() => onValidate?.(org.id)}
                         disabled={isActionsDisabled}
                       >
                         <CheckCircle className="size-4" />
@@ -134,7 +133,7 @@ export function OrganizationsTable({
                       <Button
                         size="sm"
                         variant="destructive"
-                        onClick={() => onRefuse(org)}
+                        onClick={() => onRefuse?.(org)}
                         disabled={isActionsDisabled}
                       >
                         <XCircle className="size-4" />

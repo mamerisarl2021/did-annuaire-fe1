@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { type Country } from "@/lib/features/countries/types/country.types";
-
+import Image from "next/image";
 interface CountrySelectProps {
   countries: Country[];
   value?: string;
@@ -39,11 +39,13 @@ export function CountrySelect({
         {countries.map((country) => (
           <SelectItem key={country.code} value={country.code}>
             <div className="flex items-center gap-2 flex-1 w-full">
-              <img
+              <Image
                 src={country.flagUrl}
                 alt={country.name}
                 className="h-3 w-5 object-cover border shrink-0"
                 loading="lazy"
+                width={20}
+                height={12}
               />
               <span className="truncate">{country.name}</span>
               <span className="ml-auto text-muted-foreground text-xs pl-2">

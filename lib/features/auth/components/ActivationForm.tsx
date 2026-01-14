@@ -29,7 +29,6 @@ interface ActivationFormProps {
   className?: string;
 }
 
-
 export function ActivationForm({
   form,
   onSubmit,
@@ -181,7 +180,6 @@ export function ActivationForm({
     </form>
   );
 }
-
 
 function TwoFactorSetupSection({
   form,

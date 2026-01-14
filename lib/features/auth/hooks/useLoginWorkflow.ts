@@ -8,49 +8,28 @@ import { authService } from "../services/auth.service";
 import { type AuthUser } from "../types/auth.types";
 import { ApiException } from "@/lib/shared/api/api.errors";
 
-/**
- * Login flow states
- */
 export type LoginFlowStep = "CREDENTIALS" | "EMAIL_OTP_REQUIRED" | "TOTP_REQUIRED" | "SUCCESS";
 
-/**
- * OTP method types
- */
 export type OTPMethod = "email" | "totp" | null;
 
 interface UseLoginWorkflowOptions {
-  /** Called when login is fully complete (including OTP if required) */
   onLoginComplete?: (user: AuthUser) => void;
 }
 
 interface UseLoginWorkflowReturn {
-  /** Current step in the login flow */
   currentStep: LoginFlowStep;
-  /** Login form instance */
   form: UseFormReturn<LoginFormData>;
-  /** Current authenticated user (after successful login) */
   user: AuthUser | null;
-  /** Whether login is in progress */
   isLoggingIn: boolean;
-  /** Whether OTP generation is in progress */
   isGeneratingOTP: boolean;
-  /** Whether OTP has been sent */
   otpSent: boolean;
-  /** Whether OTP verification is in progress */
   isVerifyingOTP: boolean;
-  /** Error message */
   error: string | null;
-  /** OTP method required */
   otpMethod: OTPMethod;
-  /** Submit credentials */
   submitCredentials: (data: LoginFormData) => Promise<void>;
-  /** Generate email OTP */
   generateEmailOTP: () => Promise<void>;
-  /** Verify OTP code */
   verifyOTP: (code: string) => Promise<void>;
-  /** Go back to credentials step */
   goBackToCredentials: () => void;
-  /** Clear error */
   clearError: () => void;
 }
 
@@ -84,6 +63,24 @@ export function useLoginWorkflow({
     },
     mode: "onBlur",
   });
+
+  /**
+   * Generate email OTP (for email method)
+   */
+  const generateEmailOTP = useCallback(async () => {
+    setIsGeneratingOTP(true);
+    setError(null);
+
+    try {
+      await authService.generateEmailOTP();
+      setOtpSent(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to send OTP code.";
+      setError(message);
+    } finally {
+      setIsGeneratingOTP(false);
+    }
+  }, []);
 
   /**
    * Submit credentials (step 1)
@@ -132,26 +129,8 @@ export function useLoginWorkflow({
         setIsLoggingIn(false);
       }
     },
-    [onLoginComplete]
+    [onLoginComplete, generateEmailOTP]
   );
-
-  /**
-   * Generate email OTP (for email method)
-   */
-  const generateEmailOTP = useCallback(async () => {
-    setIsGeneratingOTP(true);
-    setError(null);
-
-    try {
-      await authService.generateEmailOTP();
-      setOtpSent(true);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to send OTP code.";
-      setError(message);
-    } finally {
-      setIsGeneratingOTP(false);
-    }
-  }, []);
 
   /**
    * Verify OTP code (step 2, if required)

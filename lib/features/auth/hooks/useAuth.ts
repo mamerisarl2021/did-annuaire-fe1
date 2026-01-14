@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { authService } from "@/lib/features/auth/services/auth.service";
 import { type AuthUser } from "@/lib/features/auth/types/auth.types";
 import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
@@ -7,7 +6,6 @@ import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   const checkAuth = useCallback(async () => {
     try {

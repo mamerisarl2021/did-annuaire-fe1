@@ -70,16 +70,11 @@ export function EmailOTPForm({
           <div>
             <h3 className="font-medium text-lg">Email Verification Required</h3>
             <p className="text-sm text-muted-foreground mt-2">
-              We need to verify your identity. Click the button below to receive a verification
-              code by email.
+              We need to verify your identity. Click the button below to receive a verification code
+              by email.
             </p>
           </div>
-          <Button
-            type="button"
-            onClick={onGenerateOTP}
-            disabled={isGenerating}
-            className="w-full"
-          >
+          <Button type="button" onClick={onGenerateOTP} disabled={isGenerating} className="w-full">
             {isGenerating ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
@@ -108,7 +103,7 @@ export function EmailOTPForm({
 
           {/* Resend OTP link (Moved to top) */}
           <div className="text-center py-2 border-y border-dashed bg-muted/20">
-            <p className="text-xs text-muted-foreground mb-1">Didn't receive the code?</p>
+            <p className="text-xs text-muted-foreground mb-1">Didn&apos;t receive the code?</p>
             <Button
               type="button"
               variant="link"
@@ -143,11 +138,7 @@ export function EmailOTPForm({
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isVerifying || otpValue.length !== 6}
-          >
+          <Button type="submit" className="w-full" disabled={isVerifying || otpValue.length !== 6}>
             {isVerifying ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />

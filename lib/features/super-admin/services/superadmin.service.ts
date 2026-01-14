@@ -4,7 +4,7 @@ import {
   type OrganizationListResponse,
   type OrganizationListParams,
   type OrganizationStats,
-} from "../types/organization.types";
+} from "../../organizations/types/organization.types";
 import { organizationMapper } from "../mappers/organization.mapper";
 
 const SUPERADMIN_Endpoints = {
@@ -25,27 +25,27 @@ export const superAdminService = {
 
     const endpoint = `${SUPERADMIN_Endpoints.LIST}?${searchParams.toString()}`;
     console.log("Fetching Organizations from:", endpoint);
-    const response = await httpClient.get<any>(endpoint);
-    const rawData = response.data || response;
-    const rawItems = rawData.items || rawData.results || [];
-    const rawPagination = rawData.pagination || {};
+    const response = await httpClient.get<Record<string, unknown>>(endpoint);
+    const rawData = (response.data as Record<string, unknown>) || response;
+    const rawItems = (rawData.items as Record<string, unknown>[]) || (rawData.results as Record<string, unknown>[]) || [];
+    const rawPagination = (rawData.pagination as Record<string, unknown>) || {};
 
     const mappedResults = organizationMapper.toDomainList(rawItems);
 
     return {
       data: {
         results: mappedResults,
-        count: rawPagination.count || mappedResults.length,
-        next: rawPagination.next_url || rawData.next,
-        previous: rawPagination.prev_url || rawData.previous,
+        count: (rawPagination.count as number) || mappedResults.length,
+        next: (rawPagination.next_url as string) || (rawData.next as string),
+        previous: (rawPagination.prev_url as string) || (rawData.previous as string),
       },
     };
   },
 
   async getStats(): Promise<OrganizationStats> {
     try {
-      const response = await httpClient.get<any>(SUPERADMIN_Endpoints.STATS);
-      return response.data || response;
+      const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_Endpoints.STATS);
+      return ((response.data as OrganizationStats) || response) as OrganizationStats;
     } catch (error) {
       console.error("Failed to fetch stats", error);
       return { pending: 0, active: 0, suspended: 0, refused: 0, all: 0 };
@@ -65,8 +65,8 @@ export const superAdminService = {
   },
 
   async getOrganizationDetails(id: string): Promise<OrganizationListItem> {
-    const response = await httpClient.get<any>(SUPERADMIN_Endpoints.DETAILS(id));
-    const rawData = response.data || response;
+    const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_Endpoints.DETAILS(id));
+    const rawData = (response.data as Record<string, unknown>) || response;
     return organizationMapper.toDomain(rawData);
   },
 

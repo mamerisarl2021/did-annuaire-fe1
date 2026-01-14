@@ -1,4 +1,4 @@
-const API_BASE_url = process.env.NEXT_PUBLIC_API_URL || "";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -23,5 +23,5 @@ export const API_ENDPOINTS = {
 } as const;
 
 export const getApiUrl = (endpoint: string): string => {
-  return `${API_BASE_url}${endpoint}`;
+  return `${API_BASE_URL}${endpoint}`;
 };

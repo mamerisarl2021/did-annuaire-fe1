@@ -23,7 +23,6 @@ const ICON_MAP = {
 export function StatusBadge({ status, organizationName, className }: StatusBadgeProps) {
   const config = STATUS_CONFIG[status];
   const Icon = ICON_MAP[config.icon];
-  
 
   return (
     <span

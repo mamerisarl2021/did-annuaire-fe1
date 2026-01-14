@@ -72,7 +72,7 @@ export function AllowedEmailDomainsInput({ form, className }: AllowedEmailDomain
               <div className="flex-1">
                 <Input
                   {...form.register(`allowed_email_domains.${index}.value`)}
-                  placeholder="exemple.com"
+                  placeholder="example.com"
                   aria-invalid={!!fieldError}
                   className={cn(fieldError && "border-destructive")}
                 />

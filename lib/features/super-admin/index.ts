@@ -9,16 +9,15 @@ export * from "./hooks/useOrganizations";
 export * from "./hooks/useOrganizationActions";
 
 // Components - Existing
-export * from "./components/OrganizationStats";
-export * from "./components/OrganizationTable";
-export * from "./components/OrganizationStatusBadge";
-export * from "./components/StatCard";
+export { OrganizationStatsCards } from "../organizations/components/OrganizationStats";
+export { OrganizationsTable } from "../organizations/components/OrganizationsTable";
+export { OrganizationStatusBadge } from "../organizations/components/OrganizationStatusBadge";
+export { StatCard } from "../organizations/components/StatCard";
 
 // Components - New (SRP-compliant)
-export * from "./components/StatsCardsRow";
-export * from "./components/OrganizationFilters";
-export * from "./components/OrganizationsTable";
-export * from "./components/OrganizationsPagination";
-export * from "./components/OrganizationDetailsDialog";
+export { StatsCardsRow } from "../organizations/components/StatsCardsRow";
+export { OrganizationFilters } from "../organizations/components/OrganizationFilters";
+export { OrganizationsPagination } from "../organizations/components/OrganizationsPagination";
+export { OrganizationDetailsDialog } from "../organizations/components/OrganizationDetailsDialog";
 export * from "./components/RefuseOrganizationDialog";
 export * from "./components/DeleteOrganizationDialog";

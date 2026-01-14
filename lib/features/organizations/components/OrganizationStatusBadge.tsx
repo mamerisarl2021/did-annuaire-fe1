@@ -1,12 +1,12 @@
 import { Badge } from "@/components/ui/badge";
-import { type OrganizationStatus } from "../types/organization.types";
+import { type OrganizationStatusType } from "@/lib/types/organization-status";
 
 interface StatusBadgeProps {
-  status: OrganizationStatus;
+  status: OrganizationStatusType;
 }
 
 const variants: Record<
-  OrganizationStatus,
+  OrganizationStatusType,
   "default" | "secondary" | "destructive" | "outline" | "success"
 > = {
   ACTIVE: "success",
@@ -41,7 +41,7 @@ export function OrganizationStatusBadge({ status }: StatusBadgeProps) {
   }[status];
 
   return (
-    <Badge variant="outline" className={`border-0 font-medium ${variants[status]}`}>
+    <Badge variant="outline" className={`border-0 font-medium ${className} ${variants[status]}`}>
       {label}
     </Badge>
   );

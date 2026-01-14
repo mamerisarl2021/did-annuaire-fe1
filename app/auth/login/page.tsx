@@ -10,7 +10,6 @@ import { LoginFormComponent } from "@/lib/features/auth/components/LoginFormComp
 import { OTPForm } from "@/lib/features/auth/components/OTPForm";
 import { EmailOTPForm } from "@/lib/features/auth/components/EmailOTPForm";
 
-
 export default function LoginPage() {
   const router = useRouter();
 
@@ -112,9 +111,7 @@ export default function LoginPage() {
               </div>
               <CardTitle className="text-xl">Email Verification</CardTitle>
               <CardDescription>
-                {otpSent
-                  ? "Enter the code sent to your email"
-                  : "Verify your identity via email"}
+                {otpSent ? "Enter the code sent to your email" : "Verify your identity via email"}
               </CardDescription>
             </CardHeader>
             <CardContent>

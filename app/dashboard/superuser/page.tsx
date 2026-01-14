@@ -7,28 +7,18 @@ import { RefreshCw } from "lucide-react";
 
 import { useOrganizations } from "@/lib/features/super-admin/hooks/useOrganizations";
 import { useOrganizationActions } from "@/lib/features/super-admin/hooks/useOrganizationActions";
-import { StatsCardsRow } from "@/lib/features/super-admin/components/StatsCardsRow";
-import { OrganizationFilters } from "@/lib/features/super-admin/components/OrganizationFilters";
-import { OrganizationsTable } from "@/lib/features/super-admin/components/OrganizationsTable";
-import { OrganizationsPagination } from "@/lib/features/super-admin/components/OrganizationsPagination";
-import { OrganizationDetailsDialog } from "@/lib/features/super-admin/components/OrganizationDetailsDialog";
+import { StatsCardsRow } from "@/lib/features/organizations/components/StatsCardsRow";
+import { OrganizationFilters } from "@/lib/features/organizations/components/OrganizationFilters";
+import { OrganizationsTable } from "@/lib/features/organizations/components/OrganizationsTable";
+import { OrganizationsPagination } from "@/lib/features/organizations/components/OrganizationsPagination";
+import { OrganizationDetailsDialog } from "@/lib/features/organizations/components/OrganizationDetailsDialog";
 import { RefuseOrganizationDialog } from "@/lib/features/super-admin/components/RefuseOrganizationDialog";
 import { DeleteOrganizationDialog } from "@/lib/features/super-admin/components/DeleteOrganizationDialog";
 import {
   type OrganizationListItem,
   type OrganizationStatus,
-} from "@/lib/features/super-admin/types/organization.types";
+} from "@/lib/features/organizations/types/organization.types";
 
-/**
- * Super User Dashboard Page
- *
- * Role: Route entry point for /dashboard/superuser
- * Responsibilities:
- * - Orchestrates organizations list view
- * - Manages dialog visibility state
- * - Coordinates data fetching and actions hooks
- * - Composes pure UI components
- */
 export default function SuperUserDashboardPage() {
   // Data fetching
   const { organizations, stats, pagination, error, isLoading, refresh, filters } =
@@ -112,18 +102,21 @@ export default function SuperUserDashboardPage() {
     [pagination, totalPages]
   );
 
-  const openDetailsDialog = useCallback(async (org: OrganizationListItem) => {
-    setSelectedOrg(org);
-    setShowDetails(true);
-    try {
-      const fullOrg = await actions.getOrganizationDetails(org.id);
-      if (fullOrg) {
-        setSelectedOrg(fullOrg);
+  const openDetailsDialog = useCallback(
+    async (org: OrganizationListItem) => {
+      setSelectedOrg(org);
+      setShowDetails(true);
+      try {
+        const fullOrg = await actions.getOrganizationDetails(org.id);
+        if (fullOrg) {
+          setSelectedOrg(fullOrg);
+        }
+      } catch (error) {
+        console.error("Failed to fetch organization details:", error);
       }
-    } catch (error) {
-      console.error("Failed to fetch organization details:", error);
-    }
-  }, [actions]);
+    },
+    [actions]
+  );
 
   const openRefuseDialog = useCallback((org: OrganizationListItem) => {
     setSelectedOrg(org);

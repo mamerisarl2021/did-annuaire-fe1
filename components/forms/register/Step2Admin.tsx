@@ -1,12 +1,10 @@
 "use client";
 
-import * as React from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { User, Mail, Phone, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,

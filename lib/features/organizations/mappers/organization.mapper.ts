@@ -6,27 +6,34 @@ import {
 import { type OrganizationStatusType } from "@/lib/types/organization-status";
 
 export const organizationMapper = {
-  toDomain(raw: any): OrganizationListItem {
+  toDomain(raw: Record<string, unknown>): OrganizationListItem {
+    const admin = raw.admin as Record<string, unknown> | undefined;
+    const documents = raw.documents as Record<string, unknown> | undefined;
+
     return {
-      id: raw.id,
-      name: raw.name || "N/A",
-      type: raw.org_type || raw.type || "N/A",
-      country: raw.country || "N/A",
-      email: raw.email || "N/A",
-      slug: raw.slug || "",
+      id: raw.id as string,
+      name: (raw.name as string) || "N/A",
+      type: (raw.org_type as string) || (raw.type as string) || "N/A",
+      country: (raw.country as string) || "N/A",
+      email: (raw.email as string) || "N/A",
+      slug: (raw.slug as string) || "",
       status: raw.status as OrganizationStatusType,
-      createdAt: raw.created_at,
-      adminEmail: raw.admin?.email || raw.admin_email || "N/A",
-      authorization_document: raw.documents?.authorization_document_url || raw.authorization_document,
-      justification_document: raw.documents?.justification_document_url || raw.justification_document,
+      createdAt: raw.created_at as string,
+      adminEmail: (admin?.email as string) || (raw.admin_email as string) || "N/A",
+      authorization_document:
+        (documents?.authorization_document_url as string) || (raw.authorization_document as string),
+      justification_document:
+        (documents?.justification_document_url as string) || (raw.justification_document as string),
     };
   },
 
-  toStats(raw: any): OrganizationStats {
+  toStats(raw: Record<string, unknown>): OrganizationStats {
     return {
-      all: raw.all || 0,
-      active: raw.active || 0,
-      suspended: raw.suspended || 0,
+      all: (raw.all as number) || 0,
+      active: (raw.active as number) || 0,
+      suspended: (raw.suspended as number) || 0,
+      pending: (raw.pending as number) || 0,
+      refused: (raw.refused as number) || 0,
     };
   },
 

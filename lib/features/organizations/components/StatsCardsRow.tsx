@@ -34,7 +34,7 @@ export function StatsCardsRow({
   stats,
   activeStatus,
   onStatusClick,
-  visibleStatuses = DEFAULT_STATUSES
+  visibleStatuses = DEFAULT_STATUSES,
 }: StatsCardsRowProps) {
   const totalCount =
     (stats?.active || 0) + (stats?.pending || 0) + (stats?.suspended || 0) + (stats?.refused || 0);
@@ -72,17 +72,23 @@ export function StatsCardsRow({
     },
   ];
 
-  const cardsToRender = allCards.filter(card => visibleStatuses.includes(card.id as any));
+  const cardsToRender = allCards.filter((card) =>
+    visibleStatuses.includes(card.id as (typeof visibleStatuses)[number])
+  );
 
   return (
-    <div className={`grid gap-4 ${cardsToRender.length === 5 ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" : "grid-cols-1 sm:grid-cols-3"
-      }`}>
+    <div
+      className={`grid gap-4 ${cardsToRender.length === 5
+          ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
+          : "grid-cols-1 sm:grid-cols-3"
+        }`}
+    >
       {cardsToRender.map((card) => (
         <StatCard
           key={card.id}
           label={card.label}
           value={card.value}
-          active={(card.id === "all" && activeStatus === "all") || (activeStatus === card.id)}
+          active={(card.id === "all" && activeStatus === "all") || activeStatus === card.id}
           onClick={card.onClick}
         />
       ))}

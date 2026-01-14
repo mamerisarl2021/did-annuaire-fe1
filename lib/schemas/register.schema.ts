@@ -43,4 +43,4 @@ export const REGISTER_STEPS = [
  * - name (organization slug) uniqueness
  * - email (organization contact) uniqueness
  * - admin_email uniqueness
- */               
+ */

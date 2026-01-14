@@ -17,7 +17,7 @@ export const organizationService = {
   async createOrganization(payload: OrgCreatePayload): Promise<OrganizationListItem> {
     const formData = organizationMapper.toFormData(payload);
 
-    const response = await multipartClient.upload<any>(
+    const response = await multipartClient.upload<Record<string, unknown>>(
       API_ENDPOINTS.ORGANIZATIONS.CREATE,
       formData,
       { requiresAuth: false }
@@ -29,7 +29,7 @@ export const organizationService = {
    * Get organization details
    */
   async getOrganizationDetails(id: string): Promise<OrganizationListItem> {
-    const response = await httpClient.get<any>(API_ENDPOINTS.ORGANIZATIONS.DETAILS(id), {
+    const response = await httpClient.get<Record<string, unknown>>(API_ENDPOINTS.ORGANIZATIONS.DETAILS(id), {
       requiresAuth: true,
     });
     return organizationMapper.toDomain(response);
@@ -38,7 +38,9 @@ export const organizationService = {
   /**
    * Get organizations list with pagination and filters
    */
-  async getOrganizationsList(params: OrganizationListParams = {}): Promise<OrganizationListResponse> {
+  async getOrganizationsList(
+    params: OrganizationListParams = {}
+  ): Promise<OrganizationListResponse> {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.page_size) queryParams.append("page_size", params.page_size.toString());
@@ -47,16 +49,20 @@ export const organizationService = {
 
     const endpoint = `${API_ENDPOINTS.ORGANIZATIONS.LIST}?${queryParams.toString()}`;
 
-    const response = await httpClient.get<any>(endpoint, {
+    const response = await httpClient.get<Record<string, unknown>>(endpoint, {
       requiresAuth: true,
     });
 
     return {
-      results: (response.results || []).map(organizationMapper.toDomain),
-      count: response.count || 0,
-      next: response.next,
-      previous: response.previous,
-      stats: response.stats ? organizationMapper.toStats(response.stats) : undefined,
+      results: ((response.results as Array<Record<string, unknown>>) || []).map(
+        organizationMapper.toDomain
+      ),
+      count: (response.count as number) || 0,
+      next: response.next as string | null,
+      previous: response.previous as string | null,
+      stats: response.stats
+        ? organizationMapper.toStats(response.stats as Record<string, unknown>)
+        : undefined,
     };
   },
 
@@ -64,7 +70,7 @@ export const organizationService = {
    * Get organizations stats
    */
   async getOrganizationsStats(): Promise<OrganizationStats> {
-    const response = await httpClient.get<any>(API_ENDPOINTS.ORGANIZATIONS.STATS, {
+    const response = await httpClient.get<Record<string, unknown>>(API_ENDPOINTS.ORGANIZATIONS.STATS, {
       requiresAuth: true,
     });
     return organizationMapper.toStats(response);

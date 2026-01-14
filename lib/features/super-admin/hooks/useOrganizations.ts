@@ -4,7 +4,7 @@ import {
   type OrganizationListItem,
   type OrganizationStats,
   type OrganizationListParams,
-} from "../types/organization.types";
+} from "../../organizations/types/organization.types";
 
 export function useOrganizations() {
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);

@@ -114,7 +114,7 @@ export function OrganizationDetailsDialog({
                       </div>
                       <div className="flex gap-1 shrink-0">
                         <Button variant="ghost" size="icon" className="size-8" asChild title="View">
-                          <a href={doc.url} target="_blank" rel="noopener noreferrer">
+                          <a href={doc.url} target="_blank" rel="noopener noreferrer" title="set url doc">
                             <ExternalLink className="size-4" />
                           </a>
                         </Button>
@@ -125,7 +125,7 @@ export function OrganizationDetailsDialog({
                           asChild
                           title="Download"
                         >
-                          <a href={doc.url} download>
+                          <a href={doc.url} download title="download doc">
                             <Download className="size-4" />
                           </a>
                         </Button>

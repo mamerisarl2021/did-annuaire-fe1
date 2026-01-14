@@ -11,7 +11,7 @@ import {
 } from "@/lib/types/organization-status";
 
 interface RegistrationStatusPageProps {
-  searchParams: Promise<{ status?: string , organizationName?: string }>;
+  searchParams: Promise<{ status?: string; organizationName?: string }>;
 }
 
 export default async function RegistrationStatusPage({

@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
 import { useOrganizations } from "@/lib/features/organizations/hooks/useOrganizations";
 
-import { StatsCardsRow } from "@/lib/features/super-admin/components/StatsCardsRow";
-import { OrganizationsTable } from "@/lib/features/super-admin/components/OrganizationsTable";
-import { OrganizationDetailsDialog } from "@/lib/features/super-admin/components/OrganizationDetailsDialog";
-import { OrganizationFilters } from "@/lib/features/super-admin/components/OrganizationFilters";
-import { OrganizationsPagination } from "@/lib/features/super-admin/components/OrganizationsPagination";
+import { StatsCardsRow } from "@/lib/features/organizations/components/StatsCardsRow";
+import { OrganizationsTable } from "@/lib/features/organizations/components/OrganizationsTable";
+import { OrganizationDetailsDialog } from "@/lib/features/organizations/components/OrganizationDetailsDialog";
+import { OrganizationFilters } from "@/lib/features/organizations/components/OrganizationFilters";
+import { OrganizationsPagination } from "@/lib/features/organizations/components/OrganizationsPagination";
 
-import { type OrganizationListItem } from "@/lib/features/organizations/types/organization.types";
+import { OrganizationListItem } from "@/lib/features/organizations/types/organization.types";
+import { type OrganizationStatusType } from "@/lib/types/organization-status";
 import { cn } from "@/lib/utils";
 
 export default function OrgAdminDashboard() {
@@ -25,33 +26,36 @@ export default function OrgAdminDashboard() {
     pagination,
     filters,
     setPage,
-    setPageSize,
     setStatusFilter,
     setSearch,
     refresh,
   } = useOrganizations();
 
-  const [selectedOrg, setSelectedOrg] = useState<any>(null);
+  const [selectedOrg, setSelectedOrg] = useState<OrganizationListItem | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  const openDetailsDialog = useCallback((org: any) => {
+  const openDetailsDialog = useCallback((org: OrganizationListItem) => {
     setSelectedOrg(org);
     setShowDetails(true);
   }, []);
 
-  const handleStatusChange = useCallback((val: string | undefined) => {
-    setStatusFilter((val || "all") as any);
-    setPage(1);
-  }, [setStatusFilter, setPage]);
+  const handleStatusChange = useCallback(
+    (val: string | undefined) => {
+      setStatusFilter((val || "all") as OrganizationStatusType | "all");
+      setPage(1);
+    },
+    [setStatusFilter, setPage]
+  );
 
-  // Map stats to the format expected by StatsCardsRow
-  const mappedStats = stats ? {
-    all: stats.all,
-    active: stats.active,
-    suspended: stats.suspended,
-    pending: 0,
-    refused: 0
-  } : null;
+  const mappedStats = stats
+    ? {
+        all: stats.all,
+        active: stats.active,
+        suspended: stats.suspended,
+        pending: 0,
+        refused: 0,
+      }
+    : null;
 
   const totalPages = pagination ? Math.ceil(totalCount / pagination.pageSize) : 1;
 
@@ -69,7 +73,7 @@ export default function OrgAdminDashboard() {
       <div className="px-8 space-y-6 pb-8">
         {/* Stats Row - SAME COMPONENT with filtered visibility */}
         <StatsCardsRow
-          stats={mappedStats as any}
+          stats={mappedStats!}
           activeStatus={filters.status}
           onStatusClick={handleStatusChange}
           visibleStatuses={["all", "ACTIVE", "SUSPENDED"]}
@@ -81,7 +85,7 @@ export default function OrgAdminDashboard() {
             <OrganizationFilters
               search={filters.search}
               onSearchChange={setSearch}
-              status={filters.status as any}
+              status={filters.status as OrganizationStatusType | "all"}
               onStatusChange={handleStatusChange}
               totalCount={totalCount}
             />
@@ -93,14 +97,13 @@ export default function OrgAdminDashboard() {
             ) : (
               <>
                 <OrganizationsTable
-                  organizations={organizations as any}
+                  organizations={organizations}
                   onRowClick={openDetailsDialog}
                   onView={openDetailsDialog}
-                  // Org Admins don't have these powers, pass no-ops
-                  onValidate={() => { }}
-                  onRefuse={() => { }}
-                  onToggle={() => { }}
-                  onDelete={() => { }}
+                  onValidate={() => {}}
+                  onRefuse={() => {}}
+                  onToggle={() => {}}
+                  onDelete={() => {}}
                   isActionsDisabled={true}
                 />
 
@@ -119,8 +122,8 @@ export default function OrgAdminDashboard() {
         organization={selectedOrg}
         open={showDetails}
         onOpenChange={setShowDetails}
-        onValidate={() => { }}
-        onRefuse={() => { }}
+        onValidate={() => {}}
+        onRefuse={() => {}}
         isActionsDisabled={true}
       />
     </div>

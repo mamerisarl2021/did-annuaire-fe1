@@ -30,7 +30,6 @@ interface UseAccountActivationReturn {
   clearError: () => void;
 }
 
-
 export function useAccountActivation({
   token,
 }: UseAccountActivationOptions): UseAccountActivationReturn {
@@ -72,7 +71,11 @@ export function useAccountActivation({
           code: data.code,
         });
 
-        if (data.enableOtp && (response?.code === "TOTP_REQUIRED" || response?.totp_qr) && !data.code) {
+        if (
+          data.enableOtp &&
+          (response?.code === "TOTP_REQUIRED" || response?.totp_qr) &&
+          !data.code
+        ) {
           console.log("2FA Setup phase: QR code received, awaiting verification code.");
           return {
             success: true,
