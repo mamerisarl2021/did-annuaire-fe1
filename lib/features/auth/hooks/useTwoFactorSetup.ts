@@ -45,7 +45,7 @@ export function useTwoFactorSetup({
   const verifyCode = useCallback(
     async (code: string): Promise<boolean> => {
       if (!code || code.length !== 6) {
-        setError("Le code doit contenir 6 chiffres.");
+        setError("Code must contain 6 digits.");
         return false;
       }
 
@@ -60,7 +60,7 @@ export function useTwoFactorSetup({
         onSetupComplete?.();
         return true;
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Code OTP invalide ou expiré.";
+        const message = err instanceof Error ? err.message : "Invalid code or expired. Please try again.";
         setError(message);
         return false;
       } finally {

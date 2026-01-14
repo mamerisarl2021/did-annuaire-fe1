@@ -7,7 +7,7 @@ import {
 } from "../../organizations/types/organization.types";
 import { organizationMapper } from "../mappers/organization.mapper";
 
-const SUPERADMIN_Endpoints = {
+const SUPERADMIN_ENDPOINTS = {
   LIST: "/api/superadmin/organizations",
   STATS: "/api/superadmin/organizations/stats",
   DETAILS: (id: string) => `/api/superadmin/organizations/${id}`,
@@ -23,7 +23,7 @@ export const superAdminService = {
     if (params.status) searchParams.append("status", params.status);
     if (params.search) searchParams.append("search", params.search);
 
-    const endpoint = `${SUPERADMIN_Endpoints.LIST}?${searchParams.toString()}`;
+    const endpoint = `${SUPERADMIN_ENDPOINTS.LIST}?${searchParams.toString()}`;
     console.log("Fetching Organizations from:", endpoint);
     const response = await httpClient.get<Record<string, unknown>>(endpoint);
     const rawData = (response.data as Record<string, unknown>) || response;
@@ -44,7 +44,7 @@ export const superAdminService = {
 
   async getStats(): Promise<OrganizationStats> {
     try {
-      const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_Endpoints.STATS);
+      const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_ENDPOINTS.STATS);
       return ((response.data as OrganizationStats) || response) as OrganizationStats;
     } catch (error) {
       console.error("Failed to fetch stats", error);
@@ -65,7 +65,7 @@ export const superAdminService = {
   },
 
   async getOrganizationDetails(id: string): Promise<OrganizationListItem> {
-    const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_Endpoints.DETAILS(id));
+    const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_ENDPOINTS.DETAILS(id));
     const rawData = (response.data as Record<string, unknown>) || response;
     return organizationMapper.toDomain(rawData);
   },

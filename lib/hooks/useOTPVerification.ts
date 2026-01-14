@@ -67,7 +67,7 @@ export function useOTPVerification({
       if (success) {
         onVerified?.();
       } else {
-        setFieldError("Code OTP invalide");
+        setFieldError("Invalid OTP code");
       }
     },
     [verifyCode, onVerified, setFieldError]
