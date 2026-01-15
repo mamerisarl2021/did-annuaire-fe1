@@ -7,6 +7,7 @@ import {
   type TokenPairResponse,
   type AuthUser,
 } from "@/lib/features/auth/types/auth.types";
+import { logger } from "@/lib/shared/services/logger.service";
 
 /**
  * Response type for login that may include OTP requirement
@@ -40,7 +41,7 @@ export const authService = {
       const refreshToken = tokenStorage.getRefreshToken();
       await httpClient.post(API_ENDPOINTS.AUTH.LOGOUT, { refresh: refreshToken });
     } catch (error) {
-      console.warn("Logout error", error);
+      logger.warn("Logout API call failed", { error });
     } finally {
       tokenStorage.clear();
     }
@@ -140,6 +141,7 @@ export const authService = {
         role?: string;
         organization_id?: string;
       }>(token);
+      logger.debug("JWT token decoded", { userId: decoded.user_id || decoded.sub, email: decoded.email, role: decoded.role });
 
       let role = decoded.role;
       let email = decoded.email;
@@ -148,6 +150,7 @@ export const authService = {
 
       if (!role) {
         try {
+          logger.debug("Fetching user profile from /me endpoint");
           const response = await httpClient.get<{
             data?: { role?: string; is_superuser?: boolean; is_staff?: boolean; email?: string };
             role?: string;
@@ -155,6 +158,7 @@ export const authService = {
             is_staff?: boolean;
             email?: string;
           }>(API_ENDPOINTS.USERS.ME);
+          logger.debug("User profile fetched successfully");
 
           const userData = response.data || response;
           let apiRole = userData.role;
@@ -170,7 +174,7 @@ export const authService = {
           }
           email = userData.email || email;
         } catch (apiError) {
-          console.error("Failed to fetch user profile from me", apiError);
+          logger.error("Failed to fetch user profile from /me endpoint", apiError);
         }
       }
 
@@ -182,7 +186,7 @@ export const authService = {
         is_active: true,
       };
     } catch (error) {
-      console.error("Token decode or profile fetch failed", error);
+      logger.error("Failed to decode JWT token or fetch user profile", error);
       return null;
     }
   },

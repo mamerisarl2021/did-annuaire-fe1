@@ -6,6 +6,7 @@ import {
   type OrganizationStats,
 } from "../../organizations/types/organization.types";
 import { organizationMapper } from "../mappers/organization.mapper";
+import { logger } from "@/lib/shared/services/logger.service";
 
 const SUPERADMIN_ENDPOINTS = {
   LIST: "/api/superadmin/organizations",
@@ -24,6 +25,7 @@ export const superAdminService = {
     if (params.search) searchParams.append("search", params.search);
 
     const endpoint = `${SUPERADMIN_ENDPOINTS.LIST}?${searchParams.toString()}`;
+    logger.debug("Fetching Organizations from:", { endpoint });
     const response = await httpClient.get<Record<string, unknown>>(endpoint);
     const rawData = (response.data as Record<string, unknown>) || response;
     const rawItems = (rawData.items as Record<string, unknown>[]) || (rawData.results as Record<string, unknown>[]) || [];
@@ -46,7 +48,7 @@ export const superAdminService = {
       const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_ENDPOINTS.STATS);
       return ((response.data as OrganizationStats) || response) as OrganizationStats;
     } catch (error) {
-      console.error("Failed to fetch stats", error);
+      logger.error("Failed to fetch organization stats", error, { endpoint: SUPERADMIN_ENDPOINTS.STATS });
       return { pending: 0, active: 0, suspended: 0, refused: 0, all: 0 };
     }
   },

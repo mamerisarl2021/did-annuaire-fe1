@@ -9,6 +9,7 @@ import { DidVerifyForm } from "../components/DidVerifyForm";
 import { DidErrorCard } from "../components/DidErrorCard";
 import { DidResultCard } from "../components/DidResultCard";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { logger } from "@/lib/shared/services/logger.service";
 
 export default function UserVerifyPage() {
   const { state, verify } = useDidVerification();
@@ -23,7 +24,7 @@ export default function UserVerifyPage() {
         description: "Content copied to clipboard",
       });
     } catch (error) {
-      console.error("Copy failed:", error);
+      logger.error("Failed to copy to clipboard", error);
       toast({
         title: "Error",
         description: "Failed to copy to clipboard",
