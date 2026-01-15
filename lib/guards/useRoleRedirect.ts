@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getRouteForRole } from "./roleRoutes";
 import type { UserRoleType } from "@/lib/types/roles";
+import { logger } from "@/lib/shared/services/logger.service";
 
 interface UseRoleRedirectReturn {
   redirectToRoleDashboard: (role: UserRoleType) => void;
@@ -26,7 +27,7 @@ export function useRoleRedirect(): UseRoleRedirectReturn {
       if (url) {
         router.push(url);
       } else {
-        console.error(`No dashboard route defined for role: ${role}`);
+        logger.error(`No dashboard route defined for role: ${role}`, undefined, { role });
         router.push("/dashboard");
       }
     },
