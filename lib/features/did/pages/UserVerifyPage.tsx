@@ -40,7 +40,7 @@ export default function UserVerifyPage() {
             {state.status === "success" && (
               <DidResultCard
                 result={state.data}
-                onCopy={() => console.log("Copied to clipboard")}
+                onCopy={() => {}}
               />
             )}
           </div>

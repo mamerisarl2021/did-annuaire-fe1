@@ -140,8 +140,6 @@ export const authService = {
         role?: string;
         organization_id?: string;
       }>(token);
-      console.log("JWT Payload:", decoded);
-      console.log("Mapping role:", decoded.role);
 
       let role = decoded.role;
       let email = decoded.email;
@@ -150,7 +148,6 @@ export const authService = {
 
       if (!role) {
         try {
-          console.log("Fetching user profile from /me endpoint");
           const response = await httpClient.get<{
             data?: { role?: string; is_superuser?: boolean; is_staff?: boolean; email?: string };
             role?: string;
@@ -158,7 +155,6 @@ export const authService = {
             is_staff?: boolean;
             email?: string;
           }>(API_ENDPOINTS.USERS.ME);
-          console.log("User Profile Response:", response);
 
           const userData = response.data || response;
           let apiRole = userData.role;

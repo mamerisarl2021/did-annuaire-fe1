@@ -76,7 +76,6 @@ export function useAccountActivation({
           (response?.code === "TOTP_REQUIRED" || response?.totp_qr) &&
           !data.code
         ) {
-          console.log("2FA Setup phase: QR code received, awaiting verification code.");
           return {
             success: true,
             requiresOtp: true,
@@ -87,7 +86,6 @@ export function useAccountActivation({
           };
         }
 
-        console.log("Activation finalized successfully.");
         return { success: true, requiresOtp: false, qrCodeData: null };
       } catch (err) {
         let message = "Activation failed. The link may have expired.";
