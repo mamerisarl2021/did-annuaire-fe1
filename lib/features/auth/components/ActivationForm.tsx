@@ -54,7 +54,7 @@ export function ActivationForm({
   const enableOtp = watch("enableOtp");
   const code = watch("code");
 
-  const canSubmit = !enableOtp || !show2FASetup || (show2FASetup && code?.length === 6);
+  const canSubmit = !enableOtp || !show2FASetup || code?.length === 6;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={cn("space-y-6", className)}>
