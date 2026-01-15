@@ -5,37 +5,24 @@ interface StatusBadgeProps {
   status: OrganizationStatusType;
 }
 
-const statusConfig: Record<
-  OrganizationStatusType,
-  {
-    label: string;
-    className: string;
-  }
-> = {
-  ACTIVE: {
-    label: "Active",
-    className: "bg-green-100 text-green-800 hover:bg-green-100",
-  },
-  PENDING: {
-    label: "Pending",
-    className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
-  },
-  REFUSED: {
-    label: "Refused",
-    className: "bg-red-100 text-red-800 hover:bg-red-100",
-  },
-  SUSPENDED: {
-    label: "Suspended",
-    className: "bg-orange-100 text-orange-800 hover:bg-orange-100",
-  },
+const statusStyles: Record<OrganizationStatusType, string> = {
+  ACTIVE: "bg-green-100 text-green-800 hover:bg-green-100",
+  PENDING: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
+  REFUSED: "bg-red-100 text-red-800 hover:bg-red-100",
+  SUSPENDED: "bg-gray-100 text-gray-800 hover:bg-gray-100",
 };
 
 export function OrganizationStatusBadge({ status }: StatusBadgeProps) {
-  const config = statusConfig[status];
+  const label = {
+    ACTIVE: "Active",
+    PENDING: "Pending",
+    REFUSED: "Refused",
+    SUSPENDED: "Suspended",
+  }[status];
 
   return (
-    <Badge variant="default" className={`font-medium ${config.className}`}>
-      {config.label}
+    <Badge variant="outline" className={`border-0 font-medium ${statusStyles[status]}`}>
+      {label}
     </Badge>
   );
 }
