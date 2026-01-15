@@ -2,6 +2,7 @@ import { API_ENDPOINTS, getApiUrl } from "@/lib/shared/config/endpoints";
 import { ApiException } from "@/lib/shared/api/api.errors";
 import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
 import { type ApiErrorResponse } from "@/lib/shared/types/api.types";
+import { logger } from "@/lib/shared/services/logger.service";
 
 interface RequestOptions extends RequestInit {
   requiresAuth?: boolean;
@@ -132,7 +133,7 @@ async function handleTokenRefresh(): Promise<boolean> {
       }
       return false;
     } catch (error) {
-      console.error("Token refresh failed", error);
+      logger.error("Token refresh failed", error);
       return false;
     } finally {
       isRefreshing = false;

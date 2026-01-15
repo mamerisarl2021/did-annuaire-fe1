@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { DID } from "../types";
 import { didService } from "../services";
+import { logger } from "@/lib/shared/services/logger.service";
 
 export function useDIDs() {
   const [dids, setDids] = useState<DID[]>([]);
@@ -18,7 +19,7 @@ export function useDIDs() {
       setError(null);
     } catch (err) {
       setError("Failed to fetch DIDs");
-      console.error(err);
+      logger.error("Failed to fetch DIDs", err);
     } finally {
       setIsLoading(false);
     }
