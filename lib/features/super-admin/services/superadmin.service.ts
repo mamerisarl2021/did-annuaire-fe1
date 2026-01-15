@@ -24,7 +24,6 @@ export const superAdminService = {
     if (params.search) searchParams.append("search", params.search);
 
     const endpoint = `${SUPERADMIN_ENDPOINTS.LIST}?${searchParams.toString()}`;
-    console.log("Fetching Organizations from:", endpoint);
     const response = await httpClient.get<Record<string, unknown>>(endpoint);
     const rawData = (response.data as Record<string, unknown>) || response;
     const rawItems = (rawData.items as Record<string, unknown>[]) || (rawData.results as Record<string, unknown>[]) || [];

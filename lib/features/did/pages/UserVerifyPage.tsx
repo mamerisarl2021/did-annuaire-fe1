@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 
 import { useDidVerification } from "../hooks/useDidVerification";
 import { DidVerifyForm } from "../components/DidVerifyForm";
@@ -12,6 +13,24 @@ import { PublicHeader } from "@/components/layout/PublicHeader";
 export default function UserVerifyPage() {
   const { state, verify } = useDidVerification();
   const [input, setInput] = useState("");
+  const { toast } = useToast();
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "Copied",
+        description: "Content copied to clipboard",
+      });
+    } catch (error) {
+      console.error("Copy failed:", error);
+      toast({
+        title: "Error",
+        description: "Failed to copy to clipboard",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
@@ -40,7 +59,7 @@ export default function UserVerifyPage() {
             {state.status === "success" && (
               <DidResultCard
                 result={state.data}
-                onCopy={() => console.log("Copied to clipboard")}
+                onCopy={handleCopy}
               />
             )}
           </div>
