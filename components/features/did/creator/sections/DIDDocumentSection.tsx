@@ -12,6 +12,7 @@ interface DIDDocumentSectionProps {
   onDocumentChange: (doc: string) => void;
   onAddService: () => void;
   onRemoveService?: (id: string) => void;
+  onAddCertificate: () => void;
 }
 
 export function DIDDocumentSection({
@@ -20,6 +21,7 @@ export function DIDDocumentSection({
   onDocumentChange,
   onAddService,
   onRemoveService,
+  onAddCertificate,
 }: DIDDocumentSectionProps) {
   return (
     <div className="p-8 space-y-8 bg-[#f8fafc] dark:bg-slate-900/5 h-full border-b border-slate-200 dark:border-slate-800">
@@ -34,7 +36,7 @@ export function DIDDocumentSection({
 
       <div className="space-y-4">
         <label className="text-slate-700 dark:text-slate-300 font-bold text-sm block ml-1 uppercase tracking-wider text-[11px]">
-          Services
+          Resources
         </label>
         <div className="flex flex-wrap gap-4">
           {/* Visual Service Cards */}
@@ -84,6 +86,35 @@ export function DIDDocumentSection({
             </div>
             <span className="text-slate-800 dark:text-slate-200 font-bold text-[10px] uppercase tracking-wider">
               Add Service
+            </span>
+          </button>
+
+          {/* Add Certificate Button */}
+          <button
+            onClick={onAddCertificate}
+            className="flex flex-col items-center justify-center gap-3 w-40 h-28 border border-slate-400 dark:border-slate-700 rounded-md bg-[#cbd5e1]/40 dark:bg-slate-800/40 hover:bg-[#b0bdcc] dark:hover:bg-slate-700 transition-colors group cursor-pointer"
+          >
+            <div className="flex items-center justify-center relative size-8">
+              <svg
+                className="size-full text-slate-800 dark:text-slate-200"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                <polyline points="14 2 14 8 20 8" />
+                <path d="M12 18v-6" />
+                <path d="M9 15h6" />
+              </svg>
+              <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-800 rounded-full p-0.5 border border-slate-400">
+                <DIDPlusIcon className="size-2 text-slate-800 dark:text-slate-200" />
+              </div>
+            </div>
+            <span className="text-slate-800 dark:text-slate-200 font-bold text-[10px] uppercase tracking-wider">
+              Add Certificate
             </span>
           </button>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";import { useDIDCreator } from "@/lib/features/did/hooks/useDIDCreator";
+import React, { useState } from "react"; import { useDIDCreator } from "@/lib/features/did/hooks/useDIDCreator";
 import { TabType, Service } from "@/lib/features/did/types";
 import { DIDCreatorLayout } from "./layout/DIDCreatorLayout";
 import { DIDMethodSection } from "./sections/DIDMethodSection";
@@ -43,7 +43,7 @@ export function DIDCreator(props: DIDCreatorProps) {
 
   const { isEditing } = props;
 
-  const [isMethodSelectOpen, setIsMethodSelectOpen] = useState(false);
+  const [isMethodSelectOpen, setIsMethodSelectOpen] = useState(true);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
 
@@ -87,7 +87,7 @@ export function DIDCreator(props: DIDCreatorProps) {
         response={responseElement}
         error={errorElement}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full gap-2 p-4">
           {/* Section: Method Discovery */}
           <DIDMethodSection
             selectedMethod={selectedMethod}
@@ -103,6 +103,7 @@ export function DIDCreator(props: DIDCreatorProps) {
             onDocumentChange={setDidDocument}
             onAddService={() => setIsServiceModalOpen(true)}
             onRemoveService={handleRemoveService}
+            onAddCertificate={() => setIsCertificateModalOpen(true)}
           />
 
           {/* Section: Configuration (Options/Secret) */}

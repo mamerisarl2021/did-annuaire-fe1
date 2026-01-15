@@ -1,18 +1,4 @@
-export type MethodType =
-  | "BTCR2"
-  | "CHEQD"
-  | "EBSI"
-  | "ETHR"
-  | "INDY"
-  | "ION"
-  | "JWK"
-  | "KEY"
-  | "KSCIRC"
-  | "LING"
-  | "PKH"
-  | "V1"
-  | "WEB"
-  | "WEBVH";
+export type MethodType = "WEB";
 
 export type ServiceType = "DIDCommMessaging" | "DecentralizedWebNode" | "LinkedDomains";
 

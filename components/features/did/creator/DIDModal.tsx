@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 interface DIDModalProps {
   isOpen: boolean;
   onClose: () => void;
-  did?: DID | null; // If provided, we are in edit mode
+  did?: DID | null;
 }
 
 export function DIDModal({ isOpen, onClose, did }: DIDModalProps) {

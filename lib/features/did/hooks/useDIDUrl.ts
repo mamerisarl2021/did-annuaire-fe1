@@ -10,28 +10,12 @@ export function useDIDUrl(didId: string) {
   const [options, setOptions] = useState("{}");
   const [secret, setSecret] = useState("{}");
   const [content, setContent] = useState("");
-  const [clientManagedSecret, setClientManagedSecret] = useState(false);
+  const [contentOperations, setContentOperations] = useState("[]");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [response, setResponse] = useState("");
   const [error, setError] = useState("");
 
-  const handleClientManagedSecretChange = (checked: boolean) => {
-    setClientManagedSecret(checked);
-    try {
-      const optionsObj = JSON.parse(options);
-      if (checked) {
-        optionsObj.clientSecretMode = true;
-      } else {
-        delete optionsObj.clientSecretMode;
-      }
-      setOptions(JSON.stringify(optionsObj, null, 2));
-    } catch {
-      if (checked) {
-        setOptions(JSON.stringify({ clientSecretMode: true }, null, 2));
-      }
-    }
-  };
 
   const handleExecute = async () => {
     setIsSubmitting(true);
@@ -76,8 +60,8 @@ export function useDIDUrl(didId: string) {
     setSecret,
     content,
     setContent,
-    clientManagedSecret,
-    handleClientManagedSecretChange,
+    contentOperations,
+    setContentOperations,
     handleExecute,
     isSubmitting,
     response,

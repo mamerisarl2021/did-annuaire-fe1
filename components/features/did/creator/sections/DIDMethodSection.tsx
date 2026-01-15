@@ -13,22 +13,11 @@ interface DIDMethodSectionProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const methods: MethodType[] = [
-  "BTCR2",
-  "CHEQD",
-  "EBSI",
-  "ETHR",
-  "INDY",
-  "ION",
-  "JWK",
-  "KEY",
-  "KSCIRC",
-  "LING",
-  "PKH",
-  "V1",
-  "WEB",
-  "WEBVH",
-];
+const methods: MethodType[] = ["WEB"];
+
+const METHOD_DESCRIPTIONS: Record<string, string> = {
+  WEB: "DID:WEB is a popular DID method that only requires DNS and web servers. It supports full DID document extensibility, but has drawbacks with regard to decentralization and verifiability.",
+};
 
 export function DIDMethodSection({
   selectedMethod,
@@ -37,11 +26,11 @@ export function DIDMethodSection({
   onOpenChange,
 }: DIDMethodSectionProps) {
   return (
-    <div className="border-b border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
       <button
         type="button"
         onClick={() => onOpenChange(!isOpen)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-[#cbd5e1] dark:bg-slate-900 group transition-colors hover:bg-[#b0bdcc] dark:hover:bg-slate-800"
+        className="w-full flex items-center justify-between px-6 py-4 bg-[#cbd5e1] dark:bg-slate-900 group transition-colors hover:bg-[#b0bdcc] dark:hover:bg-slate-800 rounded-lg"
       >
         <span className="text-slate-700 dark:text-slate-300 font-bold text-[13px] uppercase tracking-wide">
           Select a method.
@@ -76,8 +65,12 @@ export function DIDMethodSection({
               );
             })}
           </div>
-          <div className="mt-8 p-4 bg-white/50 dark:bg-slate-950/50 border border-white/60 dark:border-slate-800 rounded text-slate-500 dark:text-slate-400 text-xs font-medium">
-            Select a method to see its description.
+          <div className="mt-8 p-4 bg-white/50 dark:bg-slate-950/50 border border-white/60 dark:border-slate-800 rounded-lg text-slate-600 dark:text-slate-400 text-xs font-medium leading-relaxed">
+            {selectedMethod && METHOD_DESCRIPTIONS[selectedMethod] ? (
+              METHOD_DESCRIPTIONS[selectedMethod]
+            ) : (
+              "Select a method to see its description."
+            )}
           </div>
         </div>
       )}

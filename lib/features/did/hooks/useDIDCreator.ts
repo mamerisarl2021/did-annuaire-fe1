@@ -21,29 +21,13 @@ export function useDIDCreator() {
   const [didDocument, setDidDocument] = useState<string>(INITIAL_DID_DOCUMENT);
   const [options, setOptions] = useState("{}");
   const [secret, setSecret] = useState("{}");
-  const [clientManagedSecret, setClientManagedSecret] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [response, setResponse] = useState("");
   const [error, setError] = useState("");
   const [hasCreatedDID, setHasCreatedDID] = useState(false);
 
-  const handleClientManagedSecretChange = (checked: boolean) => {
-    setClientManagedSecret(checked);
-    try {
-      const optionsObj = JSON.parse(options);
-      if (checked) {
-        optionsObj.clientSecretMode = true;
-      } else {
-        delete optionsObj.clientSecretMode;
-      }
-      setOptions(JSON.stringify(optionsObj, null, 2));
-    } catch {
-      if (checked) {
-        setOptions(JSON.stringify({ clientSecretMode: true }, null, 2));
-      }
-    }
-  };
+
 
   const handleAddKeys = (keys: VerificationMethod[]) => {
     try {
@@ -157,8 +141,6 @@ export function useDIDCreator() {
     setOptions,
     secret,
     setSecret,
-    clientManagedSecret,
-    handleClientManagedSecretChange,
     activeTab,
     setActiveTab,
     createDID,
