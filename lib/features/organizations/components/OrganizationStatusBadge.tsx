@@ -5,34 +5,14 @@ interface StatusBadgeProps {
   status: OrganizationStatusType;
 }
 
-const variants: Record<
-  OrganizationStatusType,
-  "default" | "secondary" | "destructive" | "outline" | "success"
-> = {
-  ACTIVE: "success",
-  PENDING: "secondary",
-  REFUSED: "outline",
-  SUSPENDED: "destructive",
+const statusStyles: Record<OrganizationStatusType, string> = {
+  ACTIVE: "bg-green-100 text-green-800 hover:bg-green-100",
+  PENDING: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
+  REFUSED: "bg-red-100 text-red-800 hover:bg-red-100",
+  SUSPENDED: "bg-orange-100 text-orange-800 hover:bg-orange-100",
 };
 
 export function OrganizationStatusBadge({ status }: StatusBadgeProps) {
-  let className = "";
-
-  switch (status) {
-    case "ACTIVE":
-      className = "bg-green-100 text-green-800 hover:bg-green-100";
-      break;
-    case "PENDING":
-      className = "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-      break;
-    case "REFUSED":
-      className = "bg-red-100 text-red-800 hover:bg-red-100";
-      break;
-    case "SUSPENDED":
-      className = "bg-orange-100 text-orange-800 hover:bg-orange-100";
-      break;
-  }
-
   const label = {
     ACTIVE: "Active",
     PENDING: "Pending",
@@ -41,7 +21,7 @@ export function OrganizationStatusBadge({ status }: StatusBadgeProps) {
   }[status];
 
   return (
-    <Badge variant="outline" className={`border-0 font-medium ${className} ${variants[status]}`}>
+    <Badge variant="outline" className={`border-0 font-medium ${statusStyles[status]}`}>
       {label}
     </Badge>
   );
