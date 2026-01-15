@@ -7,12 +7,12 @@ interface StatusBadgeProps {
 
 const variants: Record<
   OrganizationStatusType,
-  "default" | "secondary" | "destructive" | "outline" | "success"
+  "default" | "secondary" | "destructive" | "outline" | "success" | "warning" | "error" | "info"
 > = {
   ACTIVE: "success",
-  PENDING: "secondary",
-  REFUSED: "outline",
-  SUSPENDED: "destructive",
+  PENDING: "warning",
+  REFUSED: "error",
+  SUSPENDED: "info",
 };
 
 export function OrganizationStatusBadge({ status }: StatusBadgeProps) {
