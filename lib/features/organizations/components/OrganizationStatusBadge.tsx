@@ -14,19 +14,19 @@ const statusConfig: Record<
 > = {
   ACTIVE: {
     label: "Active",
-    className: "bg-green-100 text-green-800 hover:bg-green-100 border-0",
+    className: "bg-green-100 text-green-800 hover:bg-green-100",
   },
   PENDING: {
     label: "Pending",
-    className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-0",
+    className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
   },
   REFUSED: {
     label: "Refused",
-    className: "bg-red-100 text-red-800 hover:bg-red-100 border-0",
+    className: "bg-red-100 text-red-800 hover:bg-red-100",
   },
   SUSPENDED: {
     label: "Suspended",
-    className: "bg-orange-100 text-orange-800 hover:bg-orange-100 border-0",
+    className: "bg-orange-100 text-orange-800 hover:bg-orange-100",
   },
 };
 
@@ -34,7 +34,7 @@ export function OrganizationStatusBadge({ status }: StatusBadgeProps) {
   const config = statusConfig[status];
 
   return (
-    <Badge variant="outline" className={`font-medium ${config.className}`}>
+    <Badge variant="default" className={`font-medium ${config.className}`}>
       {config.label}
     </Badge>
   );
