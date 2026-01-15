@@ -23,6 +23,7 @@ export default function UserVerifyPage() {
         description: "Content copied to clipboard",
       });
     } catch (error) {
+      console.error("Copy failed:", error);
       toast({
         title: "Error",
         description: "Failed to copy to clipboard",
