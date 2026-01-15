@@ -5,44 +5,37 @@ interface StatusBadgeProps {
   status: OrganizationStatusType;
 }
 
-const variants: Record<
+const statusConfig: Record<
   OrganizationStatusType,
-  "default" | "secondary" | "destructive" | "outline" | "success"
+  {
+    label: string;
+    className: string;
+  }
 > = {
-  ACTIVE: "success",
-  PENDING: "secondary",
-  REFUSED: "outline",
-  SUSPENDED: "destructive",
+  ACTIVE: {
+    label: "Active",
+    className: "bg-green-100 text-green-800 hover:bg-green-100 border-0",
+  },
+  PENDING: {
+    label: "Pending",
+    className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-0",
+  },
+  REFUSED: {
+    label: "Refused",
+    className: "bg-red-100 text-red-800 hover:bg-red-100 border-0",
+  },
+  SUSPENDED: {
+    label: "Suspended",
+    className: "bg-orange-100 text-orange-800 hover:bg-orange-100 border-0",
+  },
 };
 
 export function OrganizationStatusBadge({ status }: StatusBadgeProps) {
-  let className = "";
-
-  switch (status) {
-    case "ACTIVE":
-      className = "bg-green-100 text-green-800 hover:bg-green-100";
-      break;
-    case "PENDING":
-      className = "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-      break;
-    case "REFUSED":
-      className = "bg-red-100 text-red-800 hover:bg-red-100";
-      break;
-    case "SUSPENDED":
-      className = "bg-orange-100 text-orange-800 hover:bg-orange-100";
-      break;
-  }
-
-  const label = {
-    ACTIVE: "Active",
-    PENDING: "Pending",
-    REFUSED: "Refused",
-    SUSPENDED: "Suspended",
-  }[status];
+  const config = statusConfig[status];
 
   return (
-    <Badge variant="outline" className={`border-0 font-medium ${className} ${variants[status]}`}>
-      {label}
+    <Badge variant="outline" className={`font-medium ${config.className}`}>
+      {config.label}
     </Badge>
   );
 }
