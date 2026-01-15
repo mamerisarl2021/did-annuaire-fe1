@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { authService } from "@/lib/features/auth/services/auth.service";
 import { type AuthUser } from "@/lib/features/auth/types/auth.types";
 import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
+import { logger } from "@/lib/shared/services/logger.service";
 
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -16,7 +17,7 @@ export function useAuth() {
       const currentUser = await authService.getCurrentUser();
       setUser(currentUser);
     } catch (error) {
-      console.error("Auth check failed", error);
+      logger.error("Auth check failed in useAuth hook", error);
       setUser(null);
     } finally {
       setLoading(false);
