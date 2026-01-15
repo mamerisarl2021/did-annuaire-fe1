@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { UserMenu } from "@/lib/features/auth/components/UserMenu";
 import { authService } from "@/lib/features/auth/services/auth.service";
 
 export function PublicHeader() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -149,7 +151,7 @@ export function PublicHeader() {
                         authService.logout();
                         setIsAuthenticated(false);
                         setIsOpen(false);
-                        window.location.reload();
+                        router.push('/');
                       }}
                       className="justify-start gap-3 h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >

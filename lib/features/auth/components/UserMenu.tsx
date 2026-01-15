@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authService } from "../services/auth.service";
 import { useRoleRedirect } from "@/lib/guards/useRoleRedirect";
 import { type AuthUser } from "../types/auth.types";
+import { logger } from "@/lib/shared/services/logger.service";
 
 /**
  * User Menu Component
@@ -41,7 +42,7 @@ export function UserMenu() {
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
       } catch (error) {
-        console.error("Failed to load user:", error);
+        logger.error("Failed to load user in UserMenu", error);
       }
     };
 
@@ -83,7 +84,7 @@ export function UserMenu() {
       await authService.logout();
       router.push("/auth/login");
     } catch (error) {
-      console.error("Logout failed:", error);
+      logger.error("Logout failed in UserMenu", error);
     } finally {
       setIsLoggingOut(false);
     }

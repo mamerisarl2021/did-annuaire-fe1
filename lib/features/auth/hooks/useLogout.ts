@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/lib/features/auth/services/auth.service";
+import { logger } from "@/lib/shared/services/logger.service";
 
 export function useLogout() {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +14,7 @@ export function useLogout() {
       router.push("/auth/login");
       router.refresh();
     } catch (error) {
-      console.error("Logout error", error);
+      logger.error("Logout failed in useLogout hook", error);
       router.push("/auth/login");
     } finally {
       setIsLoading(false);

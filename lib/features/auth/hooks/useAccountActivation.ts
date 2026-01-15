@@ -10,6 +10,7 @@ import {
 } from "../schemas/activate.schema";
 import { authService } from "../services/auth.service";
 import { ApiException } from "@/lib/shared/api/api.errors";
+import { logger } from "@/lib/shared/services/logger.service";
 
 interface UseAccountActivationOptions {
   token: string | null;
@@ -76,7 +77,7 @@ export function useAccountActivation({
           (response?.code === "TOTP_REQUIRED" || response?.totp_qr) &&
           !data.code
         ) {
-          console.log("2FA Setup phase: QR code received, awaiting verification code.");
+          logger.debug("2FA setup phase: QR code received, awaiting verification");
           return {
             success: true,
             requiresOtp: true,
@@ -87,7 +88,7 @@ export function useAccountActivation({
           };
         }
 
-        console.log("Activation finalized successfully.");
+        logger.info("Account activation completed successfully");
         return { success: true, requiresOtp: false, qrCodeData: null };
       } catch (err) {
         let message = "Activation failed. The link may have expired.";

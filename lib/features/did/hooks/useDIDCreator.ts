@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MethodType, TabType, Service, DID, VerificationMethod } from "../types";
 import { didService } from "../services";
+import { logger } from "@/lib/shared/services/logger.service";
 
 const INITIAL_DID_DOCUMENT = JSON.stringify(
   {
@@ -60,7 +61,7 @@ export function useDIDCreator() {
 
       setDidDocument(JSON.stringify(doc, null, 2));
     } catch (e) {
-      console.error("Error adding keys:", e);
+      logger.error("Error adding keys to DID document", e);
     }
   };
 
@@ -77,7 +78,7 @@ export function useDIDCreator() {
       });
       setDidDocument(JSON.stringify(doc, null, 2));
     } catch (e) {
-      console.error("Error adding service:", e);
+      logger.error("Error adding service to DID document", e);
     }
   };
 
