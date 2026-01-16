@@ -9,6 +9,8 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'staging' }}
     runs-on: ubuntu-latest
     steps:
+      - name: free disk space
+        run: docker system prune -af
       - name: SSH deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
