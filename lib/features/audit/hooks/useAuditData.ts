@@ -13,13 +13,40 @@ export function useAuditData(params: AuditListParams = {}) {
     const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
 
+    // Destructure params to avoid object reference comparison issues
+    const {
+        category,
+        action,
+        user_id,
+        severity,
+        date_from,
+        date_to,
+        q,
+        limit,
+        offset,
+        organization_id,
+    } = params;
+
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         try {
-            const fetchParams = { ...params };
+            const fetchParams: AuditListParams = {
+                category,
+                action,
+                user_id,
+                severity,
+                date_from,
+                date_to,
+                q,
+                limit,
+                offset,
+            };
+            
             if (user?.role !== "SUPER_USER") {
                 delete fetchParams.organization_id;
+            } else {
+                fetchParams.organization_id = organization_id;
             }
 
             const [actionsRes, statsRes] = await Promise.all([
@@ -35,7 +62,7 @@ export function useAuditData(params: AuditListParams = {}) {
         } finally {
             setIsLoading(false);
         }
-    }, [params, user?.role]);
+    }, [category, action, user_id, severity, date_from, date_to, q, limit, offset, organization_id, user?.role]);
 
     useEffect(() => {
         fetchData();
