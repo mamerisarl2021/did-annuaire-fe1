@@ -53,7 +53,7 @@ export function AuditStatsCards({
     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
       {/* "All" Card */}
       <AuditStatCard
-        label="Tous"
+        label="All"
         value={totalCount}
         isActive={activeCategory === "all" || !activeCategory}
         onClick={() => onCategoryClick?.(undefined)}
