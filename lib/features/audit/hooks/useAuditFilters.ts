@@ -22,7 +22,7 @@ export function useAuditFilters(initialLimit = 50) {
 
     const handleSearchChange = useCallback((value: string) => {
         setQ(value);
-        setOffset(0); 
+        setOffset(0);
     }, []);
 
     const handleCategoryChange = useCallback((value: string) => {
