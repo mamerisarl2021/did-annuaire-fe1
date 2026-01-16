@@ -43,7 +43,7 @@ export function useAuditData(params: AuditListParams = {}) {
                 offset,
                 organization_id,
             };
-            
+
             if (user?.role !== "SUPER_USER") {
                 delete fetchParams.organization_id;
             }
