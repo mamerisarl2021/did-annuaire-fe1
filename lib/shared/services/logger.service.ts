@@ -53,12 +53,7 @@ class LoggerService {
   /**
    * Core logging method
    */
-  private log(
-    level: LogLevel,
-    message: string,
-    context?: LogContext,
-    error?: Error
-  ): void {
+  private log(level: LogLevel, message: string, context?: LogContext, error?: Error): void {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level,
@@ -96,9 +91,7 @@ class LoggerService {
     }
   }
 
- 
   private logToMonitoringService(entry: LogEntry): void {
-
     console[entry.level](
       JSON.stringify({
         ...entry,

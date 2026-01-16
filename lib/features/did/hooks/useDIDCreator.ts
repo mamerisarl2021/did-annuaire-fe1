@@ -28,8 +28,6 @@ export function useDIDCreator() {
   const [error, setError] = useState("");
   const [hasCreatedDID, setHasCreatedDID] = useState(false);
 
-
-
   const handleAddKeys = (keys: VerificationMethod[]) => {
     try {
       const doc = JSON.parse(didDocument);

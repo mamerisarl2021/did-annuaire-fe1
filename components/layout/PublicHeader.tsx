@@ -151,7 +151,7 @@ export function PublicHeader() {
                         authService.logout();
                         setIsAuthenticated(false);
                         setIsOpen(false);
-                        router.push('/');
+                        router.push("/");
                       }}
                       className="justify-start gap-3 h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >

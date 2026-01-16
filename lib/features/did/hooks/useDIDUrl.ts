@@ -16,7 +16,6 @@ export function useDIDUrl(didId: string) {
   const [response, setResponse] = useState("");
   const [error, setError] = useState("");
 
-
   const handleExecute = async () => {
     setIsSubmitting(true);
     setError("");

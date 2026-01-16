@@ -58,10 +58,7 @@ export default function UserVerifyPage() {
           <div className="space-y-4">
             {state.status === "error" && <DidErrorCard message={state.error} />}
             {state.status === "success" && (
-              <DidResultCard
-                result={state.data}
-                onCopy={handleCopy}
-              />
+              <DidResultCard result={state.data} onCopy={handleCopy} />
             )}
           </div>
         </div>

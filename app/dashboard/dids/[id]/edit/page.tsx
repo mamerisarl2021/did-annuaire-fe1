@@ -81,11 +81,7 @@ export default function EditDIDPage() {
       </div>
 
       <div className="bg-white dark:bg-slate-950 rounded-2xl border shadow-sm overflow-hidden">
-        <DIDCreator
-          mode="update"
-          initialDid={did}
-          onClose={() => router.push("/dashboard/dids")}
-        />
+        <DIDCreator mode="update" initialDid={did} onClose={() => router.push("/dashboard/dids")} />
       </div>
     </div>
   );

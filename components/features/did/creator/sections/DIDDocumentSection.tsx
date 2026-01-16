@@ -60,7 +60,9 @@ export function DIDDocumentSection({
                     Service endpoint:
                   </p>
                   <p className="text-[12px] font-mono font-bold text-slate-700 dark:text-slate-200 truncate">
-                    {typeof service.serviceEndpoint === 'string' ? service.serviceEndpoint : JSON.stringify(service.serviceEndpoint)}
+                    {typeof service.serviceEndpoint === "string"
+                      ? service.serviceEndpoint
+                      : JSON.stringify(service.serviceEndpoint)}
                   </p>
                 </div>
               </div>
