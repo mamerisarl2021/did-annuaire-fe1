@@ -2,7 +2,7 @@
 
 // Forced HMR Refresh: 1
 import React from "react";
-import { LayoutGrid, Trash2, X } from "lucide-react";
+import { LayoutGrid, X } from "lucide-react";
 import { JSONEditor } from "../JSONEditor";
 import { Service } from "@/lib/features/did/types";
 

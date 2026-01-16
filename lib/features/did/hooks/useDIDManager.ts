@@ -53,17 +53,41 @@ export function useDIDManager(initialMode: DIDMode = "create") {
                     publicKeyJwk: key.publicKeyJwk,
                 });
 
-                // Auto-assign purposes based on key type/curve if common
-                if (key.publicKeyJwk.crv === "Ed25519" || key.publicKeyJwk.crv === "P-256") {
-                    if (!doc.authentication) doc.authentication = [];
-                    if (!doc.assertionMethod) doc.assertionMethod = [];
+                // Auto-assign purposes based on key type/curve
+                const crv = key.publicKeyJwk.crv;
+                const kty = key.publicKeyJwk.kty;
+
+                // Initialize arrays if needed
+                if (!doc.authentication) doc.authentication = [];
+                if (!doc.assertionMethod) doc.assertionMethod = [];
+                if (!doc.keyAgreement) doc.keyAgreement = [];
+                if (!doc.capabilityInvocation) doc.capabilityInvocation = [];
+                if (!doc.capabilityDelegation) doc.capabilityDelegation = [];
+
+                // Ed25519: authentication, assertionMethod, capabilityInvocation, capabilityDelegation
+                if (crv === "Ed25519") {
                     if (!doc.authentication.includes(keyId)) doc.authentication.push(keyId);
                     if (!doc.assertionMethod.includes(keyId)) doc.assertionMethod.push(keyId);
+                    if (!doc.capabilityInvocation.includes(keyId)) doc.capabilityInvocation.push(keyId);
+                    if (!doc.capabilityDelegation.includes(keyId)) doc.capabilityDelegation.push(keyId);
                 }
-
-                if (key.publicKeyJwk.crv === "X25519" || key.publicKeyJwk.crv === "P-256") {
-                    if (!doc.keyAgreement) doc.keyAgreement = [];
+                // X25519: keyAgreement only
+                else if (crv === "X25519") {
                     if (!doc.keyAgreement.includes(keyId)) doc.keyAgreement.push(keyId);
+                }
+                // P-256: all purposes
+                else if (crv === "P-256") {
+                    if (!doc.authentication.includes(keyId)) doc.authentication.push(keyId);
+                    if (!doc.assertionMethod.includes(keyId)) doc.assertionMethod.push(keyId);
+                    if (!doc.keyAgreement.includes(keyId)) doc.keyAgreement.push(keyId);
+                    if (!doc.capabilityInvocation.includes(keyId)) doc.capabilityInvocation.push(keyId);
+                    if (!doc.capabilityDelegation.includes(keyId)) doc.capabilityDelegation.push(keyId);
+                }
+                // RSA: authentication, assertionMethod, capabilityInvocation
+                else if (kty === "RSA") {
+                    if (!doc.authentication.includes(keyId)) doc.authentication.push(keyId);
+                    if (!doc.assertionMethod.includes(keyId)) doc.assertionMethod.push(keyId);
+                    if (!doc.capabilityInvocation.includes(keyId)) doc.capabilityInvocation.push(keyId);
                 }
             });
 
@@ -96,22 +120,13 @@ export function useDIDManager(initialMode: DIDMode = "create") {
         setIsSubmitting(true);
         setError("");
         try {
-            // Basic validation
             if (!logicalIdentifier) throw new Error("Logical Identifier is required.");
             const parsedDoc = JSON.parse(didDocument);
 
-            // Update ID in document based on logical identifier
-            const didId = `did:web:${logicalIdentifier}`;
-            parsedDoc.id = didId;
-
-            // Ensure purposes are reflected if needed (though the backend usually handles this)
-            // Here we just prepare the state for execution
+            // Update DID ID based on logical identifier
+            parsedDoc.id = `did:web:${logicalIdentifier}`;
             setDidDocument(JSON.stringify(parsedDoc, null, 2));
             setIsCompiled(true);
-
-            // Simulate/Trigger a compile-only check if API supports it, 
-            // otherwise this is just local validation.
-            // For now, let's just mark as compiled.
         } catch (e: unknown) {
             const message = e instanceof Error ? e.message : String(e);
             setError(`Compilation failed: ${message}`);
@@ -132,27 +147,23 @@ export function useDIDManager(initialMode: DIDMode = "create") {
         setError("");
         try {
             const parsedDoc = JSON.parse(didDocument);
-            const optionsObj: any = {};
+            const optionsObj: Record<string, unknown> = {};
             selectedOptions.forEach(opt => {
-                optionsObj[opt] = []; // Assuming backend expects arrays for these if provided
+                optionsObj[opt] = [];
             });
 
-            let res;
-            if (mode === "create") {
-                res = await didService.createDID({
+            const res = mode === "create"
+                ? await didService.createDID({
                     method: selectedMethod,
                     didDocument: parsedDoc,
                     options: optionsObj,
-                    secret: {}, // Secret is removed as per requirements
-                });
-            } else {
-                // Assume an updateDID service exists or use createDID with specific metadata
-                res = await didService.updateDID({
+                    secret: {},
+                })
+                : await didService.updateDID({
                     id: parsedDoc.id,
                     didDocument: parsedDoc,
                     options: optionsObj,
                 });
-            }
 
             setResponse(JSON.stringify(res, null, 2));
             setActiveTab("response");
@@ -180,7 +191,7 @@ export function useDIDManager(initialMode: DIDMode = "create") {
         // Map existing options if possible
         const purposes: OptionKey[] = [];
         if (did.metadata?.options) {
-            const opts = did.metadata.options as any;
+            const opts = did.metadata.options as Record<string, unknown>;
             (Object.keys(opts) as OptionKey[]).forEach(k => {
                 if (["authentication", "assertionMethod", "keyAgreement", "capabilityInvocation", "capabilityDelegation"].includes(k)) {
                     purposes.push(k);

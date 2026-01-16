@@ -132,7 +132,7 @@ export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModal
               </label>
               <Select
                 value={certificateType}
-                onValueChange={(value) => setCertificateType(value as any)}
+                onValueChange={(value) => setCertificateType(value as "PEM" | "DER" | "PKCS7" | "PKCS12" | "JWK")}
               >
                 <SelectTrigger className="w-full h-11 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-[3px] shadow-sm font-medium">
                   <SelectValue placeholder="Select certificate type" />

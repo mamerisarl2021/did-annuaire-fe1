@@ -15,10 +15,9 @@ import { CertificateModal } from "./CertificateModal";
 interface DIDCreatorProps {
   mode: DIDMode;
   initialDid?: DID | null;
-  onClose?: () => void;
 }
 
-export function DIDCreator({ mode: initialMode, initialDid, onClose }: DIDCreatorProps) {
+export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
   const manager = useDIDManager(initialMode);
 
   const {

@@ -8,10 +8,10 @@ interface DIDResponseSectionProps {
 }
 
 export function DIDResponseSection({ response }: DIDResponseSectionProps) {
-    let parsedResponse: any = null;
+    let parsedResponse: Record<string, unknown> | null = null;
     try {
         parsedResponse = JSON.parse(response);
-    } catch (e) {
+    } catch {
         return (
             <div className="bg-[#2c3e50] dark:bg-slate-950 border border-slate-700/50 rounded-xl overflow-hidden shadow-2xl">
                 <pre className="font-mono text-[13px] text-slate-100 p-8 whitespace-pre-wrap leading-relaxed">
