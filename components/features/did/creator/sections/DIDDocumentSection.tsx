@@ -2,7 +2,7 @@
 
 // Forced HMR Refresh: 1
 import React from "react";
-import { LayoutGrid, Globe, Shield, MessageSquare, Trash2 } from "lucide-react";
+import { LayoutGrid, Trash2, X } from "lucide-react";
 import { JSONEditor } from "../JSONEditor";
 import { Service } from "@/lib/features/did/types";
 
@@ -43,31 +43,35 @@ export function DIDDocumentSection({
           {services.map((service) => (
             <div
               key={service.id}
-              className="flex flex-col items-center justify-center gap-2 w-40 h-28 border border-white dark:border-slate-800 rounded-md bg-white dark:bg-slate-950 shadow-sm relative group"
+              className="flex flex-col p-4 w-48 h-32 border border-slate-300 dark:border-slate-700 rounded-md bg-[#cbd5e1]/50 dark:bg-slate-800 shadow-sm relative group"
             >
-              <div className="size-8 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center border border-slate-100 dark:border-slate-800">
-                {service.type === "LinkedDomains" ? (
-                  <Globe className="size-4 text-slate-500" />
-                ) : service.type === "DIDCommMessaging" ? (
-                  <MessageSquare className="size-4 text-slate-500" />
-                ) : (
-                  <Shield className="size-4 text-slate-500" />
-                )}
+              <div className="space-y-1 overflow-hidden">
+                <div className="space-y-0.5">
+                  <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                    Type:
+                  </p>
+                  <p className="text-[12px] font-mono font-bold text-slate-700 dark:text-slate-200 truncate">
+                    {service.type}
+                  </p>
+                </div>
+
+                <div className="space-y-0.5 pt-1">
+                  <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                    Service endpoint:
+                  </p>
+                  <p className="text-[12px] font-mono font-bold text-slate-700 dark:text-slate-200 truncate">
+                    {typeof service.serviceEndpoint === 'string' ? service.serviceEndpoint : JSON.stringify(service.serviceEndpoint)}
+                  </p>
+                </div>
               </div>
-              <span className="text-slate-800 dark:text-slate-200 font-bold text-[10px] truncate max-w-[80%] uppercase tracking-tight">
-                {service.id.replace(/^#/, "")}
-              </span>
-              <span className="text-slate-400 dark:text-slate-500 text-[9px] font-medium">
-                {service.type}
-              </span>
 
               {onRemoveService && (
                 <button
                   title="remove service"
                   onClick={() => onRemoveService(service.id)}
-                  className="absolute top-2 right-2 p-1 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-2 right-2 p-1 text-slate-500 hover:text-red-500 transition-colors"
                 >
-                  <Trash2 size={12} />
+                  <X size={16} />
                 </button>
               )}
             </div>

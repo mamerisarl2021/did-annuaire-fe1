@@ -4,9 +4,13 @@ import { Service, ServiceType } from "@/lib/features/did/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-
-// Forced HMR Refresh: 4
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ServiceModalProps {
   isOpen: boolean;
@@ -16,7 +20,7 @@ interface ServiceModalProps {
 
 export function ServiceModal({ isOpen, onClose, onAdd }: ServiceModalProps) {
   const [serviceType, setServiceType] = useState<ServiceType>("DecentralizedWebNode");
-  const [serviceId, setServiceId] = useState("#myservice");
+  const [serviceId, setServiceId] = useState("");
   const [serviceEndpoint, setServiceEndpoint] = useState("");
 
   const handleAdd = () => {
@@ -26,7 +30,7 @@ export function ServiceModal({ isOpen, onClose, onAdd }: ServiceModalProps) {
         type: serviceType,
         serviceEndpoint,
       });
-      setServiceId("#myservice");
+      setServiceId("");
       setServiceEndpoint("");
       onClose();
     }
@@ -69,30 +73,21 @@ export function ServiceModal({ isOpen, onClose, onAdd }: ServiceModalProps) {
           <div className="space-y-6">
             <div className="space-y-3">
               <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">
-                Service type: <span className="font-medium text-slate-500 ml-1">{serviceType}</span>
+                Service type
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(
-                  ["DIDCommMessaging", "DecentralizedWebNode", "LinkedDomains"] as ServiceType[]
-                ).map((type) => {
-                  const isSelected = serviceType === type;
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setServiceType(type)}
-                      className={cn(
-                        "h-11 px-2 text-[13px] font-medium transition-all rounded-[3px] border",
-                        isSelected
-                          ? "bg-[#2c3e50] text-white border-[#2c3e50] font-bold shadow-md"
-                          : "bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-800 hover:border-slate-300"
-                      )}
-                    >
-                      {type}
-                    </button>
-                  );
-                })}
-              </div>
+              <Select
+                value={serviceType}
+                onValueChange={(value) => setServiceType(value as ServiceType)}
+              >
+                <SelectTrigger className="w-full h-11 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-[3px] shadow-sm">
+                  <SelectValue placeholder="Select service type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DIDCommMessaging">DIDCommMessaging</SelectItem>
+                  <SelectItem value="DecentralizedWebNode">DecentralizedWebNode</SelectItem>
+                  <SelectItem value="LinkedDomains">LinkedDomains</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-3">
@@ -137,9 +132,9 @@ export function ServiceModal({ isOpen, onClose, onAdd }: ServiceModalProps) {
             <Button
               onClick={handleAdd}
               disabled={!serviceEndpoint || !serviceId}
-              className="bg-white hover:bg-slate-50 text-slate-800 font-medium border border-slate-300 dark:border-slate-700 px-6 h-10 rounded-[3px]"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium border-none px-6 h-10 rounded-[3px] disabled:bg-blue-400 disabled:opacity-50"
             >
-              Add Service
+              Save
             </Button>
           </div>
         </div>

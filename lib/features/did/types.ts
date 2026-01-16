@@ -2,6 +2,13 @@ export type MethodType = "WEB";
 
 export type ServiceType = "DIDCommMessaging" | "DecentralizedWebNode" | "LinkedDomains";
 
+export type OptionKey =
+  | "authentication"
+  | "assertionMethod"
+  | "keyAgreement"
+  | "capabilityInvocation"
+  | "capabilityDelegation";
+
 export interface Service {
   id: string;
   type: ServiceType;
@@ -43,9 +50,16 @@ export interface DID {
 
 export type TabType = "request" | "response" | "error";
 
+export type DIDMode = "create" | "update" | "resolve";
+
 export type OperationType = "CREATE" | "UPDATE" | "DEACTIVATE";
+
 export interface CreateDIDOptions {
-  clientSecretMode?: boolean;
+  authentication?: string[];
+  assertionMethod?: string[];
+  keyAgreement?: string[];
+  capabilityInvocation?: string[];
+  capabilityDelegation?: string[];
   [key: string]: unknown;
 }
 

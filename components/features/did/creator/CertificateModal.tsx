@@ -6,6 +6,14 @@ import { Input } from "@/components/ui/input";
 import { VerificationMethod } from "@/lib/features/did/types";
 import { cn } from "@/lib/utils";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 interface CertificateModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -14,13 +22,20 @@ interface CertificateModalProps {
 
 export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModalProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [certificateType, setCertificateType] = useState<"PEM" | "DER" | "P12" | "JWK">("PEM");
+  const [certificateType, setCertificateType] = useState<"PEM" | "DER" | "PKCS7" | "PKCS12" | "JWK">("PEM");
   const [password, setPassword] = useState("");
   const [extractedKeys, setExtractedKeys] = useState<VerificationMethod[]>([]);
+  const [error, setError] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (selectedFile: File) => {
+    if (certificateType === "JWK" && !selectedFile.name.toLowerCase().endsWith(".pem")) {
+      setError("JWK requires a .pem public key file.");
+      setFile(null);
+      return;
+    }
+    setError("");
     setFile(selectedFile);
     simulateKeyExtraction();
   };
@@ -113,28 +128,23 @@ export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModal
           <div className="space-y-6">
             <div className="space-y-3">
               <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">
-                Certificate type: <span className="font-medium text-slate-500 ml-1">{certificateType}</span>
+                Certificate type
               </label>
-              <div className="grid grid-cols-4 gap-2">
-                {(["PEM", "DER", "P12", "JWK"] as const).map((type) => {
-                  const isSelected = certificateType === type;
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setCertificateType(type)}
-                      className={cn(
-                        "h-11 px-2 text-[13px] font-medium transition-all rounded-[3px] border",
-                        isSelected
-                          ? "bg-[#2c3e50] text-white border-[#2c3e50] font-bold shadow-md"
-                          : "bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-800 hover:border-slate-300"
-                      )}
-                    >
-                      {type}
-                    </button>
-                  );
-                })}
-              </div>
+              <Select
+                value={certificateType}
+                onValueChange={(value) => setCertificateType(value as any)}
+              >
+                <SelectTrigger className="w-full h-11 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-[3px] shadow-sm font-medium">
+                  <SelectValue placeholder="Select certificate type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PEM">PEM</SelectItem>
+                  <SelectItem value="DER">DER</SelectItem>
+                  <SelectItem value="PKCS7">PKCS7</SelectItem>
+                  <SelectItem value="PKCS12">PKCS12</SelectItem>
+                  <SelectItem value="JWK">JWK</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-3">
@@ -159,7 +169,7 @@ export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModal
                   ref={fileInputRef}
                   type="file"
                   onChange={handleFileChange}
-                  accept=".pem,.der,.p12,.pfx,.jwk,.json"
+                  accept={certificateType === "JWK" ? ".pem" : ".pem,.der,.p12,.pfx,.p7b,.json"}
                   className="hidden"
                 />
 
@@ -179,8 +189,9 @@ export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModal
                     {file ? file.name : "Click to upload or drag and drop"}
                   </p>
                   <p className="text-[12px] text-slate-400 mt-1">
-                    {file ? `${(file.size / 1024).toFixed(2)} KB` : "PEM, DER, P12, or JWK files"}
+                    {file ? `${(file.size / 1024).toFixed(2)} KB` : certificateType === "JWK" ? "Public key file (.pem) only" : "PEM, DER, PKCS7, or PKCS12 files"}
                   </p>
+                  {error && <p className="text-[11px] font-bold text-red-500 mt-2 uppercase tracking-wider">{error}</p>}
                 </div>
 
                 {file && (
@@ -199,7 +210,7 @@ export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModal
               </div>
             </div>
 
-            {(certificateType === "P12" || certificateType === "DER") && (
+            {(certificateType === "PKCS12" || certificateType === "DER") && (
               <div className="space-y-3">
                 <label className="text-[13px] font-bold text-slate-700 dark:text-slate-300">
                   Password (if encrypted)
@@ -251,7 +262,7 @@ export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModal
               disabled={extractedKeys.length === 0}
               className="bg-white hover:bg-slate-50 text-slate-800 font-medium border border-slate-300 dark:border-slate-700 px-6 h-10 rounded-[3px]"
             >
-              Import Keys
+              Save
             </Button>
           </div>
         </div>

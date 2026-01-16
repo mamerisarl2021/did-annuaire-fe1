@@ -67,11 +67,9 @@ class LoggerService {
       error,
     };
 
-    // In development, use console for immediate feedback
     if (this.isDevelopment) {
       this.logToConsole(entry);
     } else {
-      // In production, send to monitoring service
       this.logToMonitoringService(entry);
     }
   }
@@ -98,29 +96,9 @@ class LoggerService {
     }
   }
 
-  /**
-   * Send logs to monitoring service (production)
-   * This is a placeholder for integration with services like:
-   * - Sentry
-   * - DataDog
-   * - CloudWatch
-   * - LogRocket
-   * - New Relic
-   */
+ 
   private logToMonitoringService(entry: LogEntry): void {
-    // TODO: Integrate with your monitoring service of choice
-    // For now, still log to console but in a structured format
-    // that can be picked up by log aggregation tools
 
-    // Example: If using Sentry
-    // if (entry.level === 'error' && entry.error) {
-    //   Sentry.captureException(entry.error, {
-    //     contexts: { custom: entry.context },
-    //     level: 'error',
-    //   });
-    // }
-
-    // Fallback to console in structured format
     console[entry.level](
       JSON.stringify({
         ...entry,
@@ -136,5 +114,4 @@ class LoggerService {
   }
 }
 
-// Export singleton instance
 export const logger = new LoggerService();

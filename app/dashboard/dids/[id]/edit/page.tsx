@@ -9,14 +9,11 @@ import { DIDCreator } from "@/components/features/did/creator/DIDCreator";
 import { didService } from "@/lib/features/did/services";
 import { DID } from "@/lib/features/did/types";
 import { useToast } from "@/components/ui/use-toast";
-import { useDIDCreator } from "@/lib/features/did/hooks/useDIDCreator";
 
 export default function EditDIDPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const creator = useDIDCreator();
-  const { loadDID } = creator;
 
   const [did, setDid] = useState<DID | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +26,6 @@ export default function EditDIDPage() {
         const data = await didService.getDIDById(didId);
         if (data) {
           setDid(data);
-          loadDID(data);
         } else {
           toast({
             title: "NotFound",
@@ -46,7 +42,7 @@ export default function EditDIDPage() {
     };
 
     fetchDID();
-  }, [didId, router, toast, loadDID]);
+  }, [didId, router, toast]);
 
   if (isLoading) {
     return (
@@ -86,9 +82,8 @@ export default function EditDIDPage() {
 
       <div className="bg-white dark:bg-slate-950 rounded-2xl border shadow-sm overflow-hidden">
         <DIDCreator
-          {...creator}
-          isEditing={true}
-          editingDidId={did.id}
+          mode="update"
+          initialDid={did}
           onClose={() => router.push("/dashboard/dids")}
         />
       </div>

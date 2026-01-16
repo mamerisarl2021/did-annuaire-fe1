@@ -34,7 +34,7 @@ export default function CreateDIDPage() {
       </div>
 
       <div className="bg-white dark:bg-slate-950 rounded-2xl border shadow-sm overflow-hidden">
-        <DIDCreator />
+        <DIDCreator mode="create" />
       </div>
     </div>
   );

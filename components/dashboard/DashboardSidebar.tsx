@@ -30,8 +30,8 @@ export function DashboardSidebar({ className }: { className?: string }) {
       roles: ["SUPER_USER"],
     },
     {
-      title: "Logs",
-      href: "/dashboard/superuser/logs",
+      title: "Audit",
+      href: "/dashboard/superuser/audit",
       icon: FileText,
       roles: ["SUPER_USER"],
     },

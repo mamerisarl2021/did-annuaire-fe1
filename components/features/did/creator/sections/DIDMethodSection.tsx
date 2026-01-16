@@ -1,79 +1,67 @@
 "use client";
 
 import React from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { MethodType } from "@/lib/features/did/types";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { DIDMode } from "@/lib/features/did/types";
 
 interface DIDMethodSectionProps {
-  selectedMethod: MethodType;
-  onMethodSelect: (method: MethodType) => void;
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+  logicalIdentifier: string;
+  onLogicalIdentifierChange: (id: string) => void;
+  mode: DIDMode;
 }
 
-const methods: MethodType[] = ["WEB"];
-
-const METHOD_DESCRIPTIONS: Record<string, string> = {
+const METHOD_DESCRIPTIONS = {
   WEB: "DID:WEB is a popular DID method that only requires DNS and web servers. It supports full DID document extensibility, but has drawbacks with regard to decentralization and verifiability.",
 };
 
 export function DIDMethodSection({
-  selectedMethod,
-  onMethodSelect,
-  isOpen,
-  onOpenChange,
+  logicalIdentifier,
+  onLogicalIdentifierChange,
+  mode,
 }: DIDMethodSectionProps) {
+  const isReadOnly = mode === "resolve";
+
   return (
     <div className="bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-      <button
-        type="button"
-        onClick={() => onOpenChange(!isOpen)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-[#cbd5e1] dark:bg-slate-900 group transition-colors hover:bg-[#b0bdcc] dark:hover:bg-slate-800 rounded-lg"
-      >
-        <span className="text-slate-700 dark:text-slate-300 font-bold text-[13px] uppercase tracking-wide">
-          Select a method.
-        </span>
-        {isOpen ? (
-          <ChevronUp className="size-5 text-slate-500" />
-        ) : (
-          <ChevronDown className="size-5 text-slate-500" />
-        )}
-      </button>
+      <div className="px-8 py-6 space-y-6">
+        <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800 dark:text-slate-200 border-l-4 border-blue-600 pl-4">
+          DID Discovery
+        </h3>
 
-      {isOpen && (
-        <div className="p-6 bg-[#cbd5e1]/50 dark:bg-slate-900/30 animate-in slide-in-from-top-1 duration-200">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {methods.map((method) => {
-              const isSelected = selectedMethod === method;
-              return (
-                <Button
-                  key={method}
-                  type="button"
-                  variant="secondary"
-                  onClick={() => onMethodSelect(method)}
-                  className={cn(
-                    "h-11 font-bold text-xs rounded-md border-0 transition-all",
-                    isSelected
-                      ? "bg-[#64748b] text-white shadow-inner"
-                      : "bg-[#94a3b8] text-slate-100 hover:bg-[#64748b]"
-                  )}
-                >
-                  {method}
-                </Button>
-              );
-            })}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-3">
+            <label className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              DID Method
+            </label>
+            <div className="h-12 px-4 flex items-center bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md font-mono text-sm text-slate-600 dark:text-slate-400 cursor-not-allowed">
+              did:web
+            </div>
+            <p className="text-[10px] text-slate-400 font-medium">
+              Statically fixed to did:web for this system.
+            </p>
           </div>
-          <div className="mt-8 p-4 bg-white/50 dark:bg-slate-950/50 border border-white/60 dark:border-slate-800 rounded-lg text-slate-600 dark:text-slate-400 text-xs font-medium leading-relaxed">
-            {selectedMethod && METHOD_DESCRIPTIONS[selectedMethod] ? (
-              METHOD_DESCRIPTIONS[selectedMethod]
-            ) : (
-              "Select a method to see its description."
-            )}
+
+          <div className="space-y-3">
+            <label className="text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              Logical Identifier
+            </label>
+            <Input
+              value={logicalIdentifier}
+              onChange={(e) => onLogicalIdentifierChange(e.target.value)}
+              placeholder="domain.com"
+              disabled={isReadOnly}
+              className="h-12 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 rounded-md font-medium text-slate-900 dark:text-slate-100 shadow-sm focus:ring-2 focus:ring-blue-500/20 transition-all"
+            />
+            <p className="text-[10px] text-slate-500 font-medium">
+              The domain or path where the DID document will be hosted.
+            </p>
           </div>
         </div>
-      )}
+
+        <div className="p-4 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50 rounded-lg text-blue-700/80 dark:text-blue-400/80 text-xs font-medium leading-relaxed">
+          {METHOD_DESCRIPTIONS.WEB}
+        </div>
+      </div>
     </div>
   );
 }
