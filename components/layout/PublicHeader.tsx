@@ -1,44 +1,84 @@
 "use client";
 
-import { Lock, Menu } from "lucide-react";
+import { Home, Lock, LogIn, LogOut, Menu, Search, UserPlus, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { UserMenu } from "@/lib/features/auth/components/UserMenu";
+import { authService } from "@/lib/features/auth/services/auth.service";
 
 export function PublicHeader() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check if user is authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await authService.getCurrentUser();
+        setIsAuthenticated(!!user);
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo / Brand */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <Lock className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold text-foreground">DID Annuaire</span>
+          <span className="text-lg font-semibold text-foreground tracking-tight">DID Annuaire</span>
         </Link>
 
         {/* Desktop Navigation Links */}
         <nav className="hidden items-center gap-1 md:flex">
-          <Button variant="ghost" asChild>
-            <Link href="/register">Register Organization</Link>
+          <Button variant="ghost" asChild className="gap-2">
+            <Link href="/">
+              <Home className="size-4" />
+              Home
+            </Link>
           </Button>
-          <Button variant="ghost" asChild>
-            <Link href="/verify">Verify DID</Link>
+          <Button variant="ghost" asChild className="gap-2">
+            <Link href="/auth/register">
+              <UserPlus className="size-4" />
+              Register
+            </Link>
+          </Button>
+          <Button variant="ghost" asChild className="gap-2">
+            <Link href="/verify">
+              <Search className="size-4" />
+              Verify DID
+            </Link>
           </Button>
         </nav>
 
-        {/* Desktop Login Button */}
+        {/* Desktop: UserMenu if authenticated, Login button if not */}
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" asChild>
-            <Link href="/login">Login</Link>
-          </Button>
+          {isAuthenticated ? (
+            <UserMenu />
+          ) : (
+            <Button variant="outline" asChild className="gap-2">
+              <Link href="/auth/login">
+                <LogIn className="size-4" />
+                Login
+              </Link>
+            </Button>
+          )}
         </div>
 
-        {/* Mobile Menu Trigger */}
-        <div className="flex bg-background md:hidden">
+        {/* Mobile Menu */}
+        <div className="flex items-center gap-2 md:hidden">
+          {/* Show UserMenu on mobile if authenticated */}
+          {isAuthenticated && <UserMenu />}
+
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -46,36 +86,92 @@ export function PublicHeader() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <SheetHeader>
-                <SheetTitle className="text-left">Menu</SheetTitle>
+                <SheetTitle className="text-left flex items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
+                    <Lock className="h-3 w-3 text-primary-foreground" />
+                  </div>
+                  Navigation
+                </SheetTitle>
               </SheetHeader>
-              <div className="mt-8 flex flex-col gap-4">
+              <div className="mt-8 flex flex-col gap-2">
                 <Button
                   variant="ghost"
                   asChild
                   onClick={() => setIsOpen(false)}
-                  className="justify-start"
+                  className="justify-start gap-3 h-11"
                 >
-                  <Link href="/register">Register Organization</Link>
+                  <Link href="/">
+                    <Home className="size-4 text-muted-foreground" />
+                    <span>Home</span>
+                  </Link>
                 </Button>
                 <Button
                   variant="ghost"
                   asChild
                   onClick={() => setIsOpen(false)}
-                  className="justify-start"
+                  className="justify-start gap-3 h-11"
                 >
-                  <Link href="/verify">Verify DID</Link>
+                  <Link href="/auth/register">
+                    <UserPlus className="size-4 text-muted-foreground" />
+                    <span>Register Organization</span>
+                  </Link>
                 </Button>
+                <Button
+                  variant="ghost"
+                  asChild
+                  onClick={() => setIsOpen(false)}
+                  className="justify-start gap-3 h-11"
+                >
+                  <Link href="/verify">
+                    <Search className="size-4 text-muted-foreground" />
+                    <span>Verify DID</span>
+                  </Link>
+                </Button>
+
                 <div className="my-2 border-t border-border" />
-                <Button
-                  variant="outline"
-                  asChild
-                  onClick={() => setIsOpen(false)}
-                  className="justify-start"
-                >
-                  <Link href="/login">Login</Link>
-                </Button>
+
+                {isAuthenticated ? (
+                  <>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      onClick={() => setIsOpen(false)}
+                      className="justify-start gap-3 h-11"
+                    >
+                      <Link href="/dashboard">
+                        <LayoutDashboard className="size-4 text-muted-foreground" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        authService.logout();
+                        setIsAuthenticated(false);
+                        setIsOpen(false);
+                        router.push('/');
+                      }}
+                      className="justify-start gap-3 h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <LogOut className="size-4" />
+                      <span>Logout</span>
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    variant="default"
+                    asChild
+                    onClick={() => setIsOpen(false)}
+                    className="justify-start gap-3 h-11"
+                  >
+                    <Link href="/auth/login">
+                      <LogIn className="size-4" />
+                      <span>Login to Account</span>
+                    </Link>
+                  </Button>
+                )}
               </div>
             </SheetContent>
           </Sheet>

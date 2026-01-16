@@ -11,23 +11,23 @@ export default function NotFound() {
           <p className="text-8xl font-bold tracking-tight text-primary/80">404</p>
 
           {/* Title */}
-          <h1 className="text-2xl font-semibold text-foreground">Page introuvable</h1>
+          <h1 className="text-2xl font-semibold text-foreground">Page not found</h1>
 
           {/* Description - One line */}
           <p className="text-muted-foreground">
-            La page demandée n&apos;existe pas ou a été déplacée.
+            The requested page does not exist or has been moved.
           </p>
         </CardHeader>
 
         <CardContent className="space-y-3 px-8 pb-10 pt-6">
           {/* Primary Action */}
           <Button asChild className="w-full" size="lg">
-            <Link href="/">Retour à l&apos;accueil</Link>
+            <Link href="/">Back to Home</Link>
           </Button>
 
           {/* Secondary Action */}
           <Button asChild variant="outline" className="w-full" size="lg">
-            <Link href="/verify">Verify DID</Link>
+            <Link href="/contact">Contact Us</Link>
           </Button>
         </CardContent>
       </Card>

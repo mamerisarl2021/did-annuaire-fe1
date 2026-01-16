@@ -19,7 +19,7 @@ export function CTASection() {
         {/* Action buttons */}
         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Button size="lg" asChild className="w-full sm:w-auto">
-            <Link href="/register">Register Your Organization</Link>
+            <Link href="/auth/register">Register Your Organization</Link>
           </Button>
           <Button
             variant="ghost"
