@@ -13,7 +13,7 @@ export function useAuditData(params: AuditListParams = {}) {
     const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
 
-    // Destructure params to avoid dependency on object reference
+    // Destructure params to avoid object reference comparison issues
     const {
         category,
         action,
@@ -41,12 +41,8 @@ export function useAuditData(params: AuditListParams = {}) {
                 q,
                 limit,
                 offset,
-                organization_id,
+                organization_id: user?.role === "SUPER_USER" ? organization_id : undefined,
             };
-
-            if (user?.role !== "SUPER_USER") {
-                delete fetchParams.organization_id;
-            }
 
             const [actionsRes, statsRes] = await Promise.all([
                 auditService.getAuditActions(fetchParams),
