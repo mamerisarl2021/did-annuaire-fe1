@@ -55,8 +55,7 @@ export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
   try {
     const doc = JSON.parse(didDocument);
     services = doc.service || [];
-  } catch {
-  }
+  } catch {}
 
   const handleRemoveService = (serviceId: string) => {
     try {
@@ -68,9 +67,7 @@ export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
     }
   };
 
-  const responseElement = response ? (
-    <DIDResponseSection response={response} />
-  ) : null;
+  const responseElement = response ? <DIDResponseSection response={response} /> : null;
 
   const errorElement = error ? (
     <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 p-6 rounded-lg">

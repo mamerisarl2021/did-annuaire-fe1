@@ -22,7 +22,9 @@ interface CertificateModalProps {
 
 export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModalProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [certificateType, setCertificateType] = useState<"PEM" | "DER" | "PKCS7" | "PKCS12" | "JWK">("PEM");
+  const [certificateType, setCertificateType] = useState<
+    "PEM" | "DER" | "PKCS7" | "PKCS12" | "JWK"
+  >("PEM");
   const [password, setPassword] = useState("");
   const [extractedKeys, setExtractedKeys] = useState<VerificationMethod[]>([]);
   const [error, setError] = useState("");
@@ -120,7 +122,11 @@ export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModal
                 Add Certificate
               </DialogTitle>
             </div>
-            <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1" title="close dialog">
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-600 p-1"
+              title="close dialog"
+            >
               <X size={20} />
             </button>
           </DialogHeader>
@@ -189,9 +195,17 @@ export function CertificateModal({ isOpen, onClose, onUpload }: CertificateModal
                     {file ? file.name : "Click to upload or drag and drop"}
                   </p>
                   <p className="text-[12px] text-slate-400 mt-1">
-                    {file ? `${(file.size / 1024).toFixed(2)} KB` : certificateType === "JWK" ? "Public key file (.pem) only" : "PEM, DER, PKCS7, or PKCS12 files"}
+                    {file
+                      ? `${(file.size / 1024).toFixed(2)} KB`
+                      : certificateType === "JWK"
+                        ? "Public key file (.pem) only"
+                        : "PEM, DER, PKCS7, or PKCS12 files"}
                   </p>
-                  {error && <p className="text-[11px] font-bold text-red-500 mt-2 uppercase tracking-wider">{error}</p>}
+                  {error && (
+                    <p className="text-[11px] font-bold text-red-500 mt-2 uppercase tracking-wider">
+                      {error}
+                    </p>
+                  )}
                 </div>
 
                 {file && (

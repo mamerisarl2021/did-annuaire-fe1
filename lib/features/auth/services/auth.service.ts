@@ -141,7 +141,11 @@ export const authService = {
         role?: string;
         organization_id?: string;
       }>(token);
-      logger.debug("JWT token decoded", { userId: decoded.user_id || decoded.sub, email: decoded.email, role: decoded.role });
+      logger.debug("JWT token decoded", {
+        userId: decoded.user_id || decoded.sub,
+        email: decoded.email,
+        role: decoded.role,
+      });
 
       let role = decoded.role;
       let email = decoded.email;

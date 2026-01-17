@@ -78,10 +78,11 @@ export function StatsCardsRow({
 
   return (
     <div
-      className={`grid gap-4 ${cardsToRender.length === 5
+      className={`grid gap-4 ${
+        cardsToRender.length === 5
           ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
           : "grid-cols-1 sm:grid-cols-3"
-        }`}
+      }`}
     >
       {cardsToRender.map((card) => (
         <StatCard

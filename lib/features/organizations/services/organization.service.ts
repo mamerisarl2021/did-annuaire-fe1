@@ -29,9 +29,12 @@ export const organizationService = {
    * Get organization details
    */
   async getOrganizationDetails(id: string): Promise<OrganizationListItem> {
-    const response = await httpClient.get<Record<string, unknown>>(API_ENDPOINTS.ORGANIZATIONS.DETAILS(id), {
-      requiresAuth: true,
-    });
+    const response = await httpClient.get<Record<string, unknown>>(
+      API_ENDPOINTS.ORGANIZATIONS.DETAILS(id),
+      {
+        requiresAuth: true,
+      }
+    );
     return organizationMapper.toDomain(response);
   },
 
@@ -70,9 +73,12 @@ export const organizationService = {
    * Get organizations stats
    */
   async getOrganizationsStats(): Promise<OrganizationStats> {
-    const response = await httpClient.get<Record<string, unknown>>(API_ENDPOINTS.ORGANIZATIONS.STATS, {
-      requiresAuth: true,
-    });
+    const response = await httpClient.get<Record<string, unknown>>(
+      API_ENDPOINTS.ORGANIZATIONS.STATS,
+      {
+        requiresAuth: true,
+      }
+    );
     return organizationMapper.toStats(response);
   },
 };

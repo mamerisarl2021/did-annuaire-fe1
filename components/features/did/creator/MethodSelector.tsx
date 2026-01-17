@@ -10,9 +10,7 @@ interface MethodSelectorProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const methods: MethodType[] = [
-  "WEB",
-];
+const methods: MethodType[] = ["WEB"];
 
 export function MethodSelector({
   selectedMethod,

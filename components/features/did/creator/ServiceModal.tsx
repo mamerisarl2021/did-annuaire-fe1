@@ -65,7 +65,11 @@ export function ServiceModal({ isOpen, onClose, onAdd }: ServiceModalProps) {
                 Add Service
               </DialogTitle>
             </div>
-            <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1" title="close dialog">
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-600 p-1"
+              title="close dialog"
+            >
               <X size={20} />
             </button>
           </DialogHeader>
