@@ -9,19 +9,19 @@ import { DIDCreator } from "@/components/features/did/creator/DIDCreator";
 import { didService } from "@/lib/features/did/services";
 import { DID } from "@/lib/features/did/types";
 import { useToast } from "@/components/ui/use-toast";
-import { useDIDCreator } from "@/lib/features/did/hooks/useDIDCreator";
+import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 
 export default function EditDIDPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const creator = useDIDCreator();
-  const { loadDID } = creator;
+  const { user, loading: authLoading } = useAuth();
 
   const [did, setDid] = useState<DID | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDidLoading, setIsDidLoading] = useState(true);
 
   const didId = decodeURIComponent(params.id as string);
+  const organizationId = user?.organization_id;
 
   useEffect(() => {
     const fetchDID = async () => {
@@ -29,7 +29,6 @@ export default function EditDIDPage() {
         const data = await didService.getDIDById(didId);
         if (data) {
           setDid(data);
-          loadDID(data);
         } else {
           toast({
             title: "NotFound",
@@ -41,14 +40,14 @@ export default function EditDIDPage() {
       } catch (error) {
         console.error("Error fetching DID:", error);
       } finally {
-        setIsLoading(false);
+        setIsDidLoading(false);
       }
     };
 
     fetchDID();
-  }, [didId, router, toast, loadDID]);
+  }, [didId, router, toast]);
 
-  if (isLoading) {
+  if (authLoading || isDidLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 className="size-8 animate-spin text-muted-foreground" />
@@ -85,12 +84,18 @@ export default function EditDIDPage() {
       </div>
 
       <div className="bg-white dark:bg-slate-950 rounded-2xl border shadow-sm overflow-hidden">
-        <DIDCreator
-          {...creator}
-          isEditing={true}
-          editingDidId={did.id}
-          onClose={() => router.push("/dashboard/dids")}
-        />
+        {organizationId ? (
+          <DIDCreator
+            mode="update"
+            initialDid={did}
+            organizationId={organizationId}
+            ownerId={user?.id}
+          />
+        ) : (
+          <div className="p-8 text-center text-red-500">
+            Missing organization ID. Please reload.
+          </div>
+        )}
       </div>
     </div>
   );

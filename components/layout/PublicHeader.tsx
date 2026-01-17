@@ -55,7 +55,7 @@ export function PublicHeader() {
           <Button variant="ghost" asChild className="gap-2">
             <Link href="/verify">
               <Search className="size-4" />
-              Verify DID
+              Resolve DID
             </Link>
           </Button>
         </nav>
@@ -126,7 +126,7 @@ export function PublicHeader() {
                 >
                   <Link href="/verify">
                     <Search className="size-4 text-muted-foreground" />
-                    <span>Verify DID</span>
+                    <span>Resolve DID</span>
                   </Link>
                 </Button>
 
@@ -151,7 +151,7 @@ export function PublicHeader() {
                         authService.logout();
                         setIsAuthenticated(false);
                         setIsOpen(false);
-                        router.push('/');
+                        router.push("/");
                       }}
                       className="justify-start gap-3 h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >

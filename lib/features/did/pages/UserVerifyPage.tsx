@@ -41,8 +41,8 @@ export default function UserVerifyPage() {
         <div className="w-full max-w-lg space-y-6">
           <Card className="shadow-lg">
             <CardHeader className="text-center space-y-1">
-              <CardTitle className="text-2xl font-bold">DID Verification</CardTitle>
-              <CardDescription>Public decentralized identity verification tool</CardDescription>
+              <CardTitle className="text-2xl font-bold">DID Resolve</CardTitle>
+              <CardDescription>Public decentralized identity resolution tool</CardDescription>
             </CardHeader>
             <CardContent>
               <DidVerifyForm
@@ -58,10 +58,7 @@ export default function UserVerifyPage() {
           <div className="space-y-4">
             {state.status === "error" && <DidErrorCard message={state.error} />}
             {state.status === "success" && (
-              <DidResultCard
-                result={state.data}
-                onCopy={handleCopy}
-              />
+              <DidResultCard result={state.data} onCopy={handleCopy} />
             )}
           </div>
         </div>

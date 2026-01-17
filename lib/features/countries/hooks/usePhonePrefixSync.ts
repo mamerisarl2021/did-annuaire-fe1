@@ -19,10 +19,7 @@ export function usePhonePrefixSync<T extends { phone?: string }>({
       !currentPhone.trim() || (oldPrefix && currentPhone.trim() === oldPrefix.trim());
 
     if (isUnmodified) {
-      form.setValue(
-        "phone" as Path<T>,
-        `${newCountry.phonePrefix} ` as PathValue<T, Path<T>>
-      );
+      form.setValue("phone" as Path<T>, `${newCountry.phonePrefix} ` as PathValue<T, Path<T>>);
     }
   };
 

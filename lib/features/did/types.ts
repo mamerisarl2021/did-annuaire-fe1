@@ -1,20 +1,13 @@
-export type MethodType =
-  | "BTCR2"
-  | "CHEQD"
-  | "EBSI"
-  | "ETHR"
-  | "INDY"
-  | "ION"
-  | "JWK"
-  | "KEY"
-  | "KSCIRC"
-  | "LING"
-  | "PKH"
-  | "V1"
-  | "WEB"
-  | "WEBVH";
+export type MethodType = "WEB";
 
 export type ServiceType = "DIDCommMessaging" | "DecentralizedWebNode" | "LinkedDomains";
+
+export type OptionKey =
+  | "authentication"
+  | "assertionMethod"
+  | "keyAgreement"
+  | "capabilityInvocation"
+  | "capabilityDelegation";
 
 export interface Service {
   id: string;
@@ -50,6 +43,8 @@ export interface DID {
   didDocument: DIDDocument;
   created: string;
   updated?: string;
+  organization_id?: string;
+  owner_id?: string;
   metadata?: {
     [key: string]: unknown;
   };
@@ -57,9 +52,16 @@ export interface DID {
 
 export type TabType = "request" | "response" | "error";
 
+export type DIDMode = "create" | "update" | "resolve";
+
 export type OperationType = "CREATE" | "UPDATE" | "DEACTIVATE";
+
 export interface CreateDIDOptions {
-  clientSecretMode?: boolean;
+  authentication?: string[];
+  assertionMethod?: string[];
+  keyAgreement?: string[];
+  capabilityInvocation?: string[];
+  capabilityDelegation?: string[];
   [key: string]: unknown;
 }
 

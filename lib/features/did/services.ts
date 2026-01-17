@@ -1,4 +1,4 @@
-import { DID, CreateDIDRequest, CreateDIDResponse, VerificationMethod } from "./types";
+import { DID, CreateDIDRequest, CreateDIDResponse, VerificationMethod, DIDDocument } from "./types";
 
 // Mock data
 const mockDIDs: DID[] = [
@@ -9,20 +9,6 @@ const mockDIDs: DID[] = [
     didDocument: {
       "@context": ["https://www.w3.org/ns/did/v1"],
       id: "did:web:example.com",
-      verificationMethod: [],
-      authentication: [],
-      assertionMethod: [],
-      keyAgreement: [],
-      service: [],
-    },
-  },
-  {
-    id: "did:key:z6MkpTHR8VNsBxv2",
-    method: "KEY",
-    created: new Date().toISOString(),
-    didDocument: {
-      "@context": ["https://www.w3.org/ns/did/v1"],
-      id: "did:key:z6MkpTHR8VNsBxv2",
       verificationMethod: [],
       authentication: [],
       assertionMethod: [],
@@ -48,12 +34,32 @@ export const didService = {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Validate JSON (already done in hook, but good for service simulation)
     return {
       did: `did:${request.method.toLowerCase()}:${Math.random().toString(36).substring(2, 15)}`,
       didDocument: request.didDocument,
       metadata: {
         created: new Date().toISOString(),
+      },
+    };
+  },
+
+  async updateDID(request: {
+    id: string;
+    didDocument: DIDDocument;
+    options: Record<string, unknown>;
+  }): Promise<{
+    did: string;
+    didDocument: DIDDocument;
+    metadata: { updated: string; [key: string]: unknown };
+  }> {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    return {
+      did: request.id,
+      didDocument: request.didDocument,
+      metadata: {
+        updated: new Date().toISOString(),
       },
     };
   },

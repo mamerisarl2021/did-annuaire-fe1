@@ -35,7 +35,7 @@ export function DidResultCard({ result, onCopy }: Props) {
             </CardTitle>
             <p className="font-mono text-sm text-[#5E6C84] mt-2 break-all">{result.did}</p>
           </div>
-          <Badge variant="default">Verified</Badge>
+          <Badge variant="default">Resolved</Badge>
         </div>
       </CardHeader>
 

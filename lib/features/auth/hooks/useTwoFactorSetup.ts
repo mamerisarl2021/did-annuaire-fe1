@@ -60,7 +60,8 @@ export function useTwoFactorSetup({
         onSetupComplete?.();
         return true;
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Invalid code or expired. Please try again.";
+        const message =
+          err instanceof Error ? err.message : "Invalid code or expired. Please try again.";
         setError(message);
         return false;
       } finally {

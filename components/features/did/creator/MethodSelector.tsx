@@ -10,22 +10,7 @@ interface MethodSelectorProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const methods: MethodType[] = [
-  "BTCR2",
-  "CHEQD",
-  "EBSI",
-  "ETHR",
-  "INDY",
-  "ION",
-  "JWK",
-  "KEY",
-  "KSCIRC",
-  "LING",
-  "PKH",
-  "V1",
-  "WEB",
-  "WEBVH",
-];
+const methods: MethodType[] = ["WEB"];
 
 export function MethodSelector({
   selectedMethod,
