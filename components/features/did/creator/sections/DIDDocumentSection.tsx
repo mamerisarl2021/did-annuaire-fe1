@@ -101,7 +101,11 @@ export function DIDDocumentSection({
                     JWK Extraction:
                   </p>
                   <p className="text-[12px] font-mono font-bold text-blue-700 dark:text-blue-200 truncate italic">
-                    {certificateKey.extracted_jwk.kty} ({certificateKey.extracted_jwk.crv || certificateKey.extracted_jwk.n ? "Public" : "Private"})
+                    {certificateKey.extracted_jwk.kty} (
+                    {certificateKey.extracted_jwk.crv || certificateKey.extracted_jwk.n
+                      ? "Public"
+                      : "Private"}
+                    )
                   </p>
                 </div>
               </div>

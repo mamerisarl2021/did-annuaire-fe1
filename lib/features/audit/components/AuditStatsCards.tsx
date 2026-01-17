@@ -46,9 +46,8 @@ export function AuditStatsCards({
   stats,
   activeCategory,
   onCategoryClick,
-  totalCount = 0
+  totalCount = 0,
 }: AuditStatsCardsProps) {
-
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
       {/* "All" Card */}
@@ -61,7 +60,7 @@ export function AuditStatsCards({
 
       {/* Defined Categories from documentation */}
       {AUDIT_CATEGORIES.map((catName) => {
-        const stat = stats.find(s => s.category === catName);
+        const stat = stats.find((s) => s.category === catName);
         return (
           <AuditStatCard
             key={catName}

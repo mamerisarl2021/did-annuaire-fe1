@@ -37,12 +37,14 @@ export function useDIDExecution(state: DIDState): DIDExecution {
           document_type: logicalIdentifier,
           certificate_id: certificateKey.certificate_id,
           key_id: certificateKey.key_id,
-          purposes: certificateKey.purposes,
+          purposes: state.selectedOptions,
+          owner_id: state.ownerId || "",
+          services: [],
+          keys: [],
         };
 
         const result = await didApiClient.createDID(payload);
 
-        // Handle success state (DRAFT)
         if (result.didState.state === "wait") {
           setResponse(JSON.stringify(result, null, 2));
           setActiveTab("response");
@@ -53,7 +55,6 @@ export function useDIDExecution(state: DIDState): DIDExecution {
           setActiveTab("response");
         }
       } else {
-
         const parsedDoc = JSON.parse(didDocument);
         setResponse(
           JSON.stringify(

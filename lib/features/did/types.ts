@@ -43,6 +43,8 @@ export interface DID {
   didDocument: DIDDocument;
   created: string;
   updated?: string;
+  organization_id?: string;
+  owner_id?: string;
   metadata?: {
     [key: string]: unknown;
   };

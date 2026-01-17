@@ -69,8 +69,8 @@ export interface CreateDIDPayload {
   key_id: string;
   purposes: string[];
   owner_id: string;
-  services?: string[];
-  keys?: string[];
+  services: string[];
+  keys: string[];
 }
 
 /**
@@ -81,3 +81,8 @@ export interface APIErrorResponse {
   code?: string;
   details?: unknown;
 }
+
+/**
+ * Supported DID Method (e.g., "web")
+ */
+export type DIDMethod = string;

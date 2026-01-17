@@ -2,9 +2,19 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { DIDMode } from "@/lib/features/did/types";
+import { DIDMode, MethodType } from "@/lib/features/did/types";
+import { useDIDMethods } from "@/lib/features/did/hooks/useDIDMethods";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DIDMethodSectionProps {
+  selectedMethod: MethodType;
+  onMethodChange: (method: MethodType) => void;
   logicalIdentifier: string;
   onLogicalIdentifierChange: (id: string) => void;
   mode: DIDMode;
@@ -15,10 +25,13 @@ const METHOD_DESCRIPTIONS = {
 };
 
 export function DIDMethodSection({
+  selectedMethod,
+  onMethodChange,
   logicalIdentifier,
   onLogicalIdentifierChange,
   mode,
 }: DIDMethodSectionProps) {
+  const { methods, isLoading } = useDIDMethods();
   const isReadOnly = mode === "resolve";
 
   return (
@@ -33,12 +46,35 @@ export function DIDMethodSection({
             <label className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               DID Method
             </label>
-            <div className="h-12 px-4 flex items-center bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md font-mono text-sm text-slate-600 dark:text-slate-400 cursor-not-allowed">
-              did:web
+            <div className="flex flex-col gap-1">
+              {isLoading ? (
+                <div className="h-12 px-4 flex items-center bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md font-mono text-sm animate-pulse">
+                  Loading methods...
+                </div>
+              ) : (
+                <Select
+                  value={selectedMethod.toLowerCase()}
+                  onValueChange={(val) => onMethodChange(val.toUpperCase() as MethodType)}
+                  disabled={isReadOnly}
+                >
+                  <SelectTrigger className="h-12 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 rounded-md font-mono text-sm">
+                    <SelectValue placeholder="Select method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {methods.map((method) => (
+                      <SelectItem key={method} value={method.toLowerCase()}>
+                        did:{method.toLowerCase()}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              <p className="text-[10px] text-slate-400 font-medium">
+                {isLoading
+                  ? "Fetching supported methods from backend..."
+                  : `Method: did:${selectedMethod.toLowerCase()}`}
+              </p>
             </div>
-            <p className="text-[10px] text-slate-400 font-medium">
-              Statically fixed to did:web for this system.
-            </p>
           </div>
 
           <div className="space-y-3">

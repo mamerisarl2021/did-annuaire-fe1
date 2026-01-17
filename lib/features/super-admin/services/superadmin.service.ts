@@ -9,8 +9,6 @@ import { organizationMapper } from "../mappers/organization.mapper";
 import { logger } from "@/lib/shared/services/logger.service";
 import { API_ENDPOINTS } from "@/lib/shared/config/endpoints";
 
-
-
 export const superAdminService = {
   async getOrganizations(
     params: OrganizationListParams = {}
@@ -45,7 +43,9 @@ export const superAdminService = {
 
   async getStats(): Promise<OrganizationStats> {
     try {
-      const response = await httpClient.get<Record<string, unknown>>(API_ENDPOINTS.SUPERADMIN.STATS);
+      const response = await httpClient.get<Record<string, unknown>>(
+        API_ENDPOINTS.SUPERADMIN.STATS
+      );
       return ((response.data as OrganizationStats) || response) as OrganizationStats;
     } catch (error) {
       logger.error("Failed to fetch organization stats", error, {

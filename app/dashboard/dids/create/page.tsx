@@ -6,7 +6,6 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DIDCreator } from "@/components/features/did/creator/DIDCreator";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
-import { logger } from "@/lib/shared/services/logger.service";
 
 export default function CreateDIDPage() {
   const { user, loading } = useAuth();
@@ -51,7 +50,7 @@ export default function CreateDIDPage() {
 
       <div className="bg-white dark:bg-slate-950 rounded-2xl border shadow-sm overflow-hidden">
         {organizationId ? (
-          <DIDCreator mode="create" organizationId={organizationId} />
+          <DIDCreator mode="create" organizationId={organizationId} ownerId={user?.id} />
         ) : (
           <div className="p-8 text-center text-slate-500 flex flex-col items-center gap-3">
             <p>Unable to retrieve Organization ID.</p>

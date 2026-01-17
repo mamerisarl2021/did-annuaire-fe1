@@ -18,9 +18,11 @@ export interface DIDState {
   response: string;
   error: string;
   organizationId: string;
+  ownerId: string;
   certificateKey: CertificateKey | null;
 
   setMode: (mode: DIDMode) => void;
+  setSelectedMethod: (method: MethodType) => void;
   setLogicalIdentifier: (id: string) => void;
   setDidDocument: (doc: string) => void;
   setSelectedOptions: (options: OptionKey[]) => void;
@@ -31,12 +33,13 @@ export interface DIDState {
   setResponse: (response: string) => void;
   setError: (error: string) => void;
   setOrganizationId: (id: string) => void;
+  setOwnerId: (id: string) => void;
   setCertificateKey: (key: CertificateKey | null) => void;
 }
 
 export function useDIDState(initialMode: DIDMode = "create"): DIDState {
   const [mode, setMode] = useState<DIDMode>(initialMode);
-  const [selectedMethod] = useState<MethodType>("WEB");
+  const [selectedMethod, setSelectedMethod] = useState<MethodType>("WEB");
   const [logicalIdentifier, setLogicalIdentifier] = useState("");
   const [didDocument, setDidDocument] = useState<string>(EMPTY_DID_DOCUMENT);
   const [selectedOptions, setSelectedOptions] = useState<OptionKey[]>([]);
@@ -50,6 +53,7 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
 
   // API integration state
   const [organizationId, setOrganizationId] = useState("");
+  const [ownerId, setOwnerId] = useState("");
   const [certificateKey, setCertificateKey] = useState<CertificateKey | null>(null);
 
   const toggleOption = (option: OptionKey) => {
@@ -71,8 +75,10 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
     response,
     error,
     organizationId,
+    ownerId,
     certificateKey,
     setMode,
+    setSelectedMethod,
     setLogicalIdentifier,
     setDidDocument,
     setSelectedOptions,
@@ -83,6 +89,7 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
     setResponse,
     setError,
     setOrganizationId,
+    setOwnerId,
     setCertificateKey,
   };
 }

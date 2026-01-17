@@ -39,8 +39,7 @@ export function useDIDCompilation(state: DIDState): DIDCompilation {
         } else if (response.didState.state === "error") {
           throw new Error(response.didState.reason || "Compilation failed");
         }
-      }
-      else {
+      } else {
         throw new Error("Please upload at least one certificate before compiling.");
       }
     } catch (e: unknown) {

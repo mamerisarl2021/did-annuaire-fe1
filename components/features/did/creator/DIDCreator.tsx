@@ -16,9 +16,16 @@ export interface DIDCreatorProps {
   mode: DIDMode;
   initialDid?: DID | null;
   organizationId: string;
+  ownerId?: string;
+  onClose?: () => void;
 }
 
-export function DIDCreator({ mode: initialMode, initialDid, organizationId }: DIDCreatorProps) {
+export function DIDCreator({
+  mode: initialMode,
+  initialDid,
+  organizationId,
+  ownerId,
+}: DIDCreatorProps) {
   const manager = useDIDManager(initialMode);
 
   const {
@@ -36,6 +43,7 @@ export function DIDCreator({ mode: initialMode, initialDid, organizationId }: DI
     certificateKey,
     setCertificateKey,
     setOrganizationId,
+    setOwnerId,
     handleAddService,
     loadDID,
     response,
@@ -44,12 +52,14 @@ export function DIDCreator({ mode: initialMode, initialDid, organizationId }: DI
     isCompiled,
   } = manager;
 
-  // Initialize Organization context
   useEffect(() => {
     if (organizationId) {
       setOrganizationId(organizationId);
     }
-  }, [organizationId, setOrganizationId]);
+    if (ownerId) {
+      setOwnerId(ownerId);
+    }
+  }, [organizationId, ownerId, setOrganizationId, setOwnerId]);
 
   useEffect(() => {
     if (initialDid) {
@@ -101,6 +111,8 @@ export function DIDCreator({ mode: initialMode, initialDid, organizationId }: DI
             logicalIdentifier={logicalIdentifier}
             onLogicalIdentifierChange={setLogicalIdentifier}
             mode={mode}
+            selectedMethod={manager.selectedMethod}
+            onMethodChange={manager.setSelectedMethod}
           />
 
           {/* Section: DID Document Editor */}

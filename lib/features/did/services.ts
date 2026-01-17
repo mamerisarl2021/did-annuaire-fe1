@@ -43,10 +43,14 @@ export const didService = {
     };
   },
 
-  async updateDID(request: { id: string; didDocument: DIDDocument; options: Record<string, unknown> }): Promise<{
+  async updateDID(request: {
+    id: string;
+    didDocument: DIDDocument;
+    options: Record<string, unknown>;
+  }): Promise<{
     did: string;
     didDocument: DIDDocument;
-    metadata: { updated: string;[key: string]: unknown };
+    metadata: { updated: string; [key: string]: unknown };
   }> {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1500));

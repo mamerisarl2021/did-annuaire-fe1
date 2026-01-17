@@ -11,9 +11,10 @@ interface DIDModalProps {
   isOpen: boolean;
   onClose: () => void;
   did?: DID | null;
+  organizationId: string;
 }
 
-export function DIDModal({ isOpen, onClose, did }: DIDModalProps) {
+export function DIDModal({ isOpen, onClose, did, organizationId }: DIDModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
@@ -33,7 +34,7 @@ export function DIDModal({ isOpen, onClose, did }: DIDModalProps) {
         </Button>
 
         <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-950">
-          <DIDCreator mode={did ? "update" : "create"} initialDid={did} onClose={onClose} />
+          <DIDCreator mode={did ? "update" : "create"} initialDid={did} onClose={onClose} organizationId={organizationId} />
         </div>
       </DialogContent>
     </Dialog>

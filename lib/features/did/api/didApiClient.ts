@@ -4,9 +4,10 @@ import type {
   UploadCertificateResponse,
   PreviewDIDParams,
   CreateDIDPayload,
+  DIDMethod,
 } from "../types/api.types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_API_UR;
 
 /**
  * Helper pour les headers d'authentification
@@ -94,6 +95,26 @@ export const didApiClient = {
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
       const detail = errorData.detail || errorData.message || "Create failed";
+      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
+    }
+
+    return await res.json();
+  },
+
+  /**
+   * Récupère la liste des méthodes DID supportées
+   */
+  async getDIDMethods(): Promise<DIDMethod[]> {
+    const res = await fetch(`${API_BASE}/api/version-service/didrecords/methods`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const detail = errorData.detail || errorData.message || "Failed to fetch DID methods";
       throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
     }
 

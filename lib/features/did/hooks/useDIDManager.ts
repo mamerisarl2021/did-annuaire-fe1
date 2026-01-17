@@ -58,6 +58,7 @@ export function useDIDManager(initialMode: DIDMode = "create") {
     mode: state.mode,
     setMode: state.setMode,
     selectedMethod: state.selectedMethod,
+    setSelectedMethod: state.setSelectedMethod,
     logicalIdentifier: state.logicalIdentifier,
     setLogicalIdentifier: state.setLogicalIdentifier,
     didDocument: state.didDocument,
@@ -74,6 +75,8 @@ export function useDIDManager(initialMode: DIDMode = "create") {
     // API State
     organizationId: state.organizationId,
     setOrganizationId: state.setOrganizationId,
+    ownerId: state.ownerId,
+    setOwnerId: state.setOwnerId,
     certificateKey: state.certificateKey,
     setCertificateKey: state.setCertificateKey,
 

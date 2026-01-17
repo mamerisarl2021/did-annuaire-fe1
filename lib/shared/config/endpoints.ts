@@ -32,7 +32,7 @@ export const API_ENDPOINTS = {
     REFUSE: (id: string) => `/api/superadmin/organizations/${id}/refuse`,
     TOGGLE_ACTIVATION: (id: string) => `/api/superadmin/organizations/${id}/toggle-activation`,
     DELETE: (id: string) => `/api/superadmin/organizations/${id}/delete`,
-  }
+  },
 } as const;
 
 export const getApiUrl = (endpoint: string): string => {

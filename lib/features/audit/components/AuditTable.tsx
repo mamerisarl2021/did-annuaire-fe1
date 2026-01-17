@@ -76,9 +76,7 @@ export function AuditTable({ logs, isLoading, onRowClick }: AuditTableProps) {
               <TableCell className="text-[#5e6c84] text-sm italic">
                 {log.user || "System"}
               </TableCell>
-              <TableCell className="text-[#5e6c84] text-sm">
-                {log.organization || "-"}
-              </TableCell>
+              <TableCell className="text-[#5e6c84] text-sm">{log.organization || "-"}</TableCell>
               <TableCell className="text-[#5e6c84] font-mono text-xs">{log.ip || "N/A"}</TableCell>
             </TableRow>
           ))}

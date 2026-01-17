@@ -29,7 +29,7 @@ export const authService = {
 
     tokenStorage.setAccessToken(response.access);
     tokenStorage.setRefreshToken(response.refresh);
-    
+
     return response;
   },
 
@@ -197,7 +197,9 @@ export const authService = {
               organization_id = userData.organization.id;
               logger.debug("Mapped organization_id from /me response", { organization_id });
             } else {
-              logger.warn("No organization ID found in /me response data", { userData: JSON.stringify(userData) });
+              logger.warn("No organization ID found in /me response data", {
+                userData: JSON.stringify(userData),
+              });
             }
           }
         } catch (apiError) {
