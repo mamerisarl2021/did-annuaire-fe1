@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
+  allowedDevOrigins: ["http://localhost:8000", "https://annuairedid-fe.qcdigitalhub.com"],
   output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,

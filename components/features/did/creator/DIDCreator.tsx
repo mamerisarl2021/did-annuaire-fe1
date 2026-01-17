@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useDIDManager } from "@/lib/features/did/hooks/useDIDManager";
-import { TabType, Service, DIDMode } from "@/lib/features/did/types";
+import { TabType, Service, DIDMode, DID } from "@/lib/features/did/types";
 import { DIDCreatorLayout } from "./layout/DIDCreatorLayout";
 import { DIDMethodSection } from "./sections/DIDMethodSection";
 import { DIDDocumentSection } from "./sections/DIDDocumentSection";
@@ -14,11 +14,10 @@ import { CertificateModal } from "./CertificateModal";
 
 interface DIDCreatorProps {
   mode: DIDMode;
-  initialDid?: any;
-  onClose?: () => void;
+  initialDid?: DID | null;
 }
 
-export function DIDCreator({ mode: initialMode, initialDid, onClose }: DIDCreatorProps) {
+export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
   const manager = useDIDManager(initialMode);
 
   const {

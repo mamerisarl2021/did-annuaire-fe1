@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { DIDCreator } from "./DIDCreator";
 import { DID } from "@/lib/features/did/types";
-import { useDIDCreator } from "@/lib/features/did/hooks/useDIDCreator";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -15,19 +14,6 @@ interface DIDModalProps {
 }
 
 export function DIDModal({ isOpen, onClose, did }: DIDModalProps) {
-  const creator = useDIDCreator();
-  const { loadDID, resetCreator } = creator;
-
-  useEffect(() => {
-    if (isOpen) {
-      if (did) {
-        loadDID(did);
-      } else {
-        resetCreator();
-      }
-    }
-  }, [isOpen, did, loadDID, resetCreator]);
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
@@ -47,7 +33,11 @@ export function DIDModal({ isOpen, onClose, did }: DIDModalProps) {
         </Button>
 
         <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-950">
-          <DIDCreator {...creator} isEditing={!!did} editingDidId={did?.id} onClose={onClose} />
+          <DIDCreator
+            mode={did ? "update" : "create"}
+            initialDid={did}
+            onClose={onClose}
+          />
         </div>
       </DialogContent>
     </Dialog>
