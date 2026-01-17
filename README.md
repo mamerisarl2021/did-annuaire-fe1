@@ -6,7 +6,7 @@ A secure, verifiable directory for organizations using `did:web` decentralized i
 
 - **Trusted DID Publishing** – Publish and manage decentralized identifiers with cryptographic proof
 - **Direct Resolution** – Resolve DIDs via web infrastructure without blockchain complexity
-- **No Intermediary Verification** – Verify organizational identity directly from the source
+- **No Intermediary Verification** – resolve organizational identity directly from the source
 - **Responsive Navigation** – Optimized for all devices with a mobile-friendly menu system
 - **Advanced Data Views** – Sortable, filterable, and paginated data tables for managing organization data
 

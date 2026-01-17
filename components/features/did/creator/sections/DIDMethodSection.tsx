@@ -48,7 +48,7 @@ export function DIDMethodSection({
             <Input
               value={logicalIdentifier}
               onChange={(e) => onLogicalIdentifierChange(e.target.value)}
-              placeholder="domain.com"
+              placeholder="eg: permis_qrcode"
               disabled={isReadOnly}
               className="h-12 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 rounded-md font-medium text-slate-900 dark:text-slate-100 shadow-sm focus:ring-2 focus:ring-blue-500/20 transition-all"
             />

@@ -1,4 +1,4 @@
-import { DID, CreateDIDRequest, CreateDIDResponse, VerificationMethod } from "./types";
+import { DID, CreateDIDRequest, CreateDIDResponse, VerificationMethod, DIDDocument } from "./types";
 
 // Mock data
 const mockDIDs: DID[] = [
@@ -43,7 +43,11 @@ export const didService = {
     };
   },
 
-  async updateDID(request: { id: string; didDocument: any; options: any }): Promise<any> {
+  async updateDID(request: { id: string; didDocument: DIDDocument; options: Record<string, unknown> }): Promise<{
+    did: string;
+    didDocument: DIDDocument;
+    metadata: { updated: string;[key: string]: unknown };
+  }> {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
