@@ -36,9 +36,6 @@ export function CertificateModal({
 
   const handleFileSelect = async (selectedFile: File) => {
     if (certificateType === "JWK" && !selectedFile.name.toLowerCase().endsWith(".pem")) {
-      // Validation for JWK handled gracefully, though usually JWK is JSON.
-      // Keeping existing logic or adapting: JWK usually implies a JSON file if type is JWK.
-      // But prompt implies X.509/PEM upload. Let's stick to standard validation.
     }
 
     setFile(selectedFile);

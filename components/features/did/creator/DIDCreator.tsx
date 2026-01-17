@@ -65,7 +65,7 @@ export function DIDCreator({ mode: initialMode, initialDid, organizationId }: DI
   try {
     const doc = JSON.parse(didDocument);
     services = doc.service || [];
-  } catch { }
+  } catch {}
 
   const handleRemoveService = (serviceId: string) => {
     try {

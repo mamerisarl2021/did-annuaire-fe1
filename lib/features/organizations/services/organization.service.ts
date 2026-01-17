@@ -82,7 +82,6 @@ export const organizationService = {
         requiresAuth: true,
       }
     );
-    logger.info("Fetched organization stats:", response);
     return organizationMapper.toStats(response);
   },
 };
