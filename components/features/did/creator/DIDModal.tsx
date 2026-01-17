@@ -33,11 +33,7 @@ export function DIDModal({ isOpen, onClose, did }: DIDModalProps) {
         </Button>
 
         <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-950">
-          <DIDCreator
-            mode={did ? "update" : "create"}
-            initialDid={did}
-            onClose={onClose}
-          />
+          <DIDCreator mode={did ? "update" : "create"} initialDid={did} onClose={onClose} />
         </div>
       </DialogContent>
     </Dialog>

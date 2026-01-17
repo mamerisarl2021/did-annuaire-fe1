@@ -28,7 +28,10 @@ export const superAdminService = {
     logger.debug("Fetching Organizations from:", { endpoint });
     const response = await httpClient.get<Record<string, unknown>>(endpoint);
     const rawData = (response.data as Record<string, unknown>) || response;
-    const rawItems = (rawData.items as Record<string, unknown>[]) || (rawData.results as Record<string, unknown>[]) || [];
+    const rawItems =
+      (rawData.items as Record<string, unknown>[]) ||
+      (rawData.results as Record<string, unknown>[]) ||
+      [];
     const rawPagination = (rawData.pagination as Record<string, unknown>) || {};
 
     const mappedResults = organizationMapper.toDomainList(rawItems);
@@ -48,7 +51,9 @@ export const superAdminService = {
       const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_ENDPOINTS.STATS);
       return ((response.data as OrganizationStats) || response) as OrganizationStats;
     } catch (error) {
-      logger.error("Failed to fetch organization stats", error, { endpoint: SUPERADMIN_ENDPOINTS.STATS });
+      logger.error("Failed to fetch organization stats", error, {
+        endpoint: SUPERADMIN_ENDPOINTS.STATS,
+      });
       return { pending: 0, active: 0, suspended: 0, refused: 0, all: 0 };
     }
   },
@@ -66,7 +71,9 @@ export const superAdminService = {
   },
 
   async getOrganizationDetails(id: string): Promise<OrganizationListItem> {
-    const response = await httpClient.get<Record<string, unknown>>(SUPERADMIN_ENDPOINTS.DETAILS(id));
+    const response = await httpClient.get<Record<string, unknown>>(
+      SUPERADMIN_ENDPOINTS.DETAILS(id)
+    );
     const rawData = (response.data as Record<string, unknown>) || response;
     return organizationMapper.toDomain(rawData);
   },

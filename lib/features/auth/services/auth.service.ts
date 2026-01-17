@@ -29,7 +29,7 @@ export const authService = {
 
     tokenStorage.setAccessToken(response.access);
     tokenStorage.setRefreshToken(response.refresh);
-
+    
     return response;
   },
 
@@ -141,50 +141,79 @@ export const authService = {
         role?: string;
         organization_id?: string;
       }>(token);
-      logger.debug("JWT token decoded", { userId: decoded.user_id || decoded.sub, email: decoded.email, role: decoded.role });
+      logger.debug("JWT token decoded", {
+        userId: decoded.user_id || decoded.sub,
+        email: decoded.email,
+        role: decoded.role,
+      });
 
       let role = decoded.role;
       let email = decoded.email;
+      let organization_id = decoded.organization_id;
+      let userId = decoded.user_id || decoded.sub;
 
-      const userId = decoded.user_id || decoded.sub;
-
-      if (!role) {
+      if (!role || !organization_id) {
         try {
-          logger.debug("Fetching user profile from /me endpoint");
+          logger.debug("Fetching user profile from /me endpoint to resolve missing fields");
           const response = await httpClient.get<{
-            data?: { role?: string; is_superuser?: boolean; is_staff?: boolean; email?: string };
+            data?: {
+              role?: string;
+              is_superuser?: boolean;
+              is_staff?: boolean;
+              email?: string;
+              organization?: { id: string; name: string };
+              full_name?: string;
+              id?: string;
+            };
             role?: string;
             is_superuser?: boolean;
             is_staff?: boolean;
             email?: string;
+            organization?: { id: string; name: string };
           }>(API_ENDPOINTS.USERS.ME);
-          logger.debug("User profile fetched successfully");
 
-          const userData = response.data || response;
-          let apiRole = userData.role;
-          if (apiRole && apiRole.toUpperCase() === "SUPERUSER") {
-            apiRole = "SUPER_USER";
+          logger.debug("User profile /me raw response", response);
+
+          const userData = response.data;
+
+          if (userData) {
+            if (userData.id) userId = userData.id;
+            if (userData.email) email = userData.email;
+
+            let apiRole = userData.role;
+            if (apiRole && apiRole.toUpperCase() === "SUPERUSER") {
+              apiRole = "SUPER_USER";
+            }
+
+            role = apiRole || role;
+
+            if (!role) {
+              if (userData.is_superuser) role = "SUPER_USER";
+              else if (userData.is_staff) role = "ORG_ADMIN";
+            }
+
+            // MAP ORGANIZATION ID
+            if (userData.organization?.id) {
+              organization_id = userData.organization.id;
+              logger.debug("Mapped organization_id from /me response", { organization_id });
+            } else {
+              logger.warn("No organization ID found in /me response data", { userData: JSON.stringify(userData) });
+            }
           }
-
-          role = apiRole;
-
-          if (!role) {
-            if (userData.is_superuser) role = "SUPER_USER";
-            else if (userData.is_staff) role = "ORG_ADMIN";
-          }
-          email = userData.email || email;
         } catch (apiError) {
           logger.error("Failed to fetch user profile from /me endpoint", apiError);
         }
       }
 
-      return {
+      const finalUser: AuthUser = {
         id: userId || "",
         email: email || "",
         role: (role || "ORG_MEMBER") as "SUPER_USER" | "ORG_ADMIN" | "ORG_MEMBER" | "AUDITOR",
-        organization_id: decoded.organization_id || "",
+        organization_id: organization_id || "",
         is_active: true,
+        full_name: "",
       };
+      return finalUser;
     } catch (error) {
       logger.error("Failed to decode JWT token or fetch user profile", error);
       return null;

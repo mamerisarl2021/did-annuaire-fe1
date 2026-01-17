@@ -12,12 +12,13 @@ import { DIDResponseSection } from "./sections/DIDResponseSection";
 import { ServiceModal } from "./ServiceModal";
 import { CertificateModal } from "./CertificateModal";
 
-interface DIDCreatorProps {
+export interface DIDCreatorProps {
   mode: DIDMode;
   initialDid?: DID | null;
+  organizationId: string;
 }
 
-export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
+export function DIDCreator({ mode: initialMode, initialDid, organizationId }: DIDCreatorProps) {
   const manager = useDIDManager(initialMode);
 
   const {
@@ -32,7 +33,9 @@ export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
     setActiveTab,
     compileDID,
     executeAction,
-    handleAddKeys,
+    certificateKey,
+    setCertificateKey,
+    setOrganizationId,
     handleAddService,
     loadDID,
     response,
@@ -40,6 +43,13 @@ export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
     isSubmitting,
     isCompiled,
   } = manager;
+
+  // Initialize Organization context
+  useEffect(() => {
+    if (organizationId) {
+      setOrganizationId(organizationId);
+    }
+  }, [organizationId, setOrganizationId]);
 
   useEffect(() => {
     if (initialDid) {
@@ -55,8 +65,7 @@ export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
   try {
     const doc = JSON.parse(didDocument);
     services = doc.service || [];
-  } catch {
-  }
+  } catch { }
 
   const handleRemoveService = (serviceId: string) => {
     try {
@@ -68,9 +77,7 @@ export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
     }
   };
 
-  const responseElement = response ? (
-    <DIDResponseSection response={response} />
-  ) : null;
+  const responseElement = response ? <DIDResponseSection response={response} /> : null;
 
   const errorElement = error ? (
     <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 p-6 rounded-lg">
@@ -100,10 +107,12 @@ export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
           <DIDDocumentSection
             didDocument={didDocument}
             services={services}
+            certificateKey={certificateKey}
             onDocumentChange={setDidDocument}
             onAddService={() => setIsServiceModalOpen(true)}
             onRemoveService={handleRemoveService}
             onAddCertificate={() => setIsCertificateModalOpen(true)}
+            onRemoveCertificate={() => setCertificateKey(null)}
           />
 
           <KeyPurposesSection
@@ -133,7 +142,8 @@ export function DIDCreator({ mode: initialMode, initialDid }: DIDCreatorProps) {
       <CertificateModal
         isOpen={isCertificateModalOpen}
         onClose={() => setIsCertificateModalOpen(false)}
-        onUpload={handleAddKeys}
+        onUpload={setCertificateKey}
+        organizationId={organizationId}
       />
     </div>
   );

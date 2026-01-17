@@ -43,7 +43,7 @@ export function DIDMethodSection({
 
           <div className="space-y-3">
             <label className="text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Logical Identifier
+              Document Type
             </label>
             <Input
               value={logicalIdentifier}
@@ -53,7 +53,7 @@ export function DIDMethodSection({
               className="h-12 bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 rounded-md font-medium text-slate-900 dark:text-slate-100 shadow-sm focus:ring-2 focus:ring-blue-500/20 transition-all"
             />
             <p className="text-[10px] text-slate-500 font-medium">
-              The domain or path where the DID document will be hosted.
+              The document type or identifier for the DID document.
             </p>
           </div>
         </div>

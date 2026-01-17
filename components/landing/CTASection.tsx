@@ -27,7 +27,7 @@ export function CTASection() {
             asChild
             className="w-full text-primary hover:text-primary sm:w-auto"
           >
-            <Link href="/verify">Verify a DID</Link>
+            <Link href="/verify">Resolve a DID</Link>
           </Button>
         </div>
       </div>

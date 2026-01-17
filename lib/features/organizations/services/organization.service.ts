@@ -9,6 +9,7 @@ import {
   type OrganizationListParams,
 } from "../types/organization.types";
 import { organizationMapper } from "../mappers/organization.mapper";
+import { logger } from "@/lib/shared/services/logger.service";
 
 export const organizationService = {
   /**
@@ -22,6 +23,7 @@ export const organizationService = {
       formData,
       { requiresAuth: false }
     );
+    logger.info("Organization created:", response);
     return organizationMapper.toDomain(response);
   },
 
@@ -29,9 +31,12 @@ export const organizationService = {
    * Get organization details
    */
   async getOrganizationDetails(id: string): Promise<OrganizationListItem> {
-    const response = await httpClient.get<Record<string, unknown>>(API_ENDPOINTS.ORGANIZATIONS.DETAILS(id), {
-      requiresAuth: true,
-    });
+    const response = await httpClient.get<Record<string, unknown>>(
+      API_ENDPOINTS.ORGANIZATIONS.DETAILS(id),
+      {
+        requiresAuth: true,
+      }
+    );
     return organizationMapper.toDomain(response);
   },
 
@@ -53,6 +58,7 @@ export const organizationService = {
       requiresAuth: true,
     });
 
+    logger.info("Fetched organizations list:", response);
     return {
       results: ((response.results as Array<Record<string, unknown>>) || []).map(
         organizationMapper.toDomain
@@ -70,9 +76,13 @@ export const organizationService = {
    * Get organizations stats
    */
   async getOrganizationsStats(): Promise<OrganizationStats> {
-    const response = await httpClient.get<Record<string, unknown>>(API_ENDPOINTS.ORGANIZATIONS.STATS, {
-      requiresAuth: true,
-    });
+    const response = await httpClient.get<Record<string, unknown>>(
+      API_ENDPOINTS.ORGANIZATIONS.STATS,
+      {
+        requiresAuth: true,
+      }
+    );
+    logger.info("Fetched organization stats:", response);
     return organizationMapper.toStats(response);
   },
 };
