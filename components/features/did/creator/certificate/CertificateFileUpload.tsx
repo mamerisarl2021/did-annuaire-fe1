@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { X, CloudUpload, FileCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { CertificateType } from "./CertificateTypeSelector";
+import { CertificateType } from "@/lib/features/did/types/certificate.types";
 
 interface CertificateFileUploadProps {
   file: File | null;

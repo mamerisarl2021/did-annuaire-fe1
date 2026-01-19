@@ -34,7 +34,12 @@ export function DIDModal({ isOpen, onClose, did, organizationId }: DIDModalProps
         </Button>
 
         <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-950">
-          <DIDCreator mode={did ? "update" : "create"} initialDid={did} onClose={onClose} organizationId={organizationId} />
+          <DIDCreator
+            mode={did ? "update" : "create"}
+            initialDid={did}
+            onClose={onClose}
+            organizationId={organizationId}
+          />
         </div>
       </DialogContent>
     </Dialog>

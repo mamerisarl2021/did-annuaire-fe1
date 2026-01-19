@@ -6,8 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-export type CertificateType = "PEM" | "DER" | "PKCS7" | "PKCS12" | "JWK";
+import { CertificateType } from "@/lib/features/did/types/certificate.types";
 
 interface CertificateTypeSelectorProps {
   value: CertificateType;
@@ -30,6 +29,8 @@ export function CertificateTypeSelector({ value, onChange }: CertificateTypeSele
           <SelectItem value="PKCS7">PKCS7</SelectItem>
           <SelectItem value="PKCS12">PKCS12</SelectItem>
           <SelectItem value="JWK">JWK</SelectItem>
+          <SelectItem value="CRT">CRT</SelectItem>
+          <SelectItem value="AUTO">AUTO</SelectItem>
         </SelectContent>
       </Select>
     </div>

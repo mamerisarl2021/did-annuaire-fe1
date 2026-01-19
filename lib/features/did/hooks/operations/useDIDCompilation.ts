@@ -28,7 +28,7 @@ export function useDIDCompilation(state: DIDState): DIDCompilation {
           document_type: logicalIdentifier,
           certificate_id: certificateKey.certificate_id,
           key_id: certificateKey.key_id,
-          purposes: certificateKey.purposes,
+          purposes: state.selectedOptions,
         };
 
         const response = await didApiClient.previewDID(params);

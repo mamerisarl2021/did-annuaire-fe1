@@ -36,7 +36,7 @@ export function useDIDCreator() {
       if (!doc.verificationMethod) doc.verificationMethod = [];
 
       keys.forEach((key: VerificationMethod, index: number) => {
-        const keyId = `${didId}${key.id || `#key-${doc.verificationMethod.length + index}`}`;
+        const keyId = `${didId}${key.id || `key-${doc.verificationMethod.length + index}`}`;
         doc.verificationMethod.push({
           id: keyId,
           type: key.type,

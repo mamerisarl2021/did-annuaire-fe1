@@ -1,7 +1,6 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
-import type { CertificateType } from "./CertificateTypeSelector";
-
+import type { CertificateType } from "@/lib/features/did/types/certificate.types";
 interface CertificatePasswordInputProps {
   value: string;
   onChange: (value: string) => void;

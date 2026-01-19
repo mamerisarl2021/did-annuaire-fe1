@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { didApiClient } from "../api/didApiClient";
-import type { CertificateKey } from "../types/certificate.types";
+import type { CertificateKey, CertificateType } from "../types/certificate.types";
 import { getDefaultPurposes } from "../utils/purposeValidator";
 import { logger } from "@/lib/shared/services/logger.service";
 
@@ -8,7 +8,7 @@ export interface UseCertificateUploadReturn {
   uploadCertificate: (
     organizationId: string,
     file: File,
-    format: "PEM" | "DER" | "PKCS7" | "PKCS12",
+    format: CertificateType,
     password?: string
   ) => Promise<CertificateKey | null>;
   isUploading: boolean;
@@ -32,7 +32,7 @@ export function useCertificateUpload(): UseCertificateUploadReturn {
     async (
       organizationId: string,
       file: File,
-      format: "PEM" | "DER" | "PKCS7" | "PKCS12",
+      format: CertificateType,
       password?: string
     ): Promise<CertificateKey | null> => {
       setIsUploading(true);
@@ -50,12 +50,12 @@ export function useCertificateUpload(): UseCertificateUploadReturn {
         const response = await didApiClient.uploadCertificate(formData);
 
         // Auto-assign default purposes based on key type
-        const defaultPurposes = getDefaultPurposes(response.extracted_jwk);
+        const defaultPurposes = getDefaultPurposes(response.didDocumentMetadata?.public_jwk);
 
         return {
-          certificate_id: response.id || response.certificate_id || "",
+          certificate_id: response.didDocumentMetadata?.certificate_id || "",
           key_id: `key-${Date.now()}`,
-          extracted_jwk: response.extracted_jwk,
+          extracted_jwk: response.didDocumentMetadata?.public_jwk || {},
           purposes: defaultPurposes,
         };
       } catch (error) {

@@ -1,4 +1,6 @@
 import { DID, CreateDIDRequest, CreateDIDResponse, VerificationMethod, DIDDocument } from "./types";
+import { didApiClient } from "./api/didApiClient";
+import { DIDListParams, DIDListPagination } from "./types/api.types";
 
 // Mock data
 const mockDIDs: DID[] = [
@@ -19,10 +21,36 @@ const mockDIDs: DID[] = [
 ];
 
 export const didService = {
-  async getDIDs(): Promise<DID[]> {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return mockDIDs;
+  async getDIDs(
+    params: DIDListParams = {}
+  ): Promise<{ items: DID[]; pagination: DIDListPagination }> {
+    try {
+      const response = await didApiClient.getAllDIDs(params);
+      const items = response.items.map((item) => ({
+        id: item.did,
+        method: "WEB" as const,
+        didDocument: {} as DIDDocument,
+        created: item.created_at || new Date().toISOString(),
+        organization_id: item.organization_id,
+        organization_name: item.organization_name,
+        owner_id: item.owner_id,
+        document_type: item.document_type,
+        key_id: item.key_id,
+        public_key_version: item.public_key_version,
+        public_key_jwk: item.public_key_jwk,
+        metadata: {
+          version: item.latest_version,
+          document_type: item.document_type,
+        },
+      }));
+      return { items, pagination: response.pagination };
+    } catch (error) {
+      console.error("Error fetching DIDs:", error);
+      return {
+        items: [],
+        pagination: { page: 1, page_size: 10, total: 0, total_pages: 0 },
+      };
+    }
   },
 
   async getDIDById(id: string): Promise<DID | undefined> {

@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useDIDs } from "@/lib/features/did/hooks/useDIDs";
 import { DIDTable } from "@/components/features/did/list/DIDTable";
+import { PaginationControl } from "@/components/common/PaginationControl";
 import { DIDSearchBar } from "@/components/features/did/list/DIDSearchBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +15,7 @@ import { DID } from "@/lib/features/did/types";
 
 export default function DIDListPage() {
   const router = useRouter();
-  const { dids, isLoading, searchQuery, setSearchQuery, deleteDID } = useDIDs();
+  const { dids, isLoading, searchQuery, setSearchQuery, deleteDID, pagination } = useDIDs();
 
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [didToDeactivate, setDidToDeactivate] = useState<DID | null>(null);
@@ -73,6 +74,14 @@ export default function DIDListPage() {
               onDelete={handleDelete}
               onFetchKeys={handleFetchKeys}
             />
+
+            <div className="px-6 border-t">
+              <PaginationControl
+                currentPage={pagination.page}
+                totalPages={pagination.total_pages}
+                onPageChange={pagination.setPage}
+              />
+            </div>
           </CardContent>
         </Card>
       </div>

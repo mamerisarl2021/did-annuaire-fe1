@@ -1,4 +1,13 @@
-import { Edit, Trash2, Calendar, Fingerprint, CloudDownload, QrCode } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Calendar,
+  Fingerprint,
+  CloudDownload,
+  QrCode,
+  Key,
+  FileText,
+} from "lucide-react";
 import { DID } from "@/lib/features/did/types";
 import {
   Table,
@@ -10,7 +19,9 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
+import { truncateDID } from "@/lib/features/did/utils/didFormatter";
 
 interface DIDTableProps {
   dids: DID[];
@@ -39,8 +50,11 @@ export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTablePro
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[40%]">DID Identifier</TableHead>
+            <TableHead className="w-[30%]">DID Identifier</TableHead>
             <TableHead>Method</TableHead>
+            <TableHead>Document Type</TableHead>
+            <TableHead>Organization</TableHead>
+            <TableHead>Public Key (Kid)</TableHead>
             <TableHead>Created</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -48,7 +62,19 @@ export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTablePro
         <TableBody>
           {dids.map((did) => (
             <TableRow key={did.id} className="hover:bg-muted/50 transition-colors">
-              <TableCell className="font-mono text-sm font-medium">{did.id}</TableCell>
+              <TableCell className="font-mono text-sm font-medium">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help">{truncateDID(did.id)}</span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-md break-all">
+                      <p className="font-mono text-xs text-white">{did.id}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+
               <TableCell>
                 <Badge
                   variant="outline"
@@ -57,12 +83,52 @@ export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTablePro
                   {did.method}
                 </Badge>
               </TableCell>
+
+              <TableCell>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <FileText className="size-3.5" />
+                  <span className="capitalize">
+                    {did.document_type?.replace(/_/g, " ") || "N/A"}
+                  </span>
+                </div>
+              </TableCell>
+
+              <TableCell className="font-medium text-sm">
+                {did.organization_id || "Unknown Org"}
+              </TableCell>
+
+              <TableCell>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-1.5 cursor-help">
+                        <Key className="size-3.5 text-muted-foreground" />
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {did.key_id ? did.key_id.substring(0, 8) + "..." : "No Key"}
+                        </span>
+                      </div>
+                    </TooltipTrigger>
+                    {did.key_id && (
+                      <TooltipContent>
+                        <p className="font-mono text-xs">Full Key ID: {did.key_id}</p>
+                        {did.public_key_version && (
+                          <p className="text-xs pt-1 text-slate-400">
+                            Version: {did.public_key_version}
+                          </p>
+                        )}
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+
               <TableCell className="text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Calendar className="size-4" />
+                <div className="flex items-center gap-2 text-xs">
+                  <Calendar className="size-3.5" />
                   {new Date(did.created).toLocaleDateString()}
                 </div>
               </TableCell>
+
               <TableCell className="text-right">
                 <div
                   className="flex items-center justify-end gap-2"

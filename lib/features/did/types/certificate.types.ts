@@ -1,7 +1,6 @@
 import { OptionKey } from "../types";
 
-export type CertificateFormat = "PEM" | "DER" | "PKCS7" | "PKCS12" | "JWK";
-
+export type CertificateType = "PEM" | "DER" | "PKCS7" | "PKCS12" | "JWK" | "CRT" | "AUTO";
 /**
  * Represents a certificate key with its metadata
  */

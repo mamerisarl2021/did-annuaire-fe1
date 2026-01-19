@@ -31,7 +31,7 @@ export function HeroSection() {
             <Link href="/auth/register">Register Organization</Link>
           </Button>
           <Button variant="outline" size="lg" asChild className="w-full sm:w-auto">
-            <Link href="/verify">Resolve a DID</Link>
+            <Link href="/resolve">Resolve a DID</Link>
           </Button>
         </div>
       </div>

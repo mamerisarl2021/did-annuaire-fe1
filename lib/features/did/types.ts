@@ -44,7 +44,12 @@ export interface DID {
   created: string;
   updated?: string;
   organization_id?: string;
+  organization_name?: string;
   owner_id?: string;
+  document_type?: string;
+  key_id?: string;
+  public_key_version?: number;
+  public_key_jwk?: Record<string, unknown>;
   metadata?: {
     [key: string]: unknown;
   };

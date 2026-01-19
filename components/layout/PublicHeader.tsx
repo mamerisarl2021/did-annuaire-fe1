@@ -53,7 +53,7 @@ export function PublicHeader() {
             </Link>
           </Button>
           <Button variant="ghost" asChild className="gap-2">
-            <Link href="/verify">
+            <Link href="/resolve">
               <Search className="size-4" />
               Resolve DID
             </Link>
@@ -124,7 +124,7 @@ export function PublicHeader() {
                   onClick={() => setIsOpen(false)}
                   className="justify-start gap-3 h-11"
                 >
-                  <Link href="/verify">
+                  <Link href="/resolve">
                     <Search className="size-4 text-muted-foreground" />
                     <span>Resolve DID</span>
                   </Link>

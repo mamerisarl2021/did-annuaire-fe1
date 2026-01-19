@@ -1,4 +1,5 @@
 import { DIDDocument } from "../types";
+import { CertificateType } from "./certificate.types";
 
 /**
  * Backend API Response Envelope
@@ -29,25 +30,33 @@ export interface DIDStateEnvelope {
  */
 export interface UploadCertificateRequest {
   organization_id: string;
-  format: "PEM" | "DER" | "PKCS7" | "PKCS12";
+  format: CertificateType;
   file: File;
   password?: string;
 }
 
 export interface UploadCertificateResponse {
-  id: string;
-  certificate_id?: string;
-  extracted_jwk: {
-    kty: string;
-    crv?: string;
-    x?: string;
-    y?: string;
-    n?: string;
-    e?: string;
-    [key: string]: unknown;
+  didState: {
+    state: "action" | "wait" | "error" | "finished" | "update";
+  };
+  didRegistrationMetadata: {
+    method: "web";
+    requestId: string;
+  };
+  didDocumentMetadata: {
+    certificate_id: string;
+    public_jwk: {
+      kty: string;
+      crv?: string;
+      x?: string;
+      y?: string;
+      n?: string;
+      e?: string;
+      [key: string]: unknown;
+    };
+    fingerprint: string;
   };
 }
-
 /**
  * Payload pour la prévisualisation (Preview)
  */
@@ -86,3 +95,89 @@ export interface APIErrorResponse {
  * Supported DID Method (e.g., "web")
  */
 export type DIDMethod = string;
+
+export interface DIDListItem {
+  did: string;
+  organization_id: string;
+  owner_id: string;
+  document_type: string;
+  latest_version: number;
+  created_at?: string; // Optional if not in spec but good to have
+  organization_name?: string;
+  key_id?: string;
+  public_key_version?: number;
+  public_key_jwk?: Record<string, unknown>;
+}
+
+export interface DIDListPagination {
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
+}
+
+export interface DIDListResponse {
+  items: DIDListItem[];
+  pagination: DIDListPagination;
+}
+
+export interface DIDListParams {
+  org_id?: string;
+  page?: number;
+  page_size?: number;
+}
+
+export interface ResolutionParser {
+  did: string;
+  method: string;
+  method_id: string;
+  query: string;
+}
+
+export interface ResolutionService {
+  id: string;
+  type: string;
+  service_endpoint: string | Record<string, unknown> | (string | Record<string, unknown>)[];
+}
+
+export interface ResolutionVerificationMethod {
+  id: string;
+  type: string;
+  public_key_jwk: Record<string, unknown>;
+}
+
+export interface ResolutionResponseData {
+  parser: ResolutionParser;
+  services: ResolutionService[];
+  verification_methods: ResolutionVerificationMethod[];
+}
+
+export interface DIDResolutionResponse {
+  didDocument: DIDDocument;
+  didDocumentMetadata: {
+    contentType: string;
+    [key: string]: unknown;
+  };
+  didResolutionMetadata: {
+    contentType: string;
+    driverUrl?: string;
+    duration?: number;
+    error?: string;
+    did?: {
+      didString: string;
+      method: string;
+    };
+    [key: string]: unknown;
+  };
+  resolution_response?: ResolutionResponseData;
+}
+
+export interface DIDMethode {
+  method: string;
+  pattern: string;
+  description: string;
+}
+
+export interface DIDMethodsResponse {
+  items: DIDMethod[];
+}

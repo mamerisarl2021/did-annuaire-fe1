@@ -5,11 +5,8 @@ import { OptionKey } from "../types";
  * Based on W3C DID specification and cryptographic standards
  */
 const PURPOSE_RULES: Record<string, OptionKey[]> = {
-  // Ed25519: Signature keys
   Ed25519: ["authentication", "assertionMethod", "capabilityInvocation", "capabilityDelegation"],
-  // X25519: Key agreement only
   X25519: ["keyAgreement"],
-  // P-256: All purposes
   "P-256": [
     "authentication",
     "assertionMethod",
@@ -17,7 +14,20 @@ const PURPOSE_RULES: Record<string, OptionKey[]> = {
     "capabilityInvocation",
     "capabilityDelegation",
   ],
-  // RSA: Signature keys (no key agreement)
+  "P-384": [
+    "authentication",
+    "assertionMethod",
+    "keyAgreement",
+    "capabilityInvocation",
+    "capabilityDelegation",
+  ],
+  "P-521": [
+    "authentication",
+    "assertionMethod",
+    "keyAgreement",
+    "capabilityInvocation",
+    "capabilityDelegation",
+  ],
   RSA: ["authentication", "assertionMethod", "capabilityInvocation"],
 };
 

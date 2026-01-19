@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import { FileKey, X, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  CertificateTypeSelector,
-  type CertificateType,
-} from "./certificate/CertificateTypeSelector";
+
 import { CertificateFileUpload } from "./certificate/CertificateFileUpload";
 import { CertificatePasswordInput } from "./certificate/CertificatePasswordInput";
 import { ExtractedKeysPreview } from "./certificate/ExtractedKeysPreview";
 import { useCertificateUpload } from "@/lib/features/did/hooks/useCertificateUpload";
-import { CertificateKey } from "@/lib/features/did/types/certificate.types";
+import { CertificateKey, CertificateType } from "@/lib/features/did/types/certificate.types";
 import { VerificationMethod } from "@/lib/features/did/types";
+import { CertificateTypeSelector } from "./certificate/CertificateTypeSelector";
 
 interface CertificateModalProps {
   isOpen: boolean;
@@ -46,7 +44,7 @@ export function CertificateModal({
     const result = await uploadCertificate(
       organizationId,
       selectedFile,
-      certificateType as "PEM" | "DER" | "PKCS7" | "PKCS12",
+      certificateType as CertificateType,
       password
     );
     if (result) {
