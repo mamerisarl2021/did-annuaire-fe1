@@ -8,6 +8,7 @@ import type {
   DIDListParams,
   DIDListResponse,
   DIDResolutionResponse,
+  KeysResponse,
 } from "../types/api.types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -174,5 +175,38 @@ export const didApiClient = {
     }
 
     return await res.json();
+  },
+  // async updateDID(
+  //   didId: string,
+  //   payload: CreateDIDPayload
+  // ): Promise<DIDStateEnvelope> {
+  //   const res = await fetch(`${API_URL}/api/registry/dids/${didId}`, {
+  //     method: "PUT",
+  //     headers: getAuthHeaders(true),
+  //     body: JSON.stringify(payload),
+  //   });
+
+  //   if (!res.ok) {
+  //     const errorData = await res.json().catch(() => ({}));
+  //     const detail = errorData.detail || errorData.message || "Update failed";
+  //     throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
+  //   }
+
+  //   return await res.json();
+  // },
+
+  async fetchKeys(didId: string): Promise<KeysResponse> {
+    const res = await fetch(`${API_URL}/api/registry/dids/${didId}/keys`, {
+      method: "GET",
+      headers: getAuthHeaders(true),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const detail = errorData.detail || errorData.message || "Failed to fetch DID";
+      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
+    }
+    const response = await res.json();
+    return response;
   },
 };

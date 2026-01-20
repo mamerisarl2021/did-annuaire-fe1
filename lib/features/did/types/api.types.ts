@@ -181,3 +181,20 @@ export interface DIDMethode {
 export interface DIDMethodsResponse {
   items: DIDMethod[];
 }
+
+
+export interface PublicJwk {
+  x: string;
+  y: string;
+  crv: string;
+  kty: string;
+}
+
+export interface KeyObject {
+  public_jwk: PublicJwk;
+  key_id: string;
+  versions: number[];
+  current: number;
+}
+
+export type KeysResponse = KeyObject[];

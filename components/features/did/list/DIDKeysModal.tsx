@@ -19,7 +19,7 @@ import {
 import { Copy, Check, Loader2, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { didService } from "@/lib/features/did/services";
+import { didApiClient } from "@/lib/features/did/api/didApiClient";
 import { useToast } from "@/components/ui/use-toast";
 
 interface PublicKeyJwk {
@@ -50,8 +50,13 @@ export function DIDKeysModal({ isOpen, onClose, didId }: DIDKeysModalProps) {
       const fetchKeys = async () => {
         setIsLoading(true);
         try {
-          const fetchedKeys = await didService.fetchDIDKeys(didId);
-          setKeys(fetchedKeys);
+          const fetchedKeys = await didApiClient.fetchKeys(didId);
+          setKeys(
+            fetchedKeys.map((k) => ({
+              id: k.key_id,
+              publicKeyJwk: k.public_jwk as unknown as PublicKeyJwk,
+            }))
+          );
         } catch (error) {
           console.error("Failed to fetch keys:", error);
           toast({
@@ -109,11 +114,13 @@ export function DIDKeysModal({ isOpen, onClose, didId }: DIDKeysModalProps) {
               <TableBody>
                 {keys.map((key) => {
                   const keyValue = JSON.stringify(key.publicKeyJwk);
+                  const typeLabel = key.publicKeyJwk.crv || key.publicKeyJwk.kty || "Unknown";
+
                   return (
                     <TableRow key={key.id}>
                       <TableCell className="font-medium">
                         <Badge variant="secondary" className="font-mono text-[10px]">
-                          {key.publicKeyJwk.crv || key.publicKeyJwk.kty}
+                          {typeLabel}
                         </Badge>
                       </TableCell>
                       <TableCell className="max-w-[200px]">

@@ -49,7 +49,11 @@ export interface DID {
   document_type?: string;
   key_id?: string;
   public_key_version?: number;
-  public_key_jwk?: Record<string, unknown>;
+  public_key_jwk?: { 
+    kty: string;
+    crv?: string;
+    x?: string;
+   };
   metadata?: {
     [key: string]: unknown;
   };

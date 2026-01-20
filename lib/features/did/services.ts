@@ -78,7 +78,7 @@ export const didService = {
   }): Promise<{
     did: string;
     didDocument: DIDDocument;
-    metadata: { updated: string; [key: string]: unknown };
+    metadata: { updated: string;[key: string]: unknown };
   }> {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -92,32 +92,20 @@ export const didService = {
     };
   },
 
-  async fetchDIDKeys(didId: string): Promise<VerificationMethod[]> {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    // Mock response
-    return [
-      {
-        id: "#key-1",
+  async fetchDIDKeys(didId: string): Promise<any[]> {
+    try {
+      const keys = await didApiClient.fetchKeys(didId);
+      return keys.map((key) => ({
+        id: key.key_id,
         type: "JsonWebKey2020",
         controller: didId,
-        publicKeyJwk: {
-          kty: "OKP",
-          crv: "Ed25519",
-          x: "VCpo2L_qn_1-Gv9GkS2X-V_K8_fG_V_K8_fG_V_K8_fG",
-        },
-      },
-      {
-        id: "#key-2",
-        type: "JsonWebKey2020",
-        controller: didId,
-        publicKeyJwk: {
-          kty: "OKP",
-          crv: "X25519",
-          x: "H_W_O_H_W_O_H_W_O_H_W_O_H_W_O_H_W_O_H_W_O",
-        },
-      },
-    ];
+        publicKeyJwk: key.public_jwk,
+        current: key.current, // Preserving extra info if needed
+        versions: key.versions,
+      }));
+    } catch (error) {
+      console.error("Error fetching keys:", error);
+      return [];
+    }
   },
 };
