@@ -36,7 +36,6 @@ export default function EditDIDPage() {
             organization_id: data.didState.organization_id || organizationId,
             owner_id: data.didState.owner_id || (user?.id as string),
             document_type: data.didDocumentMetadata?.document_type || "document",
-            key_id: data.didDocumentMetadata?.key?.key_id,
             public_key_version: data.didDocumentMetadata?.key?.public_key_version,
             public_key_jwk: data.didDocumentMetadata?.key?.public_key_jwk,
             metadata: {
