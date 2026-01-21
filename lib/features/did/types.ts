@@ -63,8 +63,6 @@ export type TabType = "request" | "response" | "error";
 
 export type DIDMode = "create" | "update" | "resolve";
 
-export type OperationType = "CREATE" | "UPDATE" | "DEACTIVATE";
-
 export interface CreateDIDOptions {
   authentication?: string[];
   assertionMethod?: string[];

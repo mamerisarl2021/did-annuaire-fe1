@@ -11,7 +11,7 @@ export interface DIDStateEnvelope {
     did?: string;
     didDocument?: DIDDocument;
     reason?: string;
-    environment?: "DRAFT" | "PREPROD" | "PROD";
+    environment?: "DRAFT" | "PROD";
     organization_id?: string;
     owner_id?: string;
   };

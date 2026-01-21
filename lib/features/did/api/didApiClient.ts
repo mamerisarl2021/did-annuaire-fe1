@@ -88,7 +88,7 @@ export const didApiClient = {
    */
   async resolveDID(
     identifier: string,
-    env: "prod" | "preprod" = "prod"
+    env = "prod"
   ): Promise<DIDResolutionResponse> {
     const query = new URLSearchParams({ env });
     const encodedIdentifier = encodeURIComponent(identifier);
