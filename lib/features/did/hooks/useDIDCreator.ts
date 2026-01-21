@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MethodType, TabType, Service, DID, VerificationMethod } from "../types";
-import { didService } from "../services";
+// import { didService } from "../services";
 import { logger } from "@/lib/shared/services/logger.service";
 
 const INITIAL_DID_DOCUMENT = JSON.stringify(
@@ -84,20 +84,7 @@ export function useDIDCreator() {
     setIsSubmitting(true);
     setError("");
     try {
-      const parsedDoc = JSON.parse(didDocument);
-      const parsedOptions = JSON.parse(options);
-      const parsedSecret = JSON.parse(secret);
-
-      const res = await didService.createDID({
-        method: selectedMethod,
-        didDocument: parsedDoc,
-        options: parsedOptions,
-        secret: parsedSecret,
-      });
-
-      setResponse(JSON.stringify(res, null, 2));
-      setHasCreatedDID(true);
-      setActiveTab("response");
+      throw new Error("useDIDCreator is deprecated and incompatible with current API.");
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);
       setError(`Invalid JSON format or API error: ${message}`);

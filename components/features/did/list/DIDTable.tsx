@@ -27,10 +27,11 @@ interface DIDTableProps {
   dids: DID[];
   onDelete: (did: DID) => void;
   onFetchKeys: (did: DID) => void;
+  onPublish: (did: DID) => void;
   isLoading?: boolean;
 }
 
-export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTableProps) {
+export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: DIDTableProps) {
   if (isLoading) {
     return <div className="text-center py-10 text-muted-foreground">Loading DIDs...</div>;
   }
@@ -123,17 +124,16 @@ export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTablePro
                     <span className="hidden lg:inline text-[11px] font-bold">Fetch Keys</span>
                   </Button>
 
-                  {/* DID URL Resolver Link */}
-                  <Link href={`/dashboard/dids/${encodeURIComponent(did.id)}/url`}>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1.5 text-violet-600 border-violet-100 hover:bg-violet-50 dark:border-violet-900/40 dark:hover:bg-violet-900/20"
-                    >
-                      <QrCode className="size-4" />
-                      <span className="hidden lg:inline text-[11px] font-bold">DID URL</span>
-                    </Button>
-                  </Link>
+                  {/* Publish Button */}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 gap-1.5 text-emerald-600 border-emerald-100 hover:bg-emerald-50 dark:border-emerald-900/40 dark:hover:bg-emerald-900/20"
+                    onClick={() => onPublish(did)}
+                  >
+                    <QrCode className="size-4" />
+                    <span className="hidden lg:inline text-[11px] font-bold">Publish</span>
+                  </Button>
 
                   {/* Edit Link */}
                   <Link href={`/dashboard/dids/${encodeURIComponent(did.id)}/edit`}>

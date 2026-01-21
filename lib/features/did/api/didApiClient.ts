@@ -1,4 +1,6 @@
-import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
+import { multipartClient } from "@/lib/shared/api/multipart.client";
+import { httpClient } from "@/lib/shared/api/http.client";
+import { API_ENDPOINTS } from "@/lib/shared/config/endpoints";
 import type {
   DIDStateEnvelope,
   UploadCertificateResponse,
@@ -11,47 +13,21 @@ import type {
   KeysResponse,
 } from "../types/api.types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 /**
- * Helper pour les headers d'authentification
- */
-const getAuthHeaders = (isJson = true): HeadersInit => {
-  const headers: HeadersInit = {};
-  const token = tokenStorage.getAccessToken();
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  if (isJson) {
-    headers["Content-Type"] = "application/json";
-  }
-
-  return headers;
-};
-
-/**
- * Client API DID - Version ultra-simplifiée
+ * Client API DID
+ * Centralized API client using shared infrastructure
  */
 export const didApiClient = {
   /**
    * Upload de certificat
    */
   async uploadCertificate(formData: FormData): Promise<UploadCertificateResponse> {
-    const res = await fetch(`${API_URL}/api/registry/certificates`, {
-      method: "POST",
-      headers: getAuthHeaders(false),
-      body: formData,
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const detail = errorData.detail || errorData.message || "Upload failed";
-      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
-    }
-
-    return await res.json();
+    const response = await multipartClient.upload<UploadCertificateResponse>(
+      API_ENDPOINTS.DID.CERTIFICATES,
+      formData,
+      { requiresAuth: true }
+    );
+    return response;
   },
 
   /**
@@ -62,47 +38,25 @@ export const didApiClient = {
       organization_id: params.organization_id,
       document_type: params.document_type,
       certificate_id: params.certificate_id,
-      key_id: params.key_id,
     });
 
     if (params.purposes && params.purposes.length > 0) {
-      query.set("purposes", params.purposes.join(","));
+      params.purposes.forEach((p) => query.append("purposes", p));
     }
 
-    const url = `${API_URL}/api/registry/dids/preview?${query.toString()}`;
-    console.log("[DID API] Preview URL:", url);
+    const endpoint = `${API_ENDPOINTS.DID.PREVIEW}?${query.toString()}`;
+    console.log("[DID API] Preview URL:", endpoint);
 
-    const res = await fetch(url, {
-      method: "GET",
-      headers: getAuthHeaders(false),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const detail = errorData.detail || errorData.message || "Preview failed";
-      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
-    }
-
-    return await res.json();
+    return await httpClient.get<DIDStateEnvelope>(endpoint, { requiresAuth: true });
   },
 
   /**
    * Création du DID (POST simple)
    */
   async createDID(payload: CreateDIDPayload): Promise<DIDStateEnvelope> {
-    const res = await fetch(`${API_URL}/api/registry/dids`, {
-      method: "POST",
-      headers: getAuthHeaders(true),
-      body: JSON.stringify(payload),
+    return await httpClient.post<DIDStateEnvelope>(API_ENDPOINTS.DID.CREATE, payload, {
+      requiresAuth: true,
     });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const detail = errorData.detail || errorData.message || "Create failed";
-      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
-    }
-
-    return await res.json();
   },
 
   /**
@@ -114,39 +68,18 @@ export const didApiClient = {
     if (params.page) query.append("page", params.page.toString());
     if (params.page_size) query.append("page_size", params.page_size.toString());
 
-    const url = `${API_URL}/api/registry/dids?${query.toString()}`;
+    const endpoint = `${API_ENDPOINTS.DID.LIST}?${query.toString()}`;
 
-    const res = await fetch(url, {
-      method: "GET",
-      headers: getAuthHeaders(true),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const detail = errorData.detail || errorData.message || "Failed to fetch DIDs";
-      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
-    }
-
-    return await res.json();
+    return await httpClient.get<DIDListResponse>(endpoint, { requiresAuth: true });
   },
 
   /**
    * Récupère la liste des méthodes DID supportées
    */
   async getDIDMethods(): Promise<DIDMethod[]> {
-    const res = await fetch(`${API_URL}/api/universal-registrar/methods`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
+    const response = await httpClient.get<{ items: DIDMethod[] }>(API_ENDPOINTS.DID.METHODS, {
+      requiresAuth: false,
     });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const detail = errorData.detail || errorData.message || "Failed to fetch DID methods";
-      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
-    }
-    const response = await res.json();
     return response.items;
   },
 
@@ -159,54 +92,65 @@ export const didApiClient = {
   ): Promise<DIDResolutionResponse> {
     const query = new URLSearchParams({ env });
     const encodedIdentifier = encodeURIComponent(identifier);
-    const url = `${API_URL}/api/universal-resolver/identifiers/${encodedIdentifier}?${query.toString()}`;
+    const endpoint = `${API_ENDPOINTS.DID.RESOLVE(encodedIdentifier)}?${query.toString()}`;
 
-    const res = await fetch(url, {
-      method: "GET",
+    return await httpClient.get<DIDResolutionResponse>(endpoint, {
+      requiresAuth: false,
       headers: {
         Accept: "application/did-resolution+json",
       },
     });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const detail = errorData.detail || errorData.message || "DID Resolution failed";
-      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
-    }
-
-    return await res.json();
   },
-  // async updateDID(
-  //   didId: string,
-  //   payload: CreateDIDPayload
-  // ): Promise<DIDStateEnvelope> {
-  //   const res = await fetch(`${API_URL}/api/registry/dids/${didId}`, {
-  //     method: "PUT",
-  //     headers: getAuthHeaders(true),
-  //     body: JSON.stringify(payload),
-  //   });
 
-  //   if (!res.ok) {
-  //     const errorData = await res.json().catch(() => ({}));
-  //     const detail = errorData.detail || errorData.message || "Update failed";
-  //     throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
-  //   }
-
-  //   return await res.json();
-  // },
-
-  async fetchKeys(didId: string): Promise<KeysResponse> {
-    const res = await fetch(`${API_URL}/api/registry/dids/${didId}/keys`, {
-      method: "GET",
-      headers: getAuthHeaders(true),
+  /**
+   * Rotation de clé (reconstruction du DRAFT)
+   */
+  async rotateKey(
+    did: string,
+    payload: { certificate_id: string; purposes?: string[] }
+  ): Promise<DIDStateEnvelope> {
+    return await httpClient.post<DIDStateEnvelope>(API_ENDPOINTS.DID.ROTATE(did), payload, {
+      requiresAuth: true,
     });
+  },
 
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const detail = errorData.detail || errorData.message || "Failed to fetch DID";
-      throw new Error(typeof detail === "object" ? JSON.stringify(detail, null, 2) : detail);
-    }
-    const response = await res.json();
-    return response;
+  /**
+   * Publication du DID en PROD
+   */
+  async publishDID(did: string, version?: string): Promise<DIDStateEnvelope> {
+    return await httpClient.post<DIDStateEnvelope>(
+      API_ENDPOINTS.DID.PUBLISH(did),
+      { version },
+      { requiresAuth: true }
+    );
+  },
+
+  /**
+   * Universal Registrar Update (DRAFT generation)
+   */
+  async updateDID(did: string): Promise<DIDStateEnvelope> {
+    return await httpClient.post<DIDStateEnvelope>(
+      API_ENDPOINTS.DID.UPDATE,
+      { did },
+      { requiresAuth: true }
+    );
+  },
+
+  /**
+   * Get DID Details
+   */
+  async getDID(didId: string): Promise<DIDStateEnvelope> {
+    return await httpClient.get<DIDStateEnvelope>(API_ENDPOINTS.DID.DETAILS(didId), {
+      requiresAuth: true,
+    });
+  },
+
+  /**
+   * Fetch DID Keys
+   */
+  async fetchKeys(didId: string): Promise<KeysResponse> {
+    return await httpClient.get<KeysResponse>(API_ENDPOINTS.DID.KEYS(didId), {
+      requiresAuth: true,
+    });
   },
 };

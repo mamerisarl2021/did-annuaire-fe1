@@ -21,8 +21,6 @@ export function PaginationControl({
   onPageChange,
   className,
 }: PaginationControlProps) {
-  if (totalPages <= 1) return null;
-
   return (
     <div className={`mt-4 flex justify-end ${className || ""}`}>
       <Pagination>

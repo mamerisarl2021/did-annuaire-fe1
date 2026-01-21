@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { MethodType, TabType, DIDMode, OptionKey } from "../../types";
 import type { CertificateKey } from "../../types/certificate.types";
 
@@ -20,6 +20,7 @@ export interface DIDState {
   organizationId: string;
   ownerId: string;
   certificateKey: CertificateKey | null;
+  initialCertificateId?: string;
 
   setMode: (mode: DIDMode) => void;
   setSelectedMethod: (method: MethodType) => void;
@@ -35,6 +36,7 @@ export interface DIDState {
   setOrganizationId: (id: string) => void;
   setOwnerId: (id: string) => void;
   setCertificateKey: (key: CertificateKey | null) => void;
+  setInitialCertificateId: (id: string) => void;
 }
 
 export function useDIDState(initialMode: DIDMode = "create"): DIDState {
@@ -55,13 +57,14 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
   const [organizationId, setOrganizationId] = useState("");
   const [ownerId, setOwnerId] = useState("");
   const [certificateKey, setCertificateKey] = useState<CertificateKey | null>(null);
+  const [initialCertificateId, setInitialCertificateId] = useState("");
 
-  const toggleOption = (option: OptionKey) => {
+  const toggleOption = useCallback((option: OptionKey) => {
     setSelectedOptions((prev) =>
       prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option]
     );
     setIsCompiled(false);
-  };
+  }, []);
 
   return {
     mode,
@@ -77,6 +80,7 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
     organizationId,
     ownerId,
     certificateKey,
+    initialCertificateId,
     setMode,
     setSelectedMethod,
     setLogicalIdentifier,
@@ -91,5 +95,6 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
     setOrganizationId,
     setOwnerId,
     setCertificateKey,
+    setInitialCertificateId,
   };
 }

@@ -27,7 +27,6 @@ export function useDIDCompilation(state: DIDState): DIDCompilation {
           organization_id: organizationId || "",
           document_type: logicalIdentifier,
           certificate_id: certificateKey.certificate_id,
-          key_id: certificateKey.key_id,
           purposes: state.selectedOptions,
         };
 
@@ -40,7 +39,7 @@ export function useDIDCompilation(state: DIDState): DIDCompilation {
           throw new Error(response.didState.reason || "Compilation failed");
         }
       } else {
-        throw new Error("Please upload at least one certificate before compiling.");
+        throw new Error("Please upload a certificate or select an existing DID to compile.");
       }
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);

@@ -36,7 +36,6 @@ export function useDIDExecution(state: DIDState): DIDExecution {
           organization_id: organizationId,
           document_type: logicalIdentifier,
           certificate_id: certificateKey.certificate_id,
-          key_id: certificateKey.key_id,
           purposes: state.selectedOptions,
           owner_id: state.ownerId || "",
           services: [],
@@ -44,25 +43,26 @@ export function useDIDExecution(state: DIDState): DIDExecution {
         };
 
         const result = await didApiClient.createDID(payload);
+        setResponse(JSON.stringify(result, null, 2));
+        setActiveTab("response");
+      } else if (mode === "update") {
+        const doc = JSON.parse(didDocument);
+        const didId = doc.id;
 
-        if (result.didState.state === "wait") {
-          setResponse(JSON.stringify(result, null, 2));
-          setActiveTab("response");
-        } else if (result.didState.state === "error") {
-          throw new Error(result.didState.reason || "DID creation failed");
-        } else {
-          setResponse(JSON.stringify(result, null, 2));
-          setActiveTab("response");
+        if (!didId) throw new Error("DID ID missing in document.");
+
+        const certId = certificateKey?.certificate_id || state.initialCertificateId || "";
+
+        if (!certId) {
+          throw new Error("Missing Certificate ID for rotation.");
         }
-      } else {
-        const parsedDoc = JSON.parse(didDocument);
-        setResponse(
-          JSON.stringify(
-            { message: "Update not yet fully integrated with backend", doc: parsedDoc },
-            null,
-            2
-          )
-        );
+
+        const result = await didApiClient.rotateKey(didId, {
+          certificate_id: certId,
+          purposes: state.selectedOptions,
+        });
+
+        setResponse(JSON.stringify(result, null, 2));
         setActiveTab("response");
       }
     } catch (e: unknown) {

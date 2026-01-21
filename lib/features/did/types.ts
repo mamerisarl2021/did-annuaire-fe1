@@ -9,6 +9,16 @@ export type OptionKey =
   | "capabilityInvocation"
   | "capabilityDelegation";
 
+export interface JWK {
+  kty: string;
+  crv?: string;
+  x?: string;
+  y?: string;
+  n?: string;
+  e?: string;
+  [key: string]: unknown;
+}
+
 export interface Service {
   id: string;
   type: ServiceType;
@@ -19,12 +29,7 @@ export interface VerificationMethod {
   id: string;
   type: string;
   controller?: string;
-  publicKeyJwk: {
-    kty: string;
-    crv?: string;
-    x?: string;
-    [key: string]: unknown;
-  };
+  publicKeyJwk: JWK;
 }
 
 export interface DIDDocument {
@@ -47,13 +52,8 @@ export interface DID {
   organization_name?: string;
   owner_id?: string;
   document_type?: string;
-  key_id?: string;
   public_key_version?: number;
-  public_key_jwk?: { 
-    kty: string;
-    crv?: string;
-    x?: string;
-   };
+  public_key_jwk?: JWK;
   metadata?: {
     [key: string]: unknown;
   };

@@ -6,7 +6,6 @@ export type CertificateType = "PEM" | "DER" | "PKCS7" | "PKCS12" | "JWK" | "CRT"
  */
 export interface CertificateKey {
   certificate_id: string;
-  key_id: string;
   extracted_jwk: {
     kty: string;
     crv?: string;

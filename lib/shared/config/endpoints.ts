@@ -33,6 +33,19 @@ export const API_ENDPOINTS = {
     TOGGLE_ACTIVATION: (id: string) => `/api/superadmin/organizations/${id}/toggle-activation`,
     DELETE: (id: string) => `/api/superadmin/organizations/${id}/delete`,
   },
+  DID: {
+    LIST: "/api/registry/dids",
+    CREATE: "/api/registry/dids",
+    PREVIEW: "/api/registry/dids/preview",
+    CERTIFICATES: "/api/registry/certificates",
+    METHODS: "/api/universal-registrar/methods",
+    RESOLVE: (identifier: string) => `/api/universal-resolver/identifiers/${identifier}`,
+    DETAILS: (id: string) => `/api/registry/dids/${id}/document`,
+    KEYS: (id: string) => `/api/registry/dids/${id}/keys`,
+    ROTATE: (id: string) => `/api/registry/dids/${id}/keys/rotate`,
+    UPDATE: "/api/universal-registrar/update",
+    PUBLISH: (id: string) => `/api/registry/dids/${id}/publish`,
+  },
 } as const;
 
 export const getApiUrl = (endpoint: string): string => {

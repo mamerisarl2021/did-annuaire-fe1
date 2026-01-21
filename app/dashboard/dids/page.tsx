@@ -11,11 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DeactivateDIDModal } from "@/components/features/did/list/DeactivateDIDModal";
 import { DIDKeysModal } from "@/components/features/did/list/DIDKeysModal";
+import { useToast } from "@/components/ui/use-toast";
 import { DID } from "@/lib/features/did/types";
 
 export default function DIDListPage() {
   const router = useRouter();
-  const { dids, isLoading, searchQuery, setSearchQuery, deleteDID, pagination } = useDIDs();
+  const { toast } = useToast();
+  const { dids, isLoading, searchQuery, setSearchQuery, deleteDID, publishDID, pagination } =
+    useDIDs();
 
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [didToDeactivate, setDidToDeactivate] = useState<DID | null>(null);
@@ -30,6 +33,38 @@ export default function DIDListPage() {
   const handleFetchKeys = (did: DID) => {
     setSelectedDidId(did.id);
     setIsKeysModalOpen(true);
+  };
+
+  const handlePublish = async (did: DID) => {
+    try {
+      const result = await publishDID(did.id);
+
+      if (result.didState?.state === "finished") {
+        toast({
+          title: "DID Published",
+          description: `The DID has been successfully published to PROD.`,
+          variant: "default",
+        });
+      } else if (result.didState?.state === "wait") {
+        toast({
+          title: "Publication Requested",
+          description: "Your publication request is awaiting approval from an administrator.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Publication Sent",
+          description: "The publication process has been initiated.",
+          variant: "default",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Publication Failed",
+        description: err instanceof Error ? err.message : "An error occurred during publication.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDelete = (did: DID) => {
@@ -73,6 +108,7 @@ export default function DIDListPage() {
               isLoading={isLoading}
               onDelete={handleDelete}
               onFetchKeys={handleFetchKeys}
+              onPublish={handlePublish}
             />
 
             <div className="px-6 border-t">

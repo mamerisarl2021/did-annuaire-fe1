@@ -6,8 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DIDCreator } from "@/components/features/did/creator/DIDCreator";
-import { didService } from "@/lib/features/did/services";
-import { DID } from "@/lib/features/did/types";
+import { didApiClient } from "@/lib/features/did/api/didApiClient";
+import { DID, DIDDocument } from "@/lib/features/did/types";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 
@@ -26,9 +26,27 @@ export default function EditDIDPage() {
   useEffect(() => {
     const fetchDID = async () => {
       try {
-        const data = await didService.getDIDById(didId);
-        if (data) {
-          setDid(data);
+        const data = await didApiClient.getDID(didId);
+        if (data && data.didState) {
+          const mappedDid: DID = {
+            id: data.didState.did || "",
+            method: "WEB",
+            didDocument: data.didState.didDocument || ({} as DIDDocument),
+            created: new Date().toISOString(),
+            organization_id: data.didState.organization_id || organizationId,
+            owner_id: data.didState.owner_id || (user?.id as string),
+            document_type: data.didDocumentMetadata?.document_type || "document",
+            key_id: data.didDocumentMetadata?.key?.key_id,
+            public_key_version: data.didDocumentMetadata?.key?.public_key_version,
+            public_key_jwk: data.didDocumentMetadata?.key?.public_key_jwk,
+            metadata: {
+              version: data.didDocumentMetadata?.versionId,
+              environment: data.didState.environment,
+              certificate_id: data.didDocumentMetadata?.key?.certificate?.id,
+              options: data.didDocumentMetadata?.key?.purposes,
+            },
+          };
+          setDid(mappedDid);
         } else {
           toast({
             title: "NotFound",
@@ -45,7 +63,7 @@ export default function EditDIDPage() {
     };
 
     fetchDID();
-  }, [didId, router, toast]);
+  }, [didId, router, toast, organizationId, user?.id]);
 
   if (authLoading || isDidLoading) {
     return (

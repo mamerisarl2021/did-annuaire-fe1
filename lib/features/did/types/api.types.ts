@@ -1,4 +1,4 @@
-import { DIDDocument } from "../types";
+import { DIDDocument, JWK } from "../types";
 import { CertificateType } from "./certificate.types";
 
 /**
@@ -12,10 +12,25 @@ export interface DIDStateEnvelope {
     didDocument?: DIDDocument;
     reason?: string;
     environment?: "DRAFT" | "PREPROD" | "PROD";
+    organization_id?: string;
+    owner_id?: string;
   };
   didDocumentMetadata?: {
-    versionId?: number;
+    versionId?: string | number;
     published?: boolean;
+    environment?: string;
+    document_type?: string;
+    key?: {
+      key_id?: string;
+      public_key_version: number;
+      public_key_jwk: JWK;
+      purposes: string[];
+      certificate: {
+        id: string;
+        filename: string;
+        url: string;
+      };
+    };
     [key: string]: unknown;
   };
   didRegistrationMetadata: {
@@ -64,7 +79,6 @@ export interface PreviewDIDParams {
   organization_id: string;
   document_type: string;
   certificate_id: string;
-  key_id: string;
   purposes?: string[];
 }
 
@@ -75,7 +89,6 @@ export interface CreateDIDPayload {
   organization_id: string;
   document_type: string;
   certificate_id: string;
-  key_id: string;
   purposes: string[];
   owner_id: string;
   services: string[];
@@ -112,7 +125,8 @@ export interface DIDListItem {
 export interface DIDListPagination {
   page: number;
   page_size: number;
-  total: number;
+  total?: number;
+  count?: number;
   total_pages: number;
 }
 
@@ -181,7 +195,6 @@ export interface DIDMethode {
 export interface DIDMethodsResponse {
   items: DIDMethod[];
 }
-
 
 export interface PublicJwk {
   x: string;

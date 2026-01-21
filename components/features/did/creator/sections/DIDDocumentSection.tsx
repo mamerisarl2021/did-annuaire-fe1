@@ -92,7 +92,7 @@ export function DIDDocumentSection({
                     Certificate Key:
                   </p>
                   <p className="text-[12px] font-mono font-bold text-blue-700 dark:text-blue-200 truncate">
-                    {certificateKey.key_id}
+                    {certificateKey.certificate_id}
                   </p>
                 </div>
 

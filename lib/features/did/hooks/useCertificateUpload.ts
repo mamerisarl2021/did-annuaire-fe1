@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { didApiClient } from "../api/didApiClient";
 import type { CertificateKey, CertificateType } from "../types/certificate.types";
-import { getDefaultPurposes } from "../utils/purposeValidator";
 import { logger } from "@/lib/shared/services/logger.service";
 
 export interface UseCertificateUploadReturn {
@@ -49,14 +48,10 @@ export function useCertificateUpload(): UseCertificateUploadReturn {
 
         const response = await didApiClient.uploadCertificate(formData);
 
-        // Auto-assign default purposes based on key type
-        const defaultPurposes = getDefaultPurposes(response.didDocumentMetadata?.public_jwk);
-
         return {
           certificate_id: response.didDocumentMetadata?.certificate_id || "",
-          key_id: `key-${Date.now()}`,
           extracted_jwk: response.didDocumentMetadata?.public_jwk || {},
-          purposes: defaultPurposes,
+          purposes: ["authentication", "assertionMethod"],
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Upload failed";
