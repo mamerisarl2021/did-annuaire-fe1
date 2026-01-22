@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { usersApiClient } from "../api/usersApiClient";
+import { usersService } from "../services/users.service";
 import {
   User,
   GetUsersParams,
@@ -56,7 +56,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await usersApiClient.getUsers(params);
+      const response = await usersService.getUsers(params);
       setUsers(response.data?.items || []);
       setPagination(response.data?.pagination || {});
     } catch (err) {
@@ -78,7 +78,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   ) => {
     const { autoRefresh = true } = options;
     try {
-      const newUser = await usersApiClient.createUser(payload);
+      const newUser = await usersService.createUser(payload);
       if (autoRefresh) await fetchUsers();
       return newUser;
     } catch (err) {
@@ -90,7 +90,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   const inviteUser = async (userId: string, options: { autoRefresh?: boolean } = {}) => {
     const { autoRefresh = true } = options;
     try {
-      await usersApiClient.inviteUser(userId);
+      await usersService.inviteUser(userId);
       if (autoRefresh) await fetchUsers();
     } catch (err) {
       logger.error("[useUsers] Invite error:", err);
@@ -105,7 +105,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   ) => {
     const { autoRefresh = true } = options;
     try {
-      const updatedUser = await usersApiClient.updateUser(userId, payload);
+      const updatedUser = await usersService.updateUser(userId, payload);
       if (autoRefresh) await fetchUsers();
       return updatedUser;
     } catch (err) {
@@ -117,7 +117,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   const deactivateUser = async (userId: string, options: { autoRefresh?: boolean } = {}) => {
     const { autoRefresh = true } = options;
     try {
-      await usersApiClient.updateUser(userId, { status: "DEACTIVATED" as UserStatus });
+      await usersService.updateUser(userId, { status: "DEACTIVATED" as UserStatus });
       if (autoRefresh) await fetchUsers();
     } catch (err) {
       logger.error("[useUsers] Deactivate error:", err);

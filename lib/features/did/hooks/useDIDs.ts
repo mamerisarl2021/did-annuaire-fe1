@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { DID, DIDDocument } from "../types";
-import { didApiClient } from "../api/didApiClient";
+import { didService } from "../services/did.service";
 import { logger } from "@/lib/shared/services/logger.service";
 import { DIDListPagination } from "../types/api.types";
 
@@ -23,7 +23,7 @@ export function useDIDs() {
   const fetchDIDs = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await didApiClient.getAllDIDs({
+      const response = await didService.getAllDIDs({
         page,
         page_size: pageSize,
       });
@@ -81,7 +81,7 @@ export function useDIDs() {
 
   const deactivateDID = async (did: string) => {
     try {
-      const response = await didApiClient.deactivateDID(did);
+      const response = await didService.deactivateDID(did);
       logger.info(`[useDIDs] Deactivated DID ${did}`, { response });
       await fetchDIDs();
       return response;
@@ -93,7 +93,7 @@ export function useDIDs() {
 
   const publishDID = async (id: string) => {
     try {
-      const response = await didApiClient.publishDID(id);
+      const response = await didService.publishDID(id);
       logger.info(`[useDIDs] Published DID ${id}`, { response });
       return response;
     } catch (err) {

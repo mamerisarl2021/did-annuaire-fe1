@@ -1,4 +1,8 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import { logger } from "../services/logger.service";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+
+logger.info(`API Base URL: ${API_BASE_URL || "(same domain)"}`);
 
 export const API_ENDPOINTS = {
   AUTH: {

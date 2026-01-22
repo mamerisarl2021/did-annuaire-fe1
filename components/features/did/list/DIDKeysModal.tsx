@@ -19,7 +19,7 @@ import {
 import { Copy, Check, Loader2, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { didApiClient } from "@/lib/features/did/api/didApiClient";
+import { didService } from "@/lib/features/did/services/did.service";
 import { useToast } from "@/components/ui/use-toast";
 
 interface PublicKeyJwk {
@@ -50,7 +50,7 @@ export function DIDKeysModal({ isOpen, onClose, didId }: DIDKeysModalProps) {
       const fetchKeys = async () => {
         setIsLoading(true);
         try {
-          const fetchedKeys = await didApiClient.fetchKeys(didId);
+          const fetchedKeys = await didService.fetchKeys(didId);
           setKeys(
             fetchedKeys.map((k) => ({
               id: k.key_id,

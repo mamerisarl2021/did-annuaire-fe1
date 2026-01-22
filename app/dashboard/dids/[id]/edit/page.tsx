@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DIDCreator } from "@/components/features/did/creator/DIDCreator";
-import { didApiClient } from "@/lib/features/did/api/didApiClient";
+import { didService } from "@/lib/features/did/services/did.service";
 import { DID, DIDDocument } from "@/lib/features/did/types";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
@@ -26,7 +26,7 @@ export default function EditDIDPage() {
   useEffect(() => {
     const fetchDID = async () => {
       try {
-        const data = await didApiClient.getDID(didId);
+        const data = await didService.getDID(didId);
         if (data && data.didState) {
           const mappedDid: DID = {
             id: data.didState.did || "",

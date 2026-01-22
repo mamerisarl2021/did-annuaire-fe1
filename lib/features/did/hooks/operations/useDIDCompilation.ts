@@ -1,4 +1,4 @@
-import { didApiClient } from "../../api/didApiClient";
+import { didService } from "../../services/did.service";
 import type { DIDState } from "../state/useDIDState";
 
 export interface DIDCompilation {
@@ -30,7 +30,7 @@ export function useDIDCompilation(state: DIDState): DIDCompilation {
           purposes: state.selectedOptions,
         };
 
-        const response = await didApiClient.previewDID(params);
+        const response = await didService.previewDID(params);
 
         if (response.didState.state === "action" && response.didState.didDocument) {
           setDidDocument(JSON.stringify(response.didState.didDocument, null, 2));
