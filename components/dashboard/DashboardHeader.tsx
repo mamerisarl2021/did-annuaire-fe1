@@ -1,6 +1,7 @@
 "use client";
 
-import { Lock, Menu } from "lucide-react";
+import Image from "next/image";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { UserMenu } from "@/lib/features/auth/components/UserMenu";
 import { Button } from "@/components/ui/button";
@@ -44,9 +45,7 @@ export function DashboardHeader() {
 
         {/* Logo / Brand */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Lock className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <Image src="/logo.png" alt="DID Annuaire" width={32} height={32} className="h-8 w-8" />
           <h1 className="text-xl font-bold text-primary">DID Annuaire</h1>
         </Link>
       </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { didApiClient } from "../api/didApiClient";
+import { didService } from "../services/did.service";
 import { DIDResolutionResponse } from "../types/api.types";
 import { DIDDocument } from "../types";
 
@@ -27,7 +27,7 @@ export function useDidResolution() {
     setState({ status: "loading" });
 
     try {
-      const response = await didApiClient.resolveDID(input);
+      const response = await didService.resolveDID(input);
 
       const didMeta = response.didResolutionMetadata;
 

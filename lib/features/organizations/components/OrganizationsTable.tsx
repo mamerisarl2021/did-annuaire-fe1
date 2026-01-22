@@ -86,7 +86,7 @@ export function OrganizationsTable({
               <TableCell>
                 <OrganizationStatusBadge status={org.status} />
               </TableCell>
-              <TableCell>{new Date(org.createdAt).toLocaleDateString()}</TableCell>
+              <TableCell>{new Date(org.createdAt).toISOString().split("T")[0]}</TableCell>
               <TableCell className="text-right">
                 <div
                   className="flex items-center justify-end gap-2"

@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { didApiClient } from "../api/didApiClient";
+import { didService } from "../services/did.service";
 import type { CertificateKey, CertificateType } from "../types/certificate.types";
 import { logger } from "@/lib/shared/services/logger.service";
 
@@ -46,7 +46,7 @@ export function useCertificateUpload(): UseCertificateUploadReturn {
           formData.append("password", password);
         }
 
-        const response = await didApiClient.uploadCertificate(formData);
+        const response = await didService.uploadCertificate(formData);
 
         return {
           certificate_id: response.didDocumentMetadata?.certificate_id || "",

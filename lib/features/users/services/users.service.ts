@@ -9,10 +9,10 @@ import {
 } from "../types/users.types";
 
 /**
- * API Client for User Management
+ * Users Service
  * Strictly handles HTTP requests related to Users
  */
-export const usersApiClient = {
+export const usersService = {
   /**
    * Fetch a paginated list of users
    */

@@ -1,4 +1,4 @@
-import { didApiClient } from "../../api/didApiClient";
+import { didService } from "../../services/did.service";
 import type { DIDState } from "../state/useDIDState";
 
 export interface DIDExecution {
@@ -42,7 +42,7 @@ export function useDIDExecution(state: DIDState): DIDExecution {
           keys: [],
         };
 
-        const result = await didApiClient.createDID(payload);
+        const result = await didService.createDID(payload);
         setResponse(JSON.stringify(result, null, 2));
         setActiveTab("response");
       } else if (mode === "update") {
@@ -57,7 +57,7 @@ export function useDIDExecution(state: DIDState): DIDExecution {
           throw new Error("Missing Certificate ID for rotation.");
         }
 
-        const result = await didApiClient.rotateKey(didId, {
+        const result = await didService.rotateKey(didId, {
           certificate_id: certId,
           purposes: state.selectedOptions,
         });

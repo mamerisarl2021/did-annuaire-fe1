@@ -74,19 +74,20 @@ class LoggerService {
    */
   private logToConsole(entry: LogEntry): void {
     const prefix = `[${entry.timestamp}] [${entry.level.toUpperCase()}]`;
+    const hasContext = entry.context && Object.keys(entry.context).length > 0;
 
     switch (entry.level) {
       case "debug":
-        console.debug(prefix, entry.message, entry.context);
+        console.debug(prefix, entry.message, ...(hasContext ? [entry.context] : []));
         break;
       case "info":
-        console.info(prefix, entry.message, entry.context);
+        console.info(prefix, entry.message, ...(hasContext ? [entry.context] : []));
         break;
       case "warn":
-        console.warn(prefix, entry.message, entry.context);
+        console.warn(prefix, entry.message, ...(hasContext ? [entry.context] : []));
         break;
       case "error":
-        console.error(prefix, entry.message, entry.context, entry.error);
+        console.error(prefix, entry.message, ...(hasContext ? [entry.context] : []), ...(entry.error ? [entry.error] : []));
         break;
     }
   }

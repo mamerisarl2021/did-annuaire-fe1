@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { didApiClient } from "../api/didApiClient";
+import { didService } from "../services/did.service";
 import type { DIDMethod } from "../types/api.types";
 import { logger } from "@/lib/shared/services/logger.service";
 
@@ -22,7 +22,7 @@ export function useDIDMethods(): UseDIDMethodsReturn {
       try {
         setIsLoading(true);
         setError(null);
-        const data = await didApiClient.getDIDMethods();
+        const data = await didService.getDIDMethods();
         setMethods(data);
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to load DID methods";

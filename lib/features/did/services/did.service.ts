@@ -15,10 +15,10 @@ import type {
 } from "../types/api.types";
 
 /**
- * Client API DID
+ * DID Service
  * Centralized API client using shared infrastructure
  */
-export const didApiClient = {
+export const didService = {
   /**
    * Upload de certificat
    */

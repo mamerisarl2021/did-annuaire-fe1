@@ -1,6 +1,7 @@
 "use client";
 
-import { Home, Lock, LogIn, LogOut, Menu, Search, UserPlus, LayoutDashboard } from "lucide-react";
+import Image from "next/image";
+import { Home, LogIn, LogOut, Menu, Search, UserPlus, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
@@ -32,9 +33,7 @@ export function PublicHeader() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo / Brand */}
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Lock className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <Image src="/logo.png" alt="DID Annuaire" width={32} height={32} className="h-8 w-8" />
           <span className="text-lg font-semibold text-foreground tracking-tight">DID Annuaire</span>
         </Link>
 
@@ -89,9 +88,7 @@ export function PublicHeader() {
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <SheetHeader>
                 <SheetTitle className="text-left flex items-center gap-2">
-                  <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
-                    <Lock className="h-3 w-3 text-primary-foreground" />
-                  </div>
+                  <Image src="/logo.png" alt="Logo" width={24} height={24} className="h-6 w-6" />
                   Navigation
                 </SheetTitle>
               </SheetHeader>
