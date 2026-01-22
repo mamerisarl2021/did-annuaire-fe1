@@ -1,4 +1,13 @@
-import { Edit, Trash2, Calendar, Fingerprint, CloudDownload, QrCode } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Calendar,
+  Fingerprint,
+  CloudDownload,
+  QrCode,
+  Key,
+  FileText,
+} from "lucide-react";
 import { DID } from "@/lib/features/did/types";
 import {
   Table,
@@ -10,16 +19,19 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
+import { truncateDID } from "@/lib/features/did/utils/didFormatter";
 
 interface DIDTableProps {
   dids: DID[];
   onDelete: (did: DID) => void;
   onFetchKeys: (did: DID) => void;
+  onPublish: (did: DID) => void;
   isLoading?: boolean;
 }
 
-export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTableProps) {
+export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: DIDTableProps) {
   if (isLoading) {
     return <div className="text-center py-10 text-muted-foreground">Loading DIDs...</div>;
   }
@@ -39,8 +51,10 @@ export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTablePro
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[40%]">DID Identifier</TableHead>
+            <TableHead className="w-[30%]">DID Identifier</TableHead>
             <TableHead>Method</TableHead>
+            <TableHead>Document Type</TableHead>
+            <TableHead>Algorithm Type</TableHead>
             <TableHead>Created</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -48,7 +62,19 @@ export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTablePro
         <TableBody>
           {dids.map((did) => (
             <TableRow key={did.id} className="hover:bg-muted/50 transition-colors">
-              <TableCell className="font-mono text-sm font-medium">{did.id}</TableCell>
+              <TableCell className="font-mono text-sm font-medium">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help">{truncateDID(did.id)}</span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-md break-all">
+                      <p className="font-mono text-xs text-white">{did.id}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+
               <TableCell>
                 <Badge
                   variant="outline"
@@ -57,12 +83,31 @@ export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTablePro
                   {did.method}
                 </Badge>
               </TableCell>
-              <TableCell className="text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Calendar className="size-4" />
-                  {new Date(did.created).toLocaleDateString()}
+
+              <TableCell>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <FileText className="size-3.5" />
+                  <span className="capitalize">
+                    {did.document_type?.replace(/_/g, " ") || "N/A"}
+                  </span>
                 </div>
               </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1.5 cursor-help">
+                  <Key className="size-3.5 text-muted-foreground" />
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {did.public_key_jwk?.kty}
+                  </span>
+                </div>
+              </TableCell>
+
+              <TableCell className="text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs">
+                  <Calendar className="size-3.5" />
+                  {new Date(did.created).toISOString().split("T")[0]}
+                </div>
+              </TableCell>
+
               <TableCell className="text-right">
                 <div
                   className="flex items-center justify-end gap-2"
@@ -79,17 +124,16 @@ export function DIDTable({ dids, onDelete, onFetchKeys, isLoading }: DIDTablePro
                     <span className="hidden lg:inline text-[11px] font-bold">Fetch Keys</span>
                   </Button>
 
-                  {/* DID URL Resolver Link */}
-                  <Link href={`/dashboard/dids/${encodeURIComponent(did.id)}/url`}>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1.5 text-violet-600 border-violet-100 hover:bg-violet-50 dark:border-violet-900/40 dark:hover:bg-violet-900/20"
-                    >
-                      <QrCode className="size-4" />
-                      <span className="hidden lg:inline text-[11px] font-bold">DID URL</span>
-                    </Button>
-                  </Link>
+                  {/* Publish Button */}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 gap-1.5 text-emerald-600 border-emerald-100 hover:bg-emerald-50 dark:border-emerald-900/40 dark:hover:bg-emerald-900/20"
+                    onClick={() => onPublish(did)}
+                  >
+                    <QrCode className="size-4" />
+                    <span className="hidden lg:inline text-[11px] font-bold">Publish</span>
+                  </Button>
 
                   {/* Edit Link */}
                   <Link href={`/dashboard/dids/${encodeURIComponent(did.id)}/edit`}>

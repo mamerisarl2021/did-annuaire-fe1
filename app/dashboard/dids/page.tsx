@@ -5,16 +5,20 @@ import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useDIDs } from "@/lib/features/did/hooks/useDIDs";
 import { DIDTable } from "@/components/features/did/list/DIDTable";
+import { PaginationControl } from "@/components/common/PaginationControl";
 import { DIDSearchBar } from "@/components/features/did/list/DIDSearchBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DeactivateDIDModal } from "@/components/features/did/list/DeactivateDIDModal";
 import { DIDKeysModal } from "@/components/features/did/list/DIDKeysModal";
+import { useToast } from "@/components/ui/use-toast";
 import { DID } from "@/lib/features/did/types";
 
 export default function DIDListPage() {
   const router = useRouter();
-  const { dids, isLoading, searchQuery, setSearchQuery, deleteDID } = useDIDs();
+  const { toast } = useToast();
+  const { dids, isLoading, searchQuery, setSearchQuery, deactivateDID, publishDID, pagination } =
+    useDIDs();
 
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [didToDeactivate, setDidToDeactivate] = useState<DID | null>(null);
@@ -31,14 +35,59 @@ export default function DIDListPage() {
     setIsKeysModalOpen(true);
   };
 
+  const handlePublish = async (did: DID) => {
+    try {
+      const result = await publishDID(did.id);
+
+      if (result.didState?.state === "finished") {
+        toast({
+          title: "DID Published",
+          description: `The DID has been successfully published to PROD.`,
+          variant: "default",
+        });
+      } else if (result.didState?.state === "wait") {
+        toast({
+          title: "Publication Requested",
+          description: "Your publication request is awaiting approval from an administrator.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Publication Sent",
+          description: "The publication process has been initiated.",
+          variant: "default",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Publication Failed",
+        description: err instanceof Error ? err.message : "An error occurred during publication.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleDelete = (did: DID) => {
     setDidToDeactivate(did);
     setIsDeactivateModalOpen(true);
   };
 
-  const handleConfirmDeactivate = (did: DID) => {
-    deleteDID(did.id);
-    setIsDeactivateModalOpen(false);
+  const handleConfirmDeactivate = async (did: DID) => {
+    try {
+      await deactivateDID(did.id);
+      toast({
+        title: "DID Deactivated",
+        description: "The DID has been successfully deactivated.",
+      });
+    } catch (err) {
+      toast({
+        title: "Deactivation Failed",
+        description: err instanceof Error ? err.message : "An error occurred during deactivation.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeactivateModalOpen(false);
+    }
   };
 
   return (
@@ -72,7 +121,16 @@ export default function DIDListPage() {
               isLoading={isLoading}
               onDelete={handleDelete}
               onFetchKeys={handleFetchKeys}
+              onPublish={handlePublish}
             />
+
+            <div className="px-6 border-t">
+              <PaginationControl
+                currentPage={pagination.page}
+                totalPages={pagination.total_pages}
+                onPageChange={pagination.setPage}
+              />
+            </div>
           </CardContent>
         </Card>
       </div>

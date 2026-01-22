@@ -13,7 +13,7 @@ import {
   Step3Documents,
 } from "@/components/forms/register";
 import { useStepper } from "@/lib/hooks/useStepper";
-import { useRegisterForm } from "@/lib/hooks/useRegisterForm";
+import { useRegisterForm } from "@/lib/features/organizations/hooks/useRegisterForm";
 import { REGISTER_STEPS, type RegisterFormData } from "@/lib/schemas/register.schema";
 import { useCreateOrganization } from "@/lib/features/organizations/hooks/useCreateOrganization";
 import { type OrgCreatePayload } from "@/lib/features/organizations/types/organization.types";

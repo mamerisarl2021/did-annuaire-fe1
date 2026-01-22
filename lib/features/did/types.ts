@@ -1,20 +1,23 @@
-export type MethodType =
-  | "BTCR2"
-  | "CHEQD"
-  | "EBSI"
-  | "ETHR"
-  | "INDY"
-  | "ION"
-  | "JWK"
-  | "KEY"
-  | "KSCIRC"
-  | "LING"
-  | "PKH"
-  | "V1"
-  | "WEB"
-  | "WEBVH";
+export type MethodType = "WEB";
 
 export type ServiceType = "DIDCommMessaging" | "DecentralizedWebNode" | "LinkedDomains";
+
+export type OptionKey =
+  | "authentication"
+  | "assertionMethod"
+  | "keyAgreement"
+  | "capabilityInvocation"
+  | "capabilityDelegation";
+
+export interface JWK {
+  kty: string;
+  crv?: string;
+  x?: string;
+  y?: string;
+  n?: string;
+  e?: string;
+  [key: string]: unknown;
+}
 
 export interface Service {
   id: string;
@@ -26,12 +29,7 @@ export interface VerificationMethod {
   id: string;
   type: string;
   controller?: string;
-  publicKeyJwk: {
-    kty: string;
-    crv?: string;
-    x?: string;
-    [key: string]: unknown;
-  };
+  publicKeyJwk: JWK;
 }
 
 export interface DIDDocument {
@@ -50,6 +48,12 @@ export interface DID {
   didDocument: DIDDocument;
   created: string;
   updated?: string;
+  organization_id?: string;
+  organization_name?: string;
+  owner_id?: string;
+  document_type?: string;
+  public_key_version?: number;
+  public_key_jwk?: JWK;
   metadata?: {
     [key: string]: unknown;
   };
@@ -57,9 +61,14 @@ export interface DID {
 
 export type TabType = "request" | "response" | "error";
 
-export type OperationType = "CREATE" | "UPDATE" | "DEACTIVATE";
+export type DIDMode = "create" | "update" | "resolve";
+
 export interface CreateDIDOptions {
-  clientSecretMode?: boolean;
+  authentication?: string[];
+  assertionMethod?: string[];
+  keyAgreement?: string[];
+  capabilityInvocation?: string[];
+  capabilityDelegation?: string[];
   [key: string]: unknown;
 }
 

@@ -1,75 +1,84 @@
 "use client";
 
-import React, { useState } from "react";import { useDIDCreator } from "@/lib/features/did/hooks/useDIDCreator";
-import { TabType, Service } from "@/lib/features/did/types";
+import React, { useEffect } from "react";
+import { useDIDManager } from "@/lib/features/did/hooks/useDIDManager";
+import { TabType, DIDMode, DID } from "@/lib/features/did/types";
+import { didDocumentParser } from "@/lib/features/did/utils/didDocumentParser";
 import { DIDCreatorLayout } from "./layout/DIDCreatorLayout";
 import { DIDMethodSection } from "./sections/DIDMethodSection";
 import { DIDDocumentSection } from "./sections/DIDDocumentSection";
-import { DIDConfigSection } from "./sections/DIDConfigSection";
+import { KeyPurposesSection } from "./sections/KeyPurposesSection";
 import { DIDCreatorFooter } from "./sections/DIDCreatorFooter";
+import { DIDResponseSection } from "./sections/DIDResponseSection";
 import { ServiceModal } from "./ServiceModal";
 import { CertificateModal } from "./CertificateModal";
 
-interface DIDCreatorProps {
-  isEditing?: boolean;
-  editingDidId?: string;
+export interface DIDCreatorProps {
+  mode: DIDMode;
+  initialDid?: DID | null;
+  organizationId: string;
+  ownerId?: string;
   onClose?: () => void;
-  [key: string]: unknown;
 }
 
-export function DIDCreator(props: DIDCreatorProps) {
-  const internalCreator = useDIDCreator();
-
-  const creator = { ...internalCreator, ...props };
+export function DIDCreator({
+  mode: initialMode,
+  initialDid,
+  organizationId,
+  ownerId,
+}: DIDCreatorProps) {
+  const manager = useDIDManager(initialMode);
 
   const {
-    selectedMethod,
-    setSelectedMethod,
+    mode,
+    logicalIdentifier,
+    setLogicalIdentifier,
     didDocument,
     setDidDocument,
-    options,
-    setOptions,
-    secret,
-    setSecret,
+    selectedOptions,
+    toggleOption,
     activeTab,
     setActiveTab,
-    createDID,
-    handleAddKeys,
+    compileDID,
+    executeAction,
+    certificateKey,
+    setCertificateKey,
+    setOrganizationId,
+    setOwnerId,
     handleAddService,
+    loadDID,
     response,
     error,
     isSubmitting,
-  } = creator;
+    isCompiled,
+  } = manager;
 
-  const { isEditing } = props;
+  useEffect(() => {
+    if (organizationId) {
+      setOrganizationId(organizationId);
+    }
+    if (ownerId) {
+      setOwnerId(ownerId);
+    }
+  }, [organizationId, ownerId, setOrganizationId, setOwnerId]);
 
-  const [isMethodSelectOpen, setIsMethodSelectOpen] = useState(false);
-  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
-  const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
+  useEffect(() => {
+    if (initialDid) {
+      loadDID(initialDid, initialMode);
+    }
+  }, [initialDid, initialMode, loadDID]);
 
-  // Dynamic services parsing for the UI
-  let services = [];
-  try {
-    const doc = JSON.parse(didDocument);
-    services = doc.service || [];
-  } catch {
-  }
+  const [isServiceModalOpen, setIsServiceModalOpen] = React.useState(false);
+  const [isCertificateModalOpen, setIsCertificateModalOpen] = React.useState(false);
+
+  const services = didDocumentParser.parseServices(didDocument);
 
   const handleRemoveService = (serviceId: string) => {
-    try {
-      const doc = JSON.parse(didDocument);
-      doc.service = (doc.service || []).filter((s: Service) => s.id !== serviceId);
-      setDidDocument(JSON.stringify(doc, null, 2));
-    } catch (e) {
-      console.error("Error removing service:", e);
-    }
+    const updatedDocument = didDocumentParser.removeService(didDocument, serviceId);
+    setDidDocument(updatedDocument);
   };
 
-  const responseElement = response ? (
-    <pre className="font-mono text-xs text-slate-700 dark:text-slate-300 p-4 bg-white dark:bg-slate-950 border rounded shadow-inner whitespace-pre-wrap">
-      {response}
-    </pre>
-  ) : null;
+  const responseElement = response ? <DIDResponseSection response={response} /> : null;
 
   const errorElement = error ? (
     <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 p-6 rounded-lg">
@@ -87,38 +96,41 @@ export function DIDCreator(props: DIDCreatorProps) {
         response={responseElement}
         error={errorElement}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full gap-2 p-4">
           {/* Section: Method Discovery */}
           <DIDMethodSection
-            selectedMethod={selectedMethod}
-            onMethodSelect={setSelectedMethod}
-            isOpen={isMethodSelectOpen}
-            onOpenChange={setIsMethodSelectOpen}
+            logicalIdentifier={logicalIdentifier}
+            onLogicalIdentifierChange={setLogicalIdentifier}
+            mode={mode}
+            selectedMethod={manager.selectedMethod}
+            onMethodChange={manager.setSelectedMethod}
           />
 
           {/* Section: DID Document Editor */}
           <DIDDocumentSection
             didDocument={didDocument}
             services={services}
+            certificateKey={certificateKey}
             onDocumentChange={setDidDocument}
             onAddService={() => setIsServiceModalOpen(true)}
             onRemoveService={handleRemoveService}
+            onAddCertificate={() => setIsCertificateModalOpen(true)}
+            onRemoveCertificate={() => setCertificateKey(null)}
           />
 
-          {/* Section: Configuration (Options/Secret) */}
-          <DIDConfigSection
-            options={options}
-            onOptionsChange={setOptions}
-            secret={secret}
-            onSecretChange={setSecret}
-            isEditing={isEditing}
+          <KeyPurposesSection
+            selectedPurposes={selectedOptions}
+            onTogglePurpose={toggleOption}
+            disabled={mode === "resolve"}
           />
 
           {/* Section: Footer Actions */}
           <DIDCreatorFooter
-            onAction={createDID}
+            onCompile={compileDID}
+            onAction={executeAction}
             isSubmitting={isSubmitting}
-            isEditing={isEditing}
+            isCompiled={isCompiled}
+            mode={mode}
           />
         </div>
       </DIDCreatorLayout>
@@ -133,7 +145,8 @@ export function DIDCreator(props: DIDCreatorProps) {
       <CertificateModal
         isOpen={isCertificateModalOpen}
         onClose={() => setIsCertificateModalOpen(false)}
-        onUpload={handleAddKeys}
+        onUpload={setCertificateKey}
+        organizationId={organizationId}
       />
     </div>
   );

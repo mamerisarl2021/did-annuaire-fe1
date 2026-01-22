@@ -23,7 +23,7 @@ export function DidVerifyForm({ value, loading, onChange, onVerify }: Props) {
           className="h-10"
         />
       </div>
-      <Button onClick={onVerify} disabled={loading} className="w-full">
+      <Button onClick={onVerify} disabled={loading || !value.trim()} className="w-full">
         {loading ? "Verifying..." : "Verify DID"}
       </Button>
     </div>
