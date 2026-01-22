@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { usersApiClient } from "../api/usersApiClient";
 import {
   User,
@@ -17,6 +17,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [clientSearch, setClientSearch] = useState("");
   const [pagination, setPagination] = useState<{
     page: number;
     page_size: number;
@@ -39,6 +40,18 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     ...initialParams,
   });
 
+  const filteredUsers = useMemo(() => {
+    if (!clientSearch.trim()) return users;
+
+    const searchLower = clientSearch.toLowerCase();
+    return users.filter(
+      (user) =>
+        user.full_name?.toLowerCase().includes(searchLower) ||
+        user.email?.toLowerCase().includes(searchLower) ||
+        user.organization?.toLowerCase().includes(searchLower)
+    );
+  }, [users, clientSearch]);
+
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -59,10 +72,14 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     fetchUsers();
   }, [fetchUsers]);
 
-  const createUser = async (payload: CreateUserPayload) => {
+  const createUser = async (
+    payload: CreateUserPayload,
+    options: { autoRefresh?: boolean } = {}
+  ) => {
+    const { autoRefresh = true } = options;
     try {
       const newUser = await usersApiClient.createUser(payload);
-      await fetchUsers();
+      if (autoRefresh) await fetchUsers();
       return newUser;
     } catch (err) {
       logger.error("[useUsers] Create error:", err);
@@ -70,20 +87,26 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     }
   };
 
-  const inviteUser = async (userId: string) => {
+  const inviteUser = async (userId: string, options: { autoRefresh?: boolean } = {}) => {
+    const { autoRefresh = true } = options;
     try {
       await usersApiClient.inviteUser(userId);
-      await fetchUsers();
+      if (autoRefresh) await fetchUsers();
     } catch (err) {
       logger.error("[useUsers] Invite error:", err);
       throw err;
     }
   };
 
-  const updateUser = async (userId: string, payload: UpdateUserPayload) => {
+  const updateUser = async (
+    userId: string,
+    payload: UpdateUserPayload,
+    options: { autoRefresh?: boolean } = {}
+  ) => {
+    const { autoRefresh = true } = options;
     try {
       const updatedUser = await usersApiClient.updateUser(userId, payload);
-      await fetchUsers();
+      if (autoRefresh) await fetchUsers();
       return updatedUser;
     } catch (err) {
       logger.error("[useUsers] Update error:", err);
@@ -91,10 +114,11 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     }
   };
 
-  const deactivateUser = async (userId: string) => {
+  const deactivateUser = async (userId: string, options: { autoRefresh?: boolean } = {}) => {
+    const { autoRefresh = true } = options;
     try {
       await usersApiClient.updateUser(userId, { status: "DEACTIVATED" as UserStatus });
-      await fetchUsers();
+      if (autoRefresh) await fetchUsers();
     } catch (err) {
       logger.error("[useUsers] Deactivate error:", err);
       throw err;
@@ -103,15 +127,18 @@ export function useUsers(initialParams: GetUsersParams = {}) {
 
   const setPage = (page: number) => setParams((prev) => ({ ...prev, page }));
   const setSearch = (search: string) => setParams((prev) => ({ ...prev, search, page: 1 }));
+  const updateClientSearch = (search: string) => setClientSearch(search);
 
   return {
     users,
+    filteredUsers,
     isLoading,
     error,
     pagination,
     params,
     setPage,
     setSearch,
+    setClientSearch: updateClientSearch,
     refresh: fetchUsers,
     createUser,
     inviteUser,

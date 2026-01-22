@@ -3,6 +3,7 @@ export * from "./types/organization.types";
 export { organizationService } from "./services/organization.service";
 
 export { useCreateOrganization } from "./hooks/useCreateOrganization";
+export { useRegisterForm } from "./hooks/useRegisterForm";
 
 export { organizationMapper } from "./mappers/organization.mapper";
 export { OrganizationDetailsDialog } from "./components/OrganizationDetailsDialog";

@@ -3,6 +3,7 @@
 import { useAuditData } from "../hooks/useAuditData";
 import { useAuditFilters } from "../hooks/useAuditFilters";
 import { useAuditDetails } from "../hooks/useAuditDetails";
+import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 import { AuditStatsCards } from "./AuditStatsCards";
 import { AuditFilters } from "./AuditFilters";
 import { AuditTable } from "./AuditTable";
@@ -13,9 +14,13 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
 export function AuditContainer() {
+  const { user } = useAuth();
   const { filters, setQ, setCategory, setSeverity, offset, limit, setOffset } = useAuditFilters();
 
-  const { logs, stats, totalCount, isLoading, error, refresh } = useAuditData(filters);
+  const { logs, stats, totalCount, isLoading, error, refresh } = useAuditData({
+    ...filters,
+    userRole: user?.role,
+  });
 
   const {
     selectedAudit,

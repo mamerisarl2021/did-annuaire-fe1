@@ -3,15 +3,20 @@
 import { useState, useCallback, useEffect } from "react";
 import { auditService } from "../services/audit.service";
 import { type AuditAction, type AuditStats, type AuditListParams } from "../types/audit.types";
-import { useAuth } from "@/lib/features/auth/hooks/useAuth";
+import { type UserRoleType } from "@/lib/types/roles";
 
-export function useAuditData(params: AuditListParams = {}) {
+interface UseAuditDataOptions extends AuditListParams {
+  userRole?: UserRoleType;
+}
+
+export function useAuditData(options: UseAuditDataOptions = {}) {
+  const { userRole, ...params } = options;
+
   const [logs, setLogs] = useState<AuditAction[]>([]);
   const [stats, setStats] = useState<AuditStats[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
 
   // Destructure params to avoid object reference comparison issues
   const {
@@ -41,7 +46,7 @@ export function useAuditData(params: AuditListParams = {}) {
         q,
         limit,
         offset,
-        organization_id: user?.role === "SUPER_USER" ? organization_id : undefined,
+        organization_id: userRole === "SUPER_USER" ? organization_id : undefined,
       };
 
       const [actionsRes, statsRes] = await Promise.all([
@@ -68,7 +73,7 @@ export function useAuditData(params: AuditListParams = {}) {
     limit,
     offset,
     organization_id,
-    user?.role,
+    userRole,
   ]);
 
   useEffect(() => {

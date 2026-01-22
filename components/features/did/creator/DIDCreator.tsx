@@ -2,7 +2,8 @@
 
 import React, { useEffect } from "react";
 import { useDIDManager } from "@/lib/features/did/hooks/useDIDManager";
-import { TabType, Service, DIDMode, DID } from "@/lib/features/did/types";
+import { TabType, DIDMode, DID } from "@/lib/features/did/types";
+import { didDocumentParser } from "@/lib/features/did/utils/didDocumentParser";
 import { DIDCreatorLayout } from "./layout/DIDCreatorLayout";
 import { DIDMethodSection } from "./sections/DIDMethodSection";
 import { DIDDocumentSection } from "./sections/DIDDocumentSection";
@@ -70,21 +71,11 @@ export function DIDCreator({
   const [isServiceModalOpen, setIsServiceModalOpen] = React.useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = React.useState(false);
 
-  // Dynamic services parsing for the UI
-  let services = [];
-  try {
-    const doc = JSON.parse(didDocument);
-    services = doc.service || [];
-  } catch {}
+  const services = didDocumentParser.parseServices(didDocument);
 
   const handleRemoveService = (serviceId: string) => {
-    try {
-      const doc = JSON.parse(didDocument);
-      doc.service = (doc.service || []).filter((s: Service) => s.id !== serviceId);
-      setDidDocument(JSON.stringify(doc, null, 2));
-    } catch (e) {
-      console.error("Error removing service:", e);
-    }
+    const updatedDocument = didDocumentParser.removeService(didDocument, serviceId);
+    setDidDocument(updatedDocument);
   };
 
   const responseElement = response ? <DIDResponseSection response={response} /> : null;

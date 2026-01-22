@@ -5,35 +5,16 @@ import { superAdminService } from "../services/superadmin.service";
 import { type OrganizationListItem } from "../../organizations/types/organization.types";
 
 interface UseOrganizationActionsReturn {
-  /** Whether an action is in progress */
   isLoading: boolean;
-  /** Error message if any */
   error: string | null;
-  /** Fetch full organization details */
   getOrganizationDetails: (orgId: string) => Promise<OrganizationListItem | null>;
-  /** Validate a pending organization */
   validateOrganization: (orgId: string) => Promise<boolean>;
-  /** Refuse a pending organization with reason */
   refuseOrganization: (orgId: string, reason: string) => Promise<boolean>;
-  /** Toggle organization status (active/suspended) */
   toggleOrganizationStatus: (orgId: string) => Promise<boolean>;
-  /** Delete an organization */
   deleteOrganization: (orgId: string) => Promise<boolean>;
-  /** Clear error state */
   clearError: () => void;
 }
 
-/**
- * Hook for organization management actions
- *
- * Single Responsibility: Handles CRUD operations on organizations
- * - Validate, refuse, toggle, delete
- * - Manages loading and error states
- *
- * Does NOT handle:
- * - UI state (modals, selections)
- * - Data fetching (handled by useOrganizations)
- */
 export function useOrganizationActions(): UseOrganizationActionsReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

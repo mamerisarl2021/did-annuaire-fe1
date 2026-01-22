@@ -22,12 +22,24 @@ interface UsersManagementViewProps {
 
 export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) {
   const { toast } = useToast();
-  const { users, isLoading, createUser, inviteUser, updateUser, deactivateUser } = useUsers({
+  const {
+    filteredUsers,
+    isLoading,
+    createUser,
+    inviteUser,
+    updateUser,
+    deactivateUser,
+    setClientSearch,
+  } = useUsers({
     org_id: orgId,
   });
 
-  // Search state
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setClientSearch(value);
+  };
 
   // Modal States
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -36,14 +48,6 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const [isResendModalOpen, setIsResendModalOpen] = useState(false);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
-  // Filter users based on search
-  const filteredUsers = users.filter(
-    (user) =>
-      user.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.organization?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const handleInvite = (user: User) => {
     setSelectedUser(user);
@@ -126,7 +130,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         <Card className="border shadow-sm rounded-2xl overflow-hidden">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4 mb-6">
-              <UsersSearchBar value={searchQuery} onChange={setSearchQuery} />
+              <UsersSearchBar value={searchQuery} onChange={handleSearchChange} />
             </div>
 
             <UsersTable

@@ -1,8 +1,8 @@
-import { API_ENDPOINTS, getApiUrl } from "@/lib/shared/config/endpoints";
+import { getApiUrl } from "@/lib/shared/config/endpoints";
 import { ApiException } from "@/lib/shared/api/api.errors";
 import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
 import { type ApiErrorResponse } from "@/lib/shared/types/api.types";
-import { logger } from "@/lib/shared/services/logger.service";
+import { authInterceptor } from "@/lib/shared/api/interceptors/auth.interceptor";
 
 interface RequestOptions extends RequestInit {
   requiresAuth?: boolean;
@@ -32,20 +32,16 @@ export const httpClient = {
       });
 
       if (response.status === 401 && requiresAuth) {
-        const refreshed = await handleTokenRefresh();
-        if (refreshed) {
-          const newToken = tokenStorage.getAccessToken();
-          if (newToken) {
-            (mergedHeaders as Record<string, string>)["Authorization"] = `Bearer ${newToken}`;
-            response = await fetch(url, {
-              ...rest,
-              headers: mergedHeaders,
-            });
-          }
-        } else {
-          tokenStorage.clear();
+        const retryResponse = await authInterceptor.retryWithNewToken(url, {
+          ...rest,
+          headers: mergedHeaders,
+        });
+
+        if (!retryResponse) {
           throw new ApiException(401, "Session expired");
         }
+
+        response = retryResponse;
       }
 
       if (!response.ok) {
@@ -99,47 +95,3 @@ export const httpClient = {
     return this.request<T>(endpoint, { ...options, method: "DELETE" });
   },
 };
-
-let isRefreshing = false;
-let refreshPromise: Promise<boolean> | null = null;
-
-async function handleTokenRefresh(): Promise<boolean> {
-  if (isRefreshing && refreshPromise) {
-    return refreshPromise;
-  }
-
-  isRefreshing = true;
-
-  refreshPromise = (async () => {
-    const refreshToken = tokenStorage.getRefreshToken();
-    if (!refreshToken) {
-      isRefreshing = false;
-      return false;
-    }
-
-    try {
-      const response = await fetch(getApiUrl(API_ENDPOINTS.AUTH.REFRESH), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh: refreshToken }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        tokenStorage.setAccessToken(data.access);
-        if (data.refresh) tokenStorage.setRefreshToken(data.refresh);
-
-        return true;
-      }
-      return false;
-    } catch (error) {
-      logger.error("Token refresh failed", error);
-      return false;
-    } finally {
-      isRefreshing = false;
-      refreshPromise = null;
-    }
-  })();
-
-  return refreshPromise;
-}

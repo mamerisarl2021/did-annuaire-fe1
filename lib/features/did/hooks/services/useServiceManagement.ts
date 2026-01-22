@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { Service } from "../../types";
 import type { DIDState } from "../state/useDIDState";
+import { logger } from "@/lib/shared/services/logger.service";
 
 export interface ServiceManagement {
   handleAddService: (service: Service) => void;
@@ -24,7 +25,7 @@ export function useServiceManagement(state: DIDState): ServiceManagement {
         setDidDocument(JSON.stringify(doc, null, 2));
         setIsCompiled(false);
       } catch (e) {
-        console.error("Error adding service:", e);
+        logger.error("Error adding service to DID document", e);
       }
     },
     [didDocument, setDidDocument, setIsCompiled]

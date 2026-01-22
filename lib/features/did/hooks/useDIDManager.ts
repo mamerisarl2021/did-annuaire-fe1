@@ -1,9 +1,10 @@
 import { useCallback } from "react";
-import { DID, DIDMode, OptionKey } from "../types";
+import { DID, DIDMode } from "../types";
 import { useDIDState } from "./state/useDIDState";
 import { useServiceManagement } from "./services/useServiceManagement";
 import { useDIDCompilation } from "./operations/useDIDCompilation";
 import { useDIDExecution } from "./operations/useDIDExecution";
+import { didMapper } from "../mappers/did.mapper";
 
 export function useDIDManager(initialMode: DIDMode = "create") {
   // Initialize state
@@ -31,55 +32,20 @@ export function useDIDManager(initialMode: DIDMode = "create") {
   const loadDID = useCallback(
     (did: DID, newMode: DIDMode = "update") => {
       if (!did) return;
+
       setMode(newMode);
+      setLogicalIdentifier(didMapper.extractLogicalId(did));
 
-      if (did.id) {
-        const idParts = did.id.split(":");
-        if (idParts.length > 0) {
-          setLogicalIdentifier(idParts[idParts.length - 1]);
-        }
-      }
+      const certId = didMapper.extractCertificateId(did);
+      if (certId) setInitialCertificateId(certId);
 
-      if (did.metadata?.certificate_id) {
-        setInitialCertificateId(did.metadata.certificate_id as string);
-      }
+      setDidDocument(didMapper.extractDidDocument(did));
 
-      setDidDocument(JSON.stringify(did.didDocument || {}, null, 2));
-
-      const purposes: OptionKey[] = [];
-      if (did.metadata?.options) {
-        const opts = did.metadata.options;
-        const VALID_PURPOSES = [
-          "authentication",
-          "assertionMethod",
-          "keyAgreement",
-          "capabilityInvocation",
-          "capabilityDelegation",
-        ];
-
-        if (Array.isArray(opts)) {
-          opts.forEach((item: string) => {
-            if (VALID_PURPOSES.includes(item)) {
-              purposes.push(item as OptionKey);
-            }
-          });
-        } else if (typeof opts === "object" && opts !== null) {
-          (Object.keys(opts) as OptionKey[]).forEach((k) => {
-            if (VALID_PURPOSES.includes(k)) {
-              purposes.push(k);
-            }
-          });
-        }
-      }
+      const purposes = didMapper.extractPurposes(did);
       setSelectedOptions(purposes);
 
-      if (did.public_key_jwk) {
-        setCertificateKey({
-          certificate_id: (did.metadata?.certificate_id as string) || "",
-          extracted_jwk: did.public_key_jwk as { kty: string; [key: string]: unknown },
-          purposes: purposes,
-        });
-      }
+      const certKey = didMapper.extractCertificateKey(did, purposes);
+      if (certKey) setCertificateKey(certKey);
 
       setIsCompiled(false);
       setActiveTab("request");

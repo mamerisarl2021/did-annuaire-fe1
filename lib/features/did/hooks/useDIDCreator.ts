@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { MethodType, TabType, Service, DID, VerificationMethod } from "../types";
-// import { didService } from "../services";
 import { logger } from "@/lib/shared/services/logger.service";
 
 const INITIAL_DID_DOCUMENT = JSON.stringify(
@@ -16,6 +15,11 @@ const INITIAL_DID_DOCUMENT = JSON.stringify(
   2
 );
 
+/**
+ * @deprecated This hook is deprecated and incompatible with current API.
+ * Use useDIDManager instead.
+ * @see useDIDManager
+ */
 export function useDIDCreator() {
   const [selectedMethod, setSelectedMethod] = useState<MethodType>("WEB");
   const [activeTab, setActiveTab] = useState<TabType>("request");
