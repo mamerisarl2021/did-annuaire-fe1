@@ -1,4 +1,11 @@
+import { logger } from "../services/logger.service";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_BASE_URL) {
+  logger.error("API base URL is not defined in environment variables.", API_BASE_URL);
+  throw new Error("API base URL is not defined in environment variables.");
+}
 
 export const API_ENDPOINTS = {
   AUTH: {
