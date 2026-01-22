@@ -211,3 +211,10 @@ export interface KeyObject {
 }
 
 export type KeysResponse = KeyObject[];
+
+
+export interface DEACTIVATEDIDResponse {
+  "@context": ["https://www.w3.org/ns/did/v1"], 
+  did: string;
+  deactivated: boolean;
+}

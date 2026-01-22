@@ -11,6 +11,7 @@ import type {
   DIDListResponse,
   DIDResolutionResponse,
   KeysResponse,
+  DEACTIVATEDIDResponse,
 } from "../types/api.types";
 
 /**
@@ -153,4 +154,16 @@ export const didApiClient = {
       requiresAuth: true,
     });
   },
+
+  async deactivateDID(did: string): Promise<DEACTIVATEDIDResponse> {
+    await httpClient.post(
+      API_ENDPOINTS.DID.DEACTIVATE,
+      { did },
+      { requiresAuth: true }
+    );
+    return { "@context": ["https://www.w3.org/ns/did/v1"], did, deactivated: true };
+  },
+
+  
+  
 };

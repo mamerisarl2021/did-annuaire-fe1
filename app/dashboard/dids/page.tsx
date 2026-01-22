@@ -17,7 +17,7 @@ import { DID } from "@/lib/features/did/types";
 export default function DIDListPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { dids, isLoading, searchQuery, setSearchQuery, deleteDID, publishDID, pagination } =
+  const { dids, isLoading, searchQuery, setSearchQuery, deactivateDID, publishDID, pagination } =
     useDIDs();
 
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
@@ -72,9 +72,22 @@ export default function DIDListPage() {
     setIsDeactivateModalOpen(true);
   };
 
-  const handleConfirmDeactivate = (did: DID) => {
-    deleteDID(did.id);
-    setIsDeactivateModalOpen(false);
+  const handleConfirmDeactivate = async (did: DID) => {
+    try {
+      await deactivateDID(did.id);
+      toast({
+        title: "DID Deactivated",
+        description: "The DID has been successfully deactivated.",
+      });
+    } catch (err) {
+      toast({
+        title: "Deactivation Failed",
+        description: err instanceof Error ? err.message : "An error occurred during deactivation.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeactivateModalOpen(false);
+    }
   };
 
   return (

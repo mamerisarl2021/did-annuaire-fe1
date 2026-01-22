@@ -25,6 +25,10 @@ export interface AuthUser {
   email: string;
   role: UserRoleType;
   organization_id?: string;
+  organization?: {
+    id: string;
+    name: string;
+  };
   is_active: boolean;
   full_name?: string;
 }

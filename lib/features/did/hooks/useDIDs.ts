@@ -79,9 +79,16 @@ export function useDIDs() {
     );
   }, [dids, searchQuery]);
 
-  const deleteDID = async (id: string) => {
-    // Mock delete
-    setDids((prev) => prev.filter((d) => d.id !== id));
+  const deactivateDID = async (did: string) => {
+    try {
+      const response = await didApiClient.deactivateDID(did);
+      logger.info(`[useDIDs] Deactivated DID ${did}`, { response });
+      await fetchDIDs();
+      return response;
+    } catch (err) {
+      logger.error(`[useDIDs] Failed to deactivate DID ${did}:`, err);
+      throw err;
+    }
   };
 
   const publishDID = async (id: string) => {
@@ -102,7 +109,7 @@ export function useDIDs() {
     searchQuery,
     setSearchQuery,
     refreshDIDs: fetchDIDs,
-    deleteDID,
+    deactivateDID,
     publishDID,
     pagination: {
       ...pagination,

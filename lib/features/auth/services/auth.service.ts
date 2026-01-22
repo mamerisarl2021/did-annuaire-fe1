@@ -152,6 +152,8 @@ export const authService = {
       let organization_id = decoded.organization_id;
       let userId = decoded.user_id || decoded.sub;
 
+      let organization_data: { id: string; name: string } | undefined;
+
       if (!role || !organization_id) {
         try {
           logger.debug("Fetching user profile from /me endpoint to resolve missing fields");
@@ -195,6 +197,7 @@ export const authService = {
             // MAP ORGANIZATION ID
             if (userData.organization?.id) {
               organization_id = userData.organization.id;
+              organization_data = userData.organization;
               logger.debug("Mapped organization_id from /me response", { organization_id });
             } else {
               logger.warn("No organization ID found in /me response data", {
@@ -212,6 +215,7 @@ export const authService = {
         email: email || "",
         role: (role || "ORG_MEMBER") as "SUPER_USER" | "ORG_ADMIN" | "ORG_MEMBER" | "AUDITOR",
         organization_id: organization_id || "",
+        organization: organization_data,
         is_active: true,
         full_name: "",
       };

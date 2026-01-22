@@ -14,6 +14,10 @@ export const API_ENDPOINTS = {
     STATS: "/api/organizations/stats",
   },
   USERS: {
+    CREATE: "/api/users/",
+    LIST: "/api/users/",
+    UPDATE: (id: string) => `/api/users/${id}/update`,
+    INVITE: (id: string) => `/api/users/${id}/invite`,
     ACTIVATE: "/api/users/activate",
     OTP_GENERATE: "/api/users/otp/email/generate",
     OTP_VERIFY: "/api/users/otp/email/verify",
@@ -45,6 +49,7 @@ export const API_ENDPOINTS = {
     ROTATE: (id: string) => `/api/registry/dids/${id}/keys/rotate`,
     UPDATE: "/api/universal-registrar/update",
     PUBLISH: (id: string) => `/api/registry/dids/${id}/publish`,
+    DEACTIVATE: "/api/universal-registrar/deactivate",
   },
 } as const;
 
