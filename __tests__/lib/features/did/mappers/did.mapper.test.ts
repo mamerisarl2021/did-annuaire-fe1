@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { didMapper } from "@/lib/features/did/mappers/did.mapper";
-import type { DID } from "@/lib/features/did/types";
+import type { DID, OptionKey } from "@/lib/features/did/types";
 
 describe("didMapper", () => {
   describe("extractLogicalId", () => {
@@ -24,7 +24,7 @@ describe("didMapper", () => {
         metadata: {
           certificate_id: "cert-123",
         },
-      } as DID;
+      } as unknown as DID;
 
       expect(didMapper.extractCertificateId(did)).toBe("cert-123");
     });
@@ -41,7 +41,7 @@ describe("didMapper", () => {
         metadata: {
           options: ["authentication", "assertionMethod", "invalid"],
         },
-      } as DID;
+      } as unknown as DID;
 
       const purposes = didMapper.extractPurposes(did);
       expect(purposes).toEqual(["authentication", "assertionMethod"]);
@@ -57,7 +57,7 @@ describe("didMapper", () => {
             invalid: true,
           },
         },
-      } as DID;
+      } as unknown as DID;
 
       const purposes = didMapper.extractPurposes(did);
       expect(purposes).toContain("authentication");
@@ -78,9 +78,9 @@ describe("didMapper", () => {
         metadata: {
           certificate_id: "cert-123",
         },
-      } as DID;
+      } as unknown as DID;
 
-      const purposes = ["authentication", "assertionMethod"];
+      const purposes: OptionKey[] = ["authentication", "assertionMethod"];
       const result = didMapper.extractCertificateKey(did, purposes);
 
       expect(result).toEqual({
@@ -92,7 +92,7 @@ describe("didMapper", () => {
 
     it("should return null when no public key", () => {
       const did = {} as DID;
-      const purposes = ["authentication"];
+      const purposes: OptionKey[] = ["authentication"];
 
       expect(didMapper.extractCertificateKey(did, purposes)).toBeNull();
     });
