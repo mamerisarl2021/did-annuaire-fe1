@@ -76,7 +76,7 @@ export function useDIDManager(initialMode: DIDMode = "create") {
       if (did.public_key_jwk) {
         setCertificateKey({
           certificate_id: (did.metadata?.certificate_id as string) || "",
-          extracted_jwk: did.public_key_jwk as { kty: string;[key: string]: unknown },
+          extracted_jwk: did.public_key_jwk as { kty: string; [key: string]: unknown },
           purposes: purposes,
         });
       }

@@ -71,12 +71,12 @@ export function CertificateModal({
   // Transform CertificateKey to VerificationMethod for preview
   const previewKeys: VerificationMethod[] = uploadedKey
     ? [
-      {
-        id: uploadedKey.certificate_id,
-        type: "JsonWebKey2020",
-        publicKeyJwk: uploadedKey.extracted_jwk,
-      },
-    ]
+        {
+          id: uploadedKey.certificate_id,
+          type: "JsonWebKey2020",
+          publicKeyJwk: uploadedKey.extracted_jwk,
+        },
+      ]
     : [];
 
   return (

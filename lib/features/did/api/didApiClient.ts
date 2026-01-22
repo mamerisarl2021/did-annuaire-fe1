@@ -87,10 +87,7 @@ export const didApiClient = {
   /**
    * Resolve a DID using the Universal Resolver API
    */
-  async resolveDID(
-    identifier: string,
-    env = "prod"
-  ): Promise<DIDResolutionResponse> {
+  async resolveDID(identifier: string, env = "prod"): Promise<DIDResolutionResponse> {
     const query = new URLSearchParams({ env });
     const encodedIdentifier = encodeURIComponent(identifier);
     const endpoint = `${API_ENDPOINTS.DID.RESOLVE(encodedIdentifier)}?${query.toString()}`;
@@ -156,14 +153,7 @@ export const didApiClient = {
   },
 
   async deactivateDID(did: string): Promise<DEACTIVATEDIDResponse> {
-    await httpClient.post(
-      API_ENDPOINTS.DID.DEACTIVATE,
-      { did },
-      { requiresAuth: true }
-    );
+    await httpClient.post(API_ENDPOINTS.DID.DEACTIVATE, { did }, { requiresAuth: true });
     return { "@context": ["https://www.w3.org/ns/did/v1"], did, deactivated: true };
   },
-
-  
-  
 };
