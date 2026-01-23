@@ -6,7 +6,7 @@ import { StatsCardsRow } from "@/lib/features/organizations/components/StatsCard
 import { OrganizationsTable } from "@/lib/features/organizations/components/OrganizationsTable";
 import { OrganizationDetailsDialog } from "@/lib/features/organizations/components/OrganizationDetailsDialog";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, RefreshCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Plus, RefreshCcw, ChevronLeft, ChevronRight, Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -72,10 +72,13 @@ export default function OrgAdminOrganizationsPage() {
             <RefreshCcw className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")} />
             Refresh
           </Button>
-          <Button size="sm" className="h-9 shadow-sm">
-            <Plus className="mr-2 h-4 w-4" />
-            New Organization
-          </Button>
+          <Link href="/auth/register">
+            <Button size="sm" className="h-9 shadow-sm">
+              <Plus className="mr-2 h-4 w-4" />
+              New Organization
+            </Button>
+          </Link>
+
         </div>
       </div>
 

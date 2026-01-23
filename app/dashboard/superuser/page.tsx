@@ -3,7 +3,8 @@
 import { useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Plus } from "lucide-react";
+import Link from "next/link";
 
 import { useOrganizations } from "@/lib/features/super-admin/hooks/useOrganizations";
 import { useOrganizationActions } from "@/lib/features/super-admin/hooks/useOrganizationActions";
@@ -133,10 +134,18 @@ export default function SuperUserDashboardPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-        <Button onClick={refresh} variant="outline" disabled={isLoading}>
-          <RefreshCw className={`mr-2 size-4 ${isLoading ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button onClick={refresh} variant="outline" size="sm" disabled={isLoading}>
+            <RefreshCw className={`mr-2 size-4 ${isLoading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <Link href="/auth/register">
+            <Button size="sm" className="h-9 shadow-sm">
+              <Plus className="mr-2 h-4 w-4" />
+              New Organization
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards */}
