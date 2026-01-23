@@ -44,26 +44,20 @@ function ActivateContent() {
    */
   const handleSubmit = useCallback(
     async (data: ActivateAccountFormData) => {
-      // If OTP is enabled and we are in setup mode, but no code is provided yet
       if (data.enableOtp && show2FASetup && !data.code) {
         return;
       }
-
-      // Call activation API (it handles both first step and second step with code)
       const result = await activation.activateAccount(data);
 
       if (!result.success) {
         return;
       }
-
-      // If OTP was enabled and we got QR code
       if (result.requiresOtp && result.qrCodeData) {
         twoFactor.setQrCode(result.qrCodeData);
         setShow2FASetup(true);
         return;
       }
 
-      // No OTP - direct success
       setActivationState("SUCCESS");
     },
     [activation, twoFactor, show2FASetup]

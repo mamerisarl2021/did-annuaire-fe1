@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import { type AuthUser } from "../types/auth.types";
 import { logger } from "@/lib/shared/services/logger.service";
+import { UserRoleType } from "@/lib/types";
 
 interface JWTPayload {
   user_id?: string;
@@ -21,6 +22,12 @@ interface UserApiResponse {
 }
 
 export const authMapper = {
+  /**
+   * Decode JWT token for UI purposes only
+   *
+   * @param token - JWT token string
+   * @returns Partial user data extracted from token payload
+   */
   decodeToken(token: string): Partial<AuthUser> {
     try {
       const decoded = jwtDecode<JWTPayload>(token);
@@ -42,7 +49,7 @@ export const authMapper = {
     }
   },
 
-  normalizeRole(role?: string): "SUPER_USER" | "ORG_ADMIN" | "ORG_MEMBER" | "AUDITOR" {
+  normalizeRole(role?: string): UserRoleType {
     if (!role) return "ORG_MEMBER";
     const normalized = role.toUpperCase();
     if (normalized === "SUPERUSER") return "SUPER_USER";
@@ -55,7 +62,7 @@ export const authMapper = {
   inferRoleFromFlags(
     isSuperuser?: boolean,
     isStaff?: boolean
-  ): "SUPER_USER" | "ORG_ADMIN" | "ORG_MEMBER" {
+  ): UserRoleType {
     if (isSuperuser) return "SUPER_USER";
     if (isStaff) return "ORG_ADMIN";
     return "ORG_MEMBER";

@@ -2,50 +2,34 @@
 
 import { useState, useCallback } from "react";
 import { authService } from "../services/auth.service";
+import { otpRateLimiter } from "@/lib/utils/rate-limiter";
 
 interface UseOTPActionsReturn {
-  /** Whether OTP generation is in progress */
   isGenerating: boolean;
-  /** Whether OTP verification is in progress */
   isVerifying: boolean;
-  /** Whether OTP has been sent (for email method) */
   otpSent: boolean;
-  /** Error message if any */
   error: string | null;
-  /** Generate OTP via email */
   generateEmailOTP: () => Promise<boolean>;
-  /** Verify an OTP code */
   verifyOTP: (code: string) => Promise<boolean>;
-  /** Clear error state */
   clearError: () => void;
-  /** Reset all state */
   reset: () => void;
 }
 
-/**
- * Hook for OTP API actions
- *
- * Single Responsibility: Manages OTP-related API calls and their states
- * - Handles generate email OTP
- * - Handles verify OTP
- * - Manages loading and error states
- *
- * Does NOT handle:
- * - Form state
- * - UI rendering
- * - Navigation
- */
 export function useOTPActions(): UseOTPActionsReturn {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  /**
-   * Generate OTP and send via email
-   * @returns true if successful
-   */
   const generateEmailOTP = useCallback(async (): Promise<boolean> => {
+    const rateLimitKey = "otp_generation";
+    if (!otpRateLimiter.canAttempt(rateLimitKey, 3, 120000)) {
+      const remainingMs = otpRateLimiter.getRemainingTime(rateLimitKey, 120000);
+      const remainingSeconds = Math.ceil(remainingMs / 1000);
+      const message = `Too many OTP requests. Please wait ${remainingSeconds} second${remainingSeconds > 1 ? 's' : ''} before trying again.`;
+      setError(message);
+      return false;
+    }
+
     setIsGenerating(true);
     setError(null);
 
