@@ -53,7 +53,7 @@ export const usersService = {
    * Update user details
    */
   async updateUser(userId: string, payload: UpdateUserPayload): Promise<User> {
-    return await httpClient.post<User>(API_ENDPOINTS.USERS.UPDATE(userId), payload, {
+    return await httpClient.patch<User>(API_ENDPOINTS.USERS.UPDATE(userId), payload, {
       requiresAuth: true,
     });
   },

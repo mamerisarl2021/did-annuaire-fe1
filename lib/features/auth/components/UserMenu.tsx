@@ -124,9 +124,9 @@ export function UserMenu() {
             <span>Dashboard</span>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/settings" className="cursor-pointer w-full flex items-center">
+            <Link href="/profile" className="cursor-pointer w-full flex items-center">
               <Settings className="mr-2 size-4" />
-              <span>Settings</span>
+              <span>Profile</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
