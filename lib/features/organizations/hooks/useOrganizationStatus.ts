@@ -25,8 +25,8 @@ export function useOrganizationStatus({
     setError(null);
     try {
       const data = await organizationService.getOrganizationStatus(organizationId);
+      logger.info("Organization status fetched", { status: data.status, organizationId });
       setStatus(data.status as OrganizationStatusType);
-      logger.info("Organization status fetched", { status: data.status });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to fetch status";
       setError(message);

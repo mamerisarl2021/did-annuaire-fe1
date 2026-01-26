@@ -24,7 +24,8 @@ export const organizationService = {
       { requiresAuth: false }
     );
     logger.info("Organization created:", response);
-    return organizationMapper.toDomain(response);
+    const data = (response.data as Record<string, unknown>) || response;
+    return organizationMapper.toDomain(data);
   },
 
   /**
@@ -89,14 +90,22 @@ export const organizationService = {
    * Get Oragnization Status
    */
   async getOrganizationStatus(organizationId: string): Promise<{ status: string }> {
+    if (!organizationId || organizationId === "undefined" || organizationId === "null") {
+      throw new Error("Invalid organization ID");
+    }
+
     const response = await httpClient.get<Record<string, unknown>>(
       API_ENDPOINTS.ORGANIZATIONS.STATUS(organizationId),
       {
         requiresAuth: false,
       }
     );
+
+    logger.info("Raw status response:", response);
+    const data = (response.data as Record<string, unknown>) || response;
+    logger.info("Extracted data:", data);
     return {
-      status: response.status as string,
+      status: data.status as string,
     };
   },
 };

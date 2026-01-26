@@ -76,7 +76,7 @@ export function OrganizationDetailsDialog({
             <div>
               <Label className="text-xs text-muted-foreground">Created Date</Label>
               <div className="font-medium">
-                {new Date(organization.createdAt).toLocaleDateString()}
+                {new Date(organization.createdAt).toISOString().split("T")[0]}
               </div>
             </div>
             <div className="col-span-2">

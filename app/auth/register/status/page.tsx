@@ -20,6 +20,7 @@ function StatusContent() {
   const searchParams = useSearchParams();
   const organizationId = searchParams.get("organizationId");
   const organizationName = searchParams.get("organizationName") || "My Organization";
+  const activationToken = searchParams.get("token");
 
   const { status, isLoading, refetch } = useOrganizationStatus({
     organizationId: organizationId || undefined,
@@ -89,11 +90,11 @@ function StatusContent() {
             <RegistrationStepper steps={steps} />
           </div>
 
-          <StatusMessage status={currentStatus} organizationName={organizationName} />
+          <StatusMessage status={currentStatus} organizationName={organizationName} activationToken={activationToken || undefined} />
 
           {currentStatus === OrganizationStatus.PENDING && (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-              <p className="font-medium">⏱️ Auto-refresh enabled</p>
+              <p className="font-medium">Auto-refresh enabled</p>
               <p className="mt-1 text-blue-600">
                 This page automatically checks for updates every 30 seconds.
               </p>
