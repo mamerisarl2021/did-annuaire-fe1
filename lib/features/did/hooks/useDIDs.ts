@@ -42,10 +42,8 @@ export function useDIDs() {
         document_type: item.document_type,
         public_key_version: item.public_key_version,
         public_key_jwk: item.public_key_jwk as { kty: string; [key: string]: unknown },
-        metadata: {
-          version: item.latest_version,
-          document_type: item.document_type,
-        },
+        version: item.latest_version,
+        published: item.published === true || item.status === "finished",
       }));
 
       setDids(items);

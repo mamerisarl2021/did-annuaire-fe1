@@ -115,11 +115,13 @@ export interface DIDListItem {
   owner_id: string;
   document_type: string;
   latest_version: number;
-  created_at?: string; // Optional if not in spec but good to have
+  created_at?: string;
   organization_name?: string;
   key_id?: string;
   public_key_version?: number;
   public_key_jwk?: Record<string, unknown>;
+  status?: "action" | "wait" | "error" | "finished" | "update";
+  published?: boolean;
 }
 
 export interface DIDListPagination {
