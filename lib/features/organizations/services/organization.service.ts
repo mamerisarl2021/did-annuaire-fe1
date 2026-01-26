@@ -84,4 +84,19 @@ export const organizationService = {
     );
     return organizationMapper.toStats(response);
   },
+
+  /**
+   * Get Oragnization Status
+   */
+  async getOrganizationStatus(organizationId: string): Promise<{ status: string }> {
+    const response = await httpClient.get<Record<string, unknown>>(
+      API_ENDPOINTS.ORGANIZATIONS.STATUS(organizationId),
+      {
+        requiresAuth: false,
+      }
+    );
+    return {
+      status: response.status as string,
+    };
+  }
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { organizationService } from "../services/organization.service";
-import { type OrganizationListItem } from "../types/organization.types";
+import { type OrganizationStatusType } from "@/lib/types/organization-status";
 import { logger } from "@/lib/shared/services/logger.service";
 
 interface UseOrganizationStatusOptions {
@@ -14,7 +14,7 @@ export function useOrganizationStatus({
   pollingInterval = 30000,
   enabled = true,
 }: UseOrganizationStatusOptions) {
-  const [organization, setOrganization] = useState<OrganizationListItem | null>(null);
+  const [status, setStatus] = useState<OrganizationStatusType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,8 +24,8 @@ export function useOrganizationStatus({
     setIsLoading(true);
     setError(null);
     try {
-      const data = await organizationService.getOrganizationDetails(organizationId);
-      setOrganization(data);
+      const data = await organizationService.getOrganizationStatus(organizationId);
+      setStatus(data.status as OrganizationStatusType);
       logger.info("Organization status fetched", { status: data.status });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to fetch status";
@@ -41,15 +41,15 @@ export function useOrganizationStatus({
 
     fetchStatus();
 
-    const shouldPoll = organization?.status === "PENDING";
+    const shouldPoll = status === "PENDING";
     if (!shouldPoll) return;
 
     const interval = setInterval(fetchStatus, pollingInterval);
     return () => clearInterval(interval);
-  }, [fetchStatus, pollingInterval, organization?.status, enabled, organizationId]);
+  }, [fetchStatus, pollingInterval, status, enabled, organizationId]);
 
   return {
-    organization,
+    status,
     isLoading,
     error,
     refetch: fetchStatus,

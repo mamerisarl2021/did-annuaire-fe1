@@ -20,16 +20,16 @@ export default function RegistrationStatusPage() {
   const organizationId = searchParams.get("organizationId");
   const organizationName = searchParams.get("organizationName") || "My Organization";
 
-  const { organization, isLoading, refetch } = useOrganizationStatus({
+  const { status, isLoading, refetch } = useOrganizationStatus({
     organizationId: organizationId || undefined,
     pollingInterval: 30000,
     enabled: !!organizationId,
   });
 
-  const status: OrganizationStatusType = organization?.status || OrganizationStatus.PENDING;
-  const steps = getRegistrationSteps(status);
+  const currentStatus: OrganizationStatusType = status || OrganizationStatus.PENDING;
+  const steps = getRegistrationSteps(currentStatus);
 
-  if (isLoading && !organization) {
+  if (isLoading && !status) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-10 w-32" />
@@ -78,7 +78,7 @@ export default function RegistrationStatusPage() {
           <CardTitle className="text-2xl">Registration Status</CardTitle>
 
           <div className="mt-4 flex justify-center">
-            <StatusBadge status={status} organizationName={organizationName} />
+            <StatusBadge status={currentStatus} organizationName={organizationName} />
           </div>
         </CardHeader>
 
@@ -88,11 +88,11 @@ export default function RegistrationStatusPage() {
             <RegistrationStepper steps={steps} />
           </div>
 
-          <StatusMessage status={status} organizationName={organizationName} />
+          <StatusMessage status={currentStatus} organizationName={organizationName} />
 
-          {status === OrganizationStatus.PENDING && (
+          {currentStatus === OrganizationStatus.PENDING && (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-              <p className="font-medium">Auto-refresh enabled</p>
+              <p className="font-medium">⏱️ Auto-refresh enabled</p>
               <p className="mt-1 text-blue-600">
                 This page automatically checks for updates every 30 seconds.
               </p>
