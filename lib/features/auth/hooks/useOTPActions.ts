@@ -25,7 +25,7 @@ export function useOTPActions(): UseOTPActionsReturn {
     if (!otpRateLimiter.canAttempt(rateLimitKey, 3, 120000)) {
       const remainingMs = otpRateLimiter.getRemainingTime(rateLimitKey, 120000);
       const remainingSeconds = Math.ceil(remainingMs / 1000);
-      const message = `Too many OTP requests. Please wait ${remainingSeconds} second${remainingSeconds > 1 ? 's' : ''} before trying again.`;
+      const message = `Too many OTP requests. Please wait ${remainingSeconds} second${remainingSeconds > 1 ? "s" : ""} before trying again.`;
       setError(message);
       return false;
     }

@@ -87,7 +87,12 @@ class LoggerService {
         console.warn(prefix, entry.message, ...(hasContext ? [entry.context] : []));
         break;
       case "error":
-        console.error(prefix, entry.message, ...(hasContext ? [entry.context] : []), ...(entry.error ? [entry.error] : []));
+        console.error(
+          prefix,
+          entry.message,
+          ...(hasContext ? [entry.context] : []),
+          ...(entry.error ? [entry.error] : [])
+        );
         break;
     }
   }
@@ -96,16 +101,16 @@ class LoggerService {
     if (!context) return undefined;
 
     const sensitiveKeys = [
-      'password',
-      'token',
-      'secret',
-      'authorization',
-      'refresh',
-      'access',
-      'api_key',
-      'apikey',
-      'private_key',
-      'privatekey',
+      "password",
+      "token",
+      "secret",
+      "authorization",
+      "refresh",
+      "access",
+      "api_key",
+      "apikey",
+      "private_key",
+      "privatekey",
     ];
 
     const sanitized = { ...context };
@@ -113,7 +118,7 @@ class LoggerService {
     Object.keys(sanitized).forEach((key) => {
       const lowerKey = key.toLowerCase();
       if (sensitiveKeys.some((sensitive) => lowerKey.includes(sensitive))) {
-        sanitized[key] = '[REDACTED]';
+        sanitized[key] = "[REDACTED]";
       }
     });
 
@@ -127,10 +132,10 @@ class LoggerService {
         context: this.sanitizeContext(entry.context),
         error: entry.error
           ? {
-            message: entry.error.message,
-            stack: entry.error.stack,
-            name: entry.error.name,
-          }
+              message: entry.error.message,
+              stack: entry.error.stack,
+              name: entry.error.name,
+            }
           : undefined,
       })
     );

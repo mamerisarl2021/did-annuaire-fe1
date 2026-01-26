@@ -59,10 +59,7 @@ export const authMapper = {
     return "ORG_MEMBER";
   },
 
-  inferRoleFromFlags(
-    isSuperuser?: boolean,
-    isStaff?: boolean
-  ): UserRoleType {
+  inferRoleFromFlags(isSuperuser?: boolean, isStaff?: boolean): UserRoleType {
     if (isSuperuser) return "SUPER_USER";
     if (isStaff) return "ORG_ADMIN";
     return "ORG_MEMBER";
