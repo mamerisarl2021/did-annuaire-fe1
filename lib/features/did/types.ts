@@ -57,6 +57,7 @@ export interface DID {
   metadata?: {
     [key: string]: unknown;
   };
+  is_published?: boolean;
 }
 
 export type TabType = "request" | "response" | "error";

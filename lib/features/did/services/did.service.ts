@@ -46,8 +46,6 @@ export const didService = {
     }
 
     const endpoint = `${API_ENDPOINTS.DID.PREVIEW}?${query.toString()}`;
-    console.log("[DID API] Preview URL:", endpoint);
-
     return await httpClient.get<DIDStateEnvelope>(endpoint, { requiresAuth: true });
   },
 
@@ -137,8 +135,10 @@ export const didService = {
   /**
    * Get DID Details
    */
-  async getDID(didId: string): Promise<DIDStateEnvelope> {
-    return await httpClient.get<DIDStateEnvelope>(API_ENDPOINTS.DID.DETAILS(didId), {
+  async getDID(didId: string, target: "draft" | "prod"): Promise<DIDStateEnvelope> {
+    const query = new URLSearchParams({ target });
+    const endpoint = `${API_ENDPOINTS.DID.DETAILS(didId)}?${query.toString()}`;
+    return await httpClient.get<DIDStateEnvelope>(endpoint, {
       requiresAuth: true,
     });
   },

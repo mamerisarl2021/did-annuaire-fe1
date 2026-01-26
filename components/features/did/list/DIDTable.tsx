@@ -151,8 +151,13 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
+                    className={`h-8 gap-1.5 border-red-100 dark:border-red-900/40 ${
+                      !did.is_published
+                        ? "text-red-300 dark:text-red-900/40 cursor-not-allowed opacity-50"
+                        : "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    }`}
                     onClick={() => onDelete(did)}
+                    disabled={!did.is_published}
                   >
                     <Trash2 className="size-4" />
                     <span className="hidden lg:inline text-[11px] font-bold">Deactivate</span>

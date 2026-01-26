@@ -27,9 +27,6 @@ export function useDIDs() {
         page,
         page_size: pageSize,
       });
-
-      console.log("[useDIDs] Raw API Response:", response);
-
       const rawItems = response.items || [];
       const items: DID[] = rawItems.map((item) => ({
         id: item.did,
@@ -42,10 +39,8 @@ export function useDIDs() {
         document_type: item.document_type,
         public_key_version: item.public_key_version,
         public_key_jwk: item.public_key_jwk as { kty: string; [key: string]: unknown },
-        metadata: {
-          version: item.latest_version,
-          document_type: item.document_type,
-        },
+        version: item.latest_version,
+        is_published: item.is_published ?? false,
       }));
 
       setDids(items);
