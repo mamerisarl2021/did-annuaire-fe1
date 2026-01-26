@@ -47,7 +47,6 @@ export function ActivationForm({
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
   } = form;
 
@@ -150,7 +149,7 @@ export function ActivationForm({
 
       {show2FASetup && !is2FAVerified && (
         <p className="text-sm text-amber-600 text-center">
-          Vous devez vérifier le code OTP pour compléter l'activation
+          Vous devez vérifier le code OTP pour compléter l&apos;activation
         </p>
       )}
 
