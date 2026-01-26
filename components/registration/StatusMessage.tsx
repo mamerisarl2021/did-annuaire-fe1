@@ -15,7 +15,12 @@ interface StatusMessageProps {
  * Status Message Component
  * Displays contextual message and actions based on status
  */
-export function StatusMessage({ status, organizationName, activationToken, className }: StatusMessageProps) {
+export function StatusMessage({
+  status,
+  organizationName,
+  activationToken,
+  className,
+}: StatusMessageProps) {
   return (
     <div className={cn("space-y-4", className)}>
       {status === OrganizationStatus.PENDING && (

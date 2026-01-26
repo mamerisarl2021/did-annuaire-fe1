@@ -90,7 +90,11 @@ function StatusContent() {
             <RegistrationStepper steps={steps} />
           </div>
 
-          <StatusMessage status={currentStatus} organizationName={organizationName} activationToken={activationToken || undefined} />
+          <StatusMessage
+            status={currentStatus}
+            organizationName={organizationName}
+            activationToken={activationToken || undefined}
+          />
 
           {currentStatus === OrganizationStatus.PENDING && (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">

@@ -1,7 +1,4 @@
-interface RateLimitConfig {
-  maxAttempts: number;
-  windowMs: number;
-}
+
 
 class RateLimiter {
   private attempts = new Map<string, number[]>();
