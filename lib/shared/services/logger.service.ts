@@ -87,7 +87,12 @@ class LoggerService {
         console.warn(prefix, entry.message, ...(hasContext ? [entry.context] : []));
         break;
       case "error":
-        console.error(prefix, entry.message, ...(hasContext ? [entry.context] : []), ...(entry.error ? [entry.error] : []));
+        console.error(
+          prefix,
+          entry.message,
+          ...(hasContext ? [entry.context] : []),
+          ...(entry.error ? [entry.error] : [])
+        );
         break;
     }
   }
