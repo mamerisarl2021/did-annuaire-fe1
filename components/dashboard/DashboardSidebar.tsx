@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Users, Building2, FileText, LayoutDashboard, Fingerprint } from "lucide-react";
+import {
+  Users,
+  Building2,
+  FileText,
+  LayoutDashboard,
+  Fingerprint,
+  MessageSquareDot,
+} from "lucide-react";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 
 export function DashboardSidebar({ className }: { className?: string }) {
@@ -59,6 +66,12 @@ export function DashboardSidebar({ className }: { className?: string }) {
       href: "/dashboard/dids",
       icon: Fingerprint,
       roles: ["SUPER_USER", "ORG_ADMIN"],
+    },
+    {
+      title: "Resolve DID",
+      href: "/resolve",
+      icon: MessageSquareDot,
+      roles: ["SUPER_USER", "ORG_ADMIN", "ORG_MEMBER", "AUDITOR"],
     },
   ];
 

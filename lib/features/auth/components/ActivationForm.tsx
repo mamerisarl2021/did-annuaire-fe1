@@ -115,29 +115,21 @@ export function ActivationForm({
         </div>
       </div>
 
-      {/* 2FA Opt-in Checkbox */}
-      <div className="flex items-center space-x-2 rounded-lg border p-4 bg-muted/30">
-        <Checkbox
-          id="enableOtp"
-          checked={enableOtp}
-          onCheckedChange={(checked) => {
-            setValue("enableOtp", checked === true, { shouldDirty: true, shouldValidate: true });
-          }}
-          disabled={isSubmitting || isDisabled || show2FASetup}
-        />
+      {/* 2FA Opt-in Checkbox - OBLIGATOIRE (lecture seule) */}
+      <div className="flex items-center space-x-2 rounded-lg border p-4 bg-primary/5 border-primary/20">
+        <Checkbox id="enableOtp" checked={true} disabled={true} />
         <div className="flex-1">
-          <Label
-            htmlFor="enableOtp"
-            className="text-sm font-medium cursor-pointer flex items-center gap-2"
-          >
+          <Label htmlFor="enableOtp" className="text-sm font-medium flex items-center gap-2">
             <ShieldCheck className="size-4 text-primary" />
-            Enable Two-Factor Authentication (2FA)
+            Two-Factor Authentication (2FA) - Obligatoire
           </Label>
-          <p className="text-xs text-muted-foreground mt-1">Recommended for enhanced security</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            La 2FA est requise pour tous les comptes
+          </p>
         </div>
       </div>
 
-      {/* Conditional 2FA Setup - Shown when checkbox is checked AND we have QR data */}
+      {/* Conditional 2FA Setup - Toujours affiché quand on a le QR */}
       {show2FASetup && qrCodeData && (
         <TwoFactorSetupSection
           form={form}
@@ -149,14 +141,16 @@ export function ActivationForm({
         />
       )}
 
-      {/* Warning if OTP enabled but not verified */}
-      {enableOtp && !is2FAVerified && !show2FASetup && (
-        <p className="text-sm text-amber-600 text-center">Click Enable to set up 2FA</p>
+      {/* Warning si pas encore vérifié */}
+      {!is2FAVerified && !show2FASetup && (
+        <p className="text-sm text-amber-600 text-center">
+          Cliquez sur le bouton pour configurer la 2FA
+        </p>
       )}
 
-      {enableOtp && show2FASetup && !is2FAVerified && (
+      {show2FASetup && !is2FAVerified && (
         <p className="text-sm text-amber-600 text-center">
-          You must verify the OTP code to complete activation
+          Vous devez vérifier le code OTP pour compléter l'activation
         </p>
       )}
 
@@ -165,16 +159,16 @@ export function ActivationForm({
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />
-            Activation in progress...
+            Activation en cours...
           </>
-        ) : enableOtp && !is2FAVerified ? (
+        ) : !is2FAVerified ? (
           show2FASetup ? (
-            "Complete activation"
+            "Compléter l'activation"
           ) : (
-            "Setup 2FA"
+            "Configurer la 2FA"
           )
         ) : (
-          "Activate my account"
+          "Activer mon compte"
         )}
       </Button>
     </form>
