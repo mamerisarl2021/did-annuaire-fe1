@@ -19,10 +19,10 @@ export function DidResponseView({ result }: Props) {
     query: "Not available",
   };
 
-  const services = resolutionResponse?.resolution_response?.services ?? [];
+  const rawServices = resolutionResponse?.resolution_response?.services;
+  const services = Array.isArray(rawServices) ? rawServices : [];
   const verificationMethods = resolutionResponse?.resolution_response?.verification_methods ?? [];
 
-  // Mock Metadata for now as typically returned by a full Resolver
   const docAny = document as unknown as Record<string, unknown>;
   const documentMetadata = resolutionResponse?.didDocumentMetadata ?? {
     created: docAny.created,
