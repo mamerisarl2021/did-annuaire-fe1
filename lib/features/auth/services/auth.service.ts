@@ -14,6 +14,9 @@ interface LoginResponse extends TokenPairResponse {
   otp_method?: "email" | "totp";
 }
 
+// Protection contre les appels multiples de logout
+let logoutPromise: Promise<void> | null = null;
+
 export const authService = {
   async login(payload: LoginPayload): Promise<LoginResponse> {
     const response = await httpClient.post<LoginResponse>(API_ENDPOINTS.AUTH.LOGIN, payload, {
@@ -27,14 +30,30 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    try {
-      const refreshToken = tokenStorage.getRefreshToken();
-      await httpClient.post(API_ENDPOINTS.AUTH.LOGOUT, { refresh: refreshToken });
-    } catch (error) {
-      logger.warn("Logout API call failed", { error });
-    } finally {
-      tokenStorage.clear();
+    if (logoutPromise) {
+      logger.debug("Logout already in progress, returning existing promise");
+      return logoutPromise;
     }
+
+    logoutPromise = (async () => {
+      try {
+        const refreshToken = tokenStorage.getRefreshToken();
+        if (refreshToken) {
+          await httpClient.post(
+            API_ENDPOINTS.AUTH.LOGOUT,
+            { refresh: refreshToken },
+            { requiresAuth: true }
+          );
+        }
+      } catch (error) {
+        logger.warn("Logout API call failed", { error });
+      } finally {
+        tokenStorage.clear();
+        logoutPromise = null;
+      }
+    })();
+
+    return logoutPromise;
   },
 
   async activateAccount(payload: {

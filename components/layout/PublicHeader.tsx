@@ -1,7 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { Home, LogIn, LogOut, Menu, Search, UserPlus, LayoutDashboard } from "lucide-react";
+import {
+  Home,
+  LogIn,
+  LogOut,
+  Menu,
+  UserPlus,
+  LayoutDashboard,
+  MessageSquareDot,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
@@ -54,7 +62,7 @@ export function PublicHeader() {
           </Button>
           <Button variant="ghost" asChild className="gap-2">
             <Link href="/resolve">
-              <Search className="size-4" />
+              <MessageSquareDot className="size-4" />
               Resolve DID
             </Link>
           </Button>
@@ -125,7 +133,7 @@ export function PublicHeader() {
                   className="justify-start gap-3 h-11"
                 >
                   <Link href="/resolve">
-                    <Search className="size-4 text-muted-foreground" />
+                    <MessageSquareDot className="size-4 text-muted-foreground" />
                     <span>Resolve DID</span>
                   </Link>
                 </Button>
@@ -147,10 +155,10 @@ export function PublicHeader() {
                     </Button>
                     <Button
                       variant="ghost"
-                      onClick={() => {
-                        authService.logout();
-                        setIsAuthenticated(false);
+                      onClick={async () => {
                         setIsOpen(false);
+                        await authService.logout();
+                        setIsAuthenticated(false);
                         router.push("/");
                       }}
                       className="justify-start gap-3 h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"

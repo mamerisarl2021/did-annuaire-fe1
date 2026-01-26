@@ -42,7 +42,7 @@ export function useAccountActivation({
     defaultValues: {
       password: "",
       confirmPassword: "",
-      enableOtp: false,
+      enableOtp: true,
     },
     mode: "onBlur",
   });
@@ -68,15 +68,11 @@ export function useAccountActivation({
           token,
           password: data.password,
           re_password: data.confirmPassword,
-          enable_totp: data.enableOtp, // Mapping enableOtp from form to enable_totp for API
+          enable_totp: true,
           code: data.code,
         });
 
-        if (
-          data.enableOtp &&
-          (response?.code === "TOTP_REQUIRED" || response?.totp_qr) &&
-          !data.code
-        ) {
+        if ((response?.code === "TOTP_REQUIRED" || response?.totp_qr) && !data.code) {
           logger.debug("2FA setup phase: QR code received, awaiting verification");
           return {
             success: true,

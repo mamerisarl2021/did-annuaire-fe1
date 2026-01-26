@@ -44,20 +44,25 @@ function ActivateContent() {
    */
   const handleSubmit = useCallback(
     async (data: ActivateAccountFormData) => {
-      if (data.enableOtp && show2FASetup && !data.code) {
+      // Si on est en mode setup 2FA mais pas de code fourni
+      if (show2FASetup && !data.code) {
         return;
       }
-      const result = await activation.activateAccount(data);
 
+      // Appel API d'activation (gère les deux étapes)
+      const result = await activation.activateAccount(data);
       if (!result.success) {
         return;
       }
+
+      // Si on a reçu le QR code pour la 2FA
       if (result.requiresOtp && result.qrCodeData) {
         twoFactor.setQrCode(result.qrCodeData);
         setShow2FASetup(true);
         return;
       }
 
+      // Succès final
       setActivationState("SUCCESS");
     },
     [activation, twoFactor, show2FASetup]
