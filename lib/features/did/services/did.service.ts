@@ -46,8 +46,6 @@ export const didService = {
     }
 
     const endpoint = `${API_ENDPOINTS.DID.PREVIEW}?${query.toString()}`;
-    console.log("[DID API] Preview URL:", endpoint);
-
     return await httpClient.get<DIDStateEnvelope>(endpoint, { requiresAuth: true });
   },
 

@@ -120,8 +120,7 @@ export interface DIDListItem {
   key_id?: string;
   public_key_version?: number;
   public_key_jwk?: Record<string, unknown>;
-  status?: "action" | "wait" | "error" | "finished" | "update";
-  published?: boolean;
+  is_published?: boolean;
 }
 
 export interface DIDListPagination {
