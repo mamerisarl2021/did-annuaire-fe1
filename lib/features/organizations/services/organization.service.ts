@@ -98,5 +98,5 @@ export const organizationService = {
     return {
       status: response.status as string,
     };
-  }
+  },
 };

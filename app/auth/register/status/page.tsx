@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import { Building2, ArrowLeft, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +16,7 @@ import { useOrganizationStatus } from "@/lib/features/organizations/hooks/useOrg
 import { useSearchParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function RegistrationStatusPage() {
+function StatusContent() {
   const searchParams = useSearchParams();
   const organizationId = searchParams.get("organizationId");
   const organizationName = searchParams.get("organizationName") || "My Organization";
@@ -92,7 +93,7 @@ export default function RegistrationStatusPage() {
 
           {currentStatus === OrganizationStatus.PENDING && (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-              <p className="font-medium">Auto-refresh enabled</p>
+              <p className="font-medium">⏱️ Auto-refresh enabled</p>
               <p className="mt-1 text-blue-600">
                 This page automatically checks for updates every 30 seconds.
               </p>
@@ -114,5 +115,29 @@ export default function RegistrationStatusPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function RegistrationStatusPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-6">
+          <Skeleton className="h-10 w-32" />
+          <Card className="shadow-lg">
+            <CardHeader className="text-center">
+              <Skeleton className="mx-auto h-16 w-16 rounded-full" />
+              <Skeleton className="mx-auto mt-4 h-8 w-48" />
+              <Skeleton className="mx-auto mt-4 h-6 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-48 w-full" />
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
+      <StatusContent />
+    </Suspense>
   );
 }
