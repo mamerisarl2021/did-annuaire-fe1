@@ -92,7 +92,7 @@ export default function RegistrationStatusPage() {
 
           {currentStatus === OrganizationStatus.PENDING && (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-              <p className="font-medium">⏱️ Auto-refresh enabled</p>
+              <p className="font-medium">Auto-refresh enabled</p>
               <p className="mt-1 text-blue-600">
                 This page automatically checks for updates every 30 seconds.
               </p>

@@ -13,6 +13,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { ModeToggle } from "@/components/mode-toggle";
 
 /**
  * Dashboard Header Component
@@ -52,6 +53,7 @@ export function DashboardHeader() {
 
       {/* User Menu */}
       <div className="flex items-center gap-4">
+        <ModeToggle />
         <UserMenu />
       </div>
     </header>

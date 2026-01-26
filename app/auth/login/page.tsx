@@ -115,7 +115,6 @@ export default function LoginPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Email OTP Form with generate + verify flow */}
               <EmailOTPForm
                 onGenerateOTP={generateEmailOTP}
                 onSubmit={verifyOTP}
@@ -130,7 +129,6 @@ export default function LoginPage() {
         );
 
       case "SUCCESS":
-        // This state is brief - user will be redirected
         return (
           <Card className="shadow-lg">
             <CardContent className="py-12 text-center">

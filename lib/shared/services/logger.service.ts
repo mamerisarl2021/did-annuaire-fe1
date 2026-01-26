@@ -87,15 +87,49 @@ class LoggerService {
         console.warn(prefix, entry.message, ...(hasContext ? [entry.context] : []));
         break;
       case "error":
-        console.error(prefix, entry.message, ...(hasContext ? [entry.context] : []), ...(entry.error ? [entry.error] : []));
+        console.error(
+          prefix,
+          entry.message,
+          ...(hasContext ? [entry.context] : []),
+          ...(entry.error ? [entry.error] : [])
+        );
         break;
     }
+  }
+
+  private sanitizeContext(context?: LogContext): LogContext | undefined {
+    if (!context) return undefined;
+
+    const sensitiveKeys = [
+      "password",
+      "token",
+      "secret",
+      "authorization",
+      "refresh",
+      "access",
+      "api_key",
+      "apikey",
+      "private_key",
+      "privatekey",
+    ];
+
+    const sanitized = { ...context };
+
+    Object.keys(sanitized).forEach((key) => {
+      const lowerKey = key.toLowerCase();
+      if (sensitiveKeys.some((sensitive) => lowerKey.includes(sensitive))) {
+        sanitized[key] = "[REDACTED]";
+      }
+    });
+
+    return sanitized;
   }
 
   private logToMonitoringService(entry: LogEntry): void {
     console[entry.level](
       JSON.stringify({
         ...entry,
+        context: this.sanitizeContext(entry.context),
         error: entry.error
           ? {
               message: entry.error.message,

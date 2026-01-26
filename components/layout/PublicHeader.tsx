@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UserMenu } from "@/lib/features/auth/components/UserMenu";
 import { authService } from "@/lib/features/auth/services/auth.service";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export function PublicHeader() {
   const router = useRouter();
@@ -61,6 +62,7 @@ export function PublicHeader() {
 
         {/* Desktop: UserMenu if authenticated, Login button if not */}
         <div className="hidden items-center gap-2 md:flex">
+          <ModeToggle />
           {isAuthenticated ? (
             <UserMenu />
           ) : (
@@ -75,6 +77,7 @@ export function PublicHeader() {
 
         {/* Mobile Menu */}
         <div className="flex items-center gap-2 md:hidden">
+          <ModeToggle />
           {/* Show UserMenu on mobile if authenticated */}
           {isAuthenticated && <UserMenu />}
 
