@@ -26,7 +26,7 @@ export default function EditDIDPage() {
   useEffect(() => {
     const fetchDID = async () => {
       try {
-        const data = await didService.getDID(didId);
+        const data = await didService.getDID(didId, "prod");
         if (data && data.didState) {
           const mappedDid: DID = {
             id: data.didState.did || "",
