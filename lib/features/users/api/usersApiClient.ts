@@ -9,10 +9,10 @@ import {
 } from "../types/users.types";
 
 /**
- * Users Service
+ * API Client for User Management
  * Strictly handles HTTP requests related to Users
  */
-export const usersService = {
+export const usersApiClient = {
   /**
    * Fetch a paginated list of users
    */
@@ -53,7 +53,7 @@ export const usersService = {
    * Update user details
    */
   async updateUser(userId: string, payload: UpdateUserPayload): Promise<User> {
-    return await httpClient.patch<User>(API_ENDPOINTS.USERS.UPDATE(userId), payload, {
+    return await httpClient.post<User>(API_ENDPOINTS.USERS.UPDATE(userId), payload, {
       requiresAuth: true,
     });
   },

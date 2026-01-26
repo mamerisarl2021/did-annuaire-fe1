@@ -72,9 +72,12 @@ export default function RegisterPage() {
         justification_document: data.justification_document || undefined,
       };
 
-      await createOrganization(payload);
+      const createdOrg = await createOrganization(payload);
+      const orgId = createdOrg.id;
 
-      router.push(`/auth/register/status?organizationName=${encodeURIComponent(data.name)}`);
+      router.push(
+        `/auth/register/status?organizationId=${orgId}&organizationName=${encodeURIComponent(data.name)}`
+      );
     } catch (error) {
       console.error("Registration failed", error);
     }

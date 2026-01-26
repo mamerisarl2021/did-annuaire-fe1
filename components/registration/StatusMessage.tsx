@@ -7,6 +7,7 @@ import { OrganizationStatus, type OrganizationStatusType } from "@/lib/types/org
 interface StatusMessageProps {
   status: OrganizationStatusType;
   organizationName?: string;
+  activationToken?: string;
   className?: string;
 }
 
@@ -14,7 +15,12 @@ interface StatusMessageProps {
  * Status Message Component
  * Displays contextual message and actions based on status
  */
-export function StatusMessage({ status, organizationName, className }: StatusMessageProps) {
+export function StatusMessage({
+  status,
+  organizationName,
+  activationToken,
+  className,
+}: StatusMessageProps) {
   return (
     <div className={cn("space-y-4", className)}>
       {status === OrganizationStatus.PENDING && (
@@ -58,7 +64,9 @@ export function StatusMessage({ status, organizationName, className }: StatusMes
           </div>
 
           <Button className="w-full" size="lg" asChild>
-            <Link href="/auth/activate">Activate my account</Link>
+            <Link href={activationToken ? `/activate?token=${activationToken}` : "/auth/activate"}>
+              Activate my account
+            </Link>
           </Button>
         </>
       )}
