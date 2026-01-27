@@ -6,6 +6,7 @@ import { UserRole } from "@/lib/types/roles";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 import { usePublishRequests } from "@/lib/features/publish-requests/hooks/usePublishRequests";
 import { usePublishRequestsStats } from "@/lib/features/publish-requests/hooks/usePublishRequestsStats";
+import { usePublishRequestActions } from "@/lib/features/publish-requests/hooks/usePublishRequestActions";
 import { PublishRequestStatsCards } from "@/lib/features/publish-requests/components/PublishRequestStatsCards";
 import { PublishRequestFilters } from "@/lib/features/publish-requests/components/PublishRequestFilters";
 import { PublishRequestsTable } from "@/lib/features/publish-requests/components/PublishRequestsTable";
@@ -29,6 +30,7 @@ export default function PublishRequestsPage() {
     error: statsError,
     refresh: refreshStats,
   } = usePublishRequestsStats(org_id);
+
   const {
     requests,
     isLoading,
@@ -37,10 +39,10 @@ export default function PublishRequestsPage() {
     setStatusFilter,
     searchQuery,
     setSearchQuery,
-    approveRequest,
-    rejectRequest,
     refresh,
   } = usePublishRequests(org_id);
+
+  const { approveRequest, rejectRequest } = usePublishRequestActions(org_id);
 
   const [selectedRequest, setSelectedRequest] = useState<PublishRequest | null>(null);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
@@ -59,12 +61,11 @@ export default function PublishRequestsPage() {
   const handleConfirmApprove = async (note?: string) => {
     if (!selectedRequest) return;
     try {
-      await approveRequest(selectedRequest.id, { note });
+      await approveRequest({ id: selectedRequest.id, payload: { note } });
       toast({
         title: "Request Approved",
         description: "The publish request has been approved successfully.",
       });
-      refreshStats();
     } catch (err) {
       toast({
         title: "Approval Failed",
@@ -77,12 +78,11 @@ export default function PublishRequestsPage() {
   const handleConfirmReject = async (note?: string) => {
     if (!selectedRequest) return;
     try {
-      await rejectRequest(selectedRequest.id, { note });
+      await rejectRequest({ id: selectedRequest.id, payload: { note } });
       toast({
         title: "Request Rejected",
         description: "The publish request has been rejected.",
       });
-      refreshStats();
     } catch (err) {
       toast({
         title: "Rejection Failed",

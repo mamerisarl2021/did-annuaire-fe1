@@ -37,7 +37,7 @@ interface Step1OrganizationProps {
  * Pure UI component - receives form from parent
  */
 export function Step1Organization({ form, className }: Step1OrganizationProps) {
-  const { countries, loading } = useCountries();
+  const { countries, isLoading } = useCountries();
   const { syncPhonePrefix } = usePhonePrefixSync({ form, countries });
 
   return (
@@ -109,7 +109,7 @@ export function Step1Organization({ form, className }: Step1OrganizationProps) {
                       field.onChange(country.code);
                       syncPhonePrefix(country, oldCountryCode);
                     }}
-                    disabled={loading}
+                    disabled={isLoading}
                   />
                 </FormControl>
                 <FormMessage />

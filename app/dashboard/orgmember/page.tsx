@@ -20,7 +20,7 @@ export default function OrgMemberDashboard() {
         {/* Header */}
         <div className="flex justify-between items-center px-8 pt-6">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <Button onClick={refresh} variant="outline" size="sm" disabled={isLoading}>
+          <Button onClick={() => refresh()} variant="outline" size="sm" disabled={isLoading}>
             <RefreshCcw className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")} />
             Refresh
           </Button>

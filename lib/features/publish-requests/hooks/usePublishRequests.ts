@@ -1,46 +1,36 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { publishRequestService } from "../services/publish-request.service";
-import { PublishRequest, ApprovePayload, RejectPayload } from "../types/publish-request.types";
-import { logger } from "@/lib/shared/services/logger.service";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 export function usePublishRequests(org_id?: string) {
-  const [requests, setRequests] = useState<PublishRequest[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [offset] = useState(0);
-  const limit = 50;
 
-  const fetchRequests = useCallback(async () => {
-    if (!org_id) return;
+  // Debounce search
+  const debouncedSearch = useDebounce(searchQuery, 300);
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await publishRequestService.getPublishRequests({
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["publish-requests", { org_id, status: statusFilter, search: debouncedSearch }],
+    queryFn: async () => {
+      if (!org_id) return [];
+
+      return publishRequestService.getPublishRequests({
         org_id,
         status: statusFilter === "all" ? undefined : statusFilter,
-        offset,
-        limit,
+        offset: 0,
+        limit: 50,
       });
-      setRequests(data);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to fetch publish requests";
-      setError(msg);
-      logger.error("[usePublishRequests] Fetch error:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [org_id, statusFilter, offset]);
+    },
+    enabled: !!org_id,
+    staleTime: 60 * 1000, // 1 minute
+  });
 
-  useEffect(() => {
-    fetchRequests();
-  }, [fetchRequests]);
-
+  // Client-side filtering for instant feedback
   const filteredRequests = useMemo(() => {
+    const requests = data || [];
     if (!searchQuery.trim()) return requests;
 
     const searchLower = searchQuery.toLowerCase();
@@ -49,38 +39,16 @@ export function usePublishRequests(org_id?: string) {
         req.did.toLowerCase().includes(searchLower) ||
         req.requested_by.toLowerCase().includes(searchLower)
     );
-  }, [requests, searchQuery]);
-
-  const approveRequest = async (id: string, payload: ApprovePayload = {}) => {
-    try {
-      await publishRequestService.approveRequest(id, payload);
-      await fetchRequests();
-    } catch (err) {
-      logger.error("[usePublishRequests] Approve error:", err);
-      throw err;
-    }
-  };
-
-  const rejectRequest = async (id: string, payload: RejectPayload = {}) => {
-    try {
-      await publishRequestService.rejectRequest(id, payload);
-      await fetchRequests();
-    } catch (err) {
-      logger.error("[usePublishRequests] Reject error:", err);
-      throw err;
-    }
-  };
+  }, [data, searchQuery]);
 
   return {
     requests: filteredRequests,
     isLoading,
-    error,
+    error: error ? (error as Error).message : null,
     statusFilter,
     setStatusFilter,
     searchQuery,
     setSearchQuery,
-    approveRequest,
-    rejectRequest,
-    refresh: fetchRequests,
+    refresh: refetch,
   };
 }

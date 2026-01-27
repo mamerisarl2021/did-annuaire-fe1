@@ -47,7 +47,7 @@ export function AuditContainer() {
           </p>
         </div>
         <Button
-          onClick={refresh}
+          onClick={() => refresh()}
           variant="outline"
           disabled={isLoading}
           className="border-[#dfe1e6] text-[#172b4d]"

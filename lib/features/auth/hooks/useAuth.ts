@@ -1,46 +1,48 @@
-import { useState, useCallback, useEffect } from "react";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import { authService } from "@/lib/features/auth/services/auth.service";
-import { type AuthUser } from "@/lib/features/auth/types/auth.types";
 import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
 import { logger } from "@/lib/shared/services/logger.service";
 
+/**
+ * Hook to manage authentication state
+ * Migrated to React Query for better caching and performance
+ */
 export function useAuth() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const checkAuth = useCallback(async () => {
-    logger.debug("useAuth: checkAuth initiated");
-    try {
-      const hasTokens = tokenStorage.hasTokens();
-      logger.debug("useAuth: hasTokens check", { hasTokens });
+  const {
+    data: user,
+    isLoading: loading,
+    refetch,
+  } = useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: async () => {
+      logger.debug("useAuth: Checking authentication");
 
       if (!tokenStorage.hasTokens()) {
-        logger.debug("useAuth: No tokens, user set to null");
-        setUser(null);
-        return;
+        logger.debug("useAuth: No tokens found");
+        return null;
       }
 
-      logger.debug("useAuth: Requesting user from authService...");
-      const currentUser = await authService.getCurrentUser();
-      logger.info("useAuth: User fetched successfully", { user: currentUser });
-      setUser(currentUser);
-    } catch (error) {
-      logger.error("useAuth: checkAuth failed", error);
-      setUser(null);
-    } finally {
-      logger.debug("useAuth: checkAuth finished (setting loading false)");
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+      try {
+        logger.debug("useAuth: Fetching current user");
+        const currentUser = await authService.getCurrentUser();
+        logger.info("useAuth: User fetched successfully", { user: currentUser });
+        return currentUser;
+      } catch (error) {
+        logger.error("useAuth: Failed to fetch user", error);
+        return null;
+      }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes - user session doesn't change often
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 1, // Only retry once on failure
+  });
 
   return {
-    user,
+    user: user || null,
     loading,
     isAuthenticated: !!user,
-    checkAuth,
+    checkAuth: refetch,
   };
 }

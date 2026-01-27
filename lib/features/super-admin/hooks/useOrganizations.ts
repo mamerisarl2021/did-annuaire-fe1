@@ -1,77 +1,66 @@
-import { useState, useEffect, useCallback } from "react";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { superAdminService } from "../services/superadmin.service";
-import {
-  type OrganizationListItem,
-  type OrganizationStats,
-  type OrganizationListParams,
-} from "../../organizations/types/organization.types";
+import { type OrganizationListParams } from "../../organizations/types/organization.types";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 export function useOrganizations() {
-  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
-  const [stats, setStats] = useState<OrganizationStats>({
-    all: 0,
-    pending: 0,
-    active: 0,
-    suspended: 0,
-    refused: 0,
-  });
-
   // Pagination State
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [totalCount, setTotalCount] = useState(0);
 
   // Filters
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<OrganizationListParams["status"] | undefined>(undefined);
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Debounce search
+  const debouncedSearch = useDebounce(search, 300);
 
-  /**
-   * Fetch Data
-   */
-  const fetchOrganizations = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
+  // Main organizations query
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["super-admin", "organizations", { page, pageSize, search: debouncedSearch, status }],
+    queryFn: async () => {
       const params: OrganizationListParams = {
         page,
         page_size: pageSize,
-        search: search || undefined,
+        search: debouncedSearch || undefined,
         status: status || undefined,
       };
 
       const { data } = await superAdminService.getOrganizations(params);
-      setOrganizations(data.results);
-      setTotalCount(data.count);
-      const statsData = await superAdminService.getStats();
-      setStats(statsData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error loading organizations");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, pageSize, search, status]);
+      return data;
+    },
+    staleTime: 60 * 1000, // 1 minute
+  });
 
-  // Initial Load & Updates
-  useEffect(() => {
-    fetchOrganizations();
-  }, [fetchOrganizations]);
+  // Separate stats query with longer cache
+  const { data: statsData } = useQuery({
+    queryKey: ["super-admin", "organizations", "stats"],
+    queryFn: () => superAdminService.getStats(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   return {
-    organizations,
-    stats,
+    organizations: data?.results || [],
+    stats: statsData || {
+      all: 0,
+      pending: 0,
+      active: 0,
+      suspended: 0,
+      refused: 0,
+    },
     isLoading,
-    error,
+    error: error ? (error as Error).message : null,
     pagination: {
       page,
       pageSize,
-      count: totalCount,
+      count: data?.count || 0,
       setPage,
       setPageSize,
     },
-    refresh: fetchOrganizations,
+    refresh: refetch,
     filters: {
       search,
       setSearch,

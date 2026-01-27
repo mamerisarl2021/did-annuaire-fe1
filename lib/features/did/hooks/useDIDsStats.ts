@@ -1,30 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { didService } from "../services/did.service";
-import { type DIDStats } from "../types";
 
 export function useDIDsStats() {
-  const [stats, setStats] = useState<DIDStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["dids", "stats"],
+    queryFn: () => didService.getDIDsStats(),
+    staleTime: 5 * 60 * 1000, // 5 minutes - stats don't change frequently
+  });
 
-  const fetchStats = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await didService.getDIDsStats();
-      setStats(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch DIDs stats");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
-
-  return { stats, isLoading, error, refresh: fetchStats };
+  return {
+    stats: data || null,
+    isLoading,
+    error: error ? (error as Error).message : null,
+    refresh: refetch,
+  };
 }

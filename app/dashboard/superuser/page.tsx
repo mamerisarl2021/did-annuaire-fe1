@@ -135,7 +135,7 @@ export default function SuperUserDashboardPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
         <div className="flex items-center space-x-2">
-          <Button onClick={refresh} variant="outline" size="sm" disabled={isLoading}>
+          <Button onClick={() => refresh()} variant="outline" size="sm" disabled={isLoading}>
             <RefreshCw className={`mr-2 size-4 ${isLoading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
