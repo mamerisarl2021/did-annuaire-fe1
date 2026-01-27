@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
     OTP_VERIFY: "/api/users/otp/email/verify",
     ME: "/api/users/me",
     DETAIL: (id: string) => `/api/users/${id}/`,
+    STATS: "/api/users/stats",
   },
   AUDIT: {
     ACTIONS: "/api/audit/actions",
@@ -55,6 +56,13 @@ export const API_ENDPOINTS = {
     UPDATE: "/api/universal-registrar/update",
     PUBLISH: (id: string) => `/api/registry/dids/${id}/publish`,
     DEACTIVATE: "/api/universal-registrar/deactivate",
+    STATS: "/api/registry/dids/stats",
+  },
+  PUBLISH_REQUESTS: {
+    LIST: "/api/registry/publish-requests",
+    STATS: "/api/registry/publish-requests/stats",
+    APPROVE: (id: string) => `/api/registry/publish-requests/${id}/approve`,
+    REJECT: (id: string) => `/api/registry/publish-requests/${id}/reject`,
   },
 } as const;
 

@@ -6,6 +6,7 @@ import {
   CreateUserPayload,
   UpdateUserPayload,
   GetUsersParams,
+  UserStats,
 } from "../types/users.types";
 
 /**
@@ -63,5 +64,16 @@ export const usersService = {
    */
   async getMe(): Promise<User> {
     return await httpClient.get<User>(API_ENDPOINTS.USERS.ME, { requiresAuth: true });
+  },
+
+  /**
+   * Get users statistics
+   */
+  async getUsersStats(): Promise<UserStats> {
+    const response = await httpClient.get<{ success: boolean; message: string; data: UserStats }>(
+      API_ENDPOINTS.USERS.STATS,
+      { requiresAuth: true }
+    );
+    return response.data;
   },
 };

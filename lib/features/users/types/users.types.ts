@@ -71,3 +71,18 @@ export interface GetUsersParams {
 export interface DeactivateUserPayload {
   user_id: string;
 }
+
+export interface UserStats {
+  all: number;
+  by_status: {
+    pending: number;
+    invited: number;
+    active: number;
+    deactivated: number;
+  };
+  by_role: {
+    org_admin: number;
+    org_member: number;
+    auditor: number;
+  };
+}

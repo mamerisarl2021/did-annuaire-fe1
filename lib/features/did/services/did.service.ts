@@ -13,6 +13,7 @@ import type {
   KeysResponse,
   DEACTIVATEDIDResponse,
 } from "../types/api.types";
+import type { DIDStats } from "../types";
 
 /**
  * DID Service
@@ -155,5 +156,16 @@ export const didService = {
   async deactivateDID(did: string): Promise<DEACTIVATEDIDResponse> {
     await httpClient.post(API_ENDPOINTS.DID.DEACTIVATE, { did }, { requiresAuth: true });
     return { "@context": ["https://www.w3.org/ns/did/v1"], did, deactivated: true };
+  },
+
+  /**
+   * Get DIDs statistics
+   */
+  async getDIDsStats(): Promise<DIDStats> {
+    const response = await httpClient.get<{ success: boolean; message: string; data: DIDStats }>(
+      API_ENDPOINTS.DID.STATS,
+      { requiresAuth: true }
+    );
+    return response.data;
   },
 };

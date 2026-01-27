@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus, Send } from "lucide-react";
 import { useUsers } from "@/lib/features/users/hooks/useUsers";
+import { useUsersStats } from "@/lib/features/users/hooks/useUsersStats";
 import { UsersTable } from "./UsersTable";
 import { UsersSearchBar } from "./UsersSearchBar";
 import { UserCreateModal } from "./modals/UserCreateModal";
@@ -14,6 +15,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { User, CreateUserPayload, UpdateUserPayload } from "@/lib/features/users/types/users.types";
 import { UserUpdateModal } from "./modals/UserUpdateModal";
 import { UserResendModal } from "./modals/UserResendModal";
+import { UserStatsCards } from "@/lib/features/users/components/UserStatsCards";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface UsersManagementViewProps {
   scope: "SUPER_USER" | "ORG_ADMIN";
@@ -22,6 +31,7 @@ interface UsersManagementViewProps {
 
 export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) {
   const { toast } = useToast();
+  const { stats, isLoading: isStatsLoading, error: statsError } = useUsersStats();
   const {
     filteredUsers,
     isLoading,
@@ -35,11 +45,18 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   });
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
     setClientSearch(value);
   };
+
+  // Filter users by role
+  const displayedUsers = useMemo(() => {
+    if (roleFilter === "all") return filteredUsers;
+    return filteredUsers.filter((user) => user.role === roleFilter);
+  }, [filteredUsers, roleFilter]);
 
   // Modal States
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -126,15 +143,41 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         </div>
       </div>
 
+      {/* Stats Cards */}
+      {!isStatsLoading && stats && (
+        <div className="px-8">
+          <UserStatsCards stats={stats} />
+        </div>
+      )}
+
+      {statsError && (
+        <div className="px-8">
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg text-sm">
+            Unable to load statistics: {statsError}
+          </div>
+        </div>
+      )}
+
       <div className="px-8 space-y-6 pb-8">
         <Card className="border shadow-sm rounded-2xl overflow-hidden">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4 mb-6">
               <UsersSearchBar value={searchQuery} onChange={handleSearchChange} />
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="org_admin">Org Admin</SelectItem>
+                  <SelectItem value="org_member">Org Member</SelectItem>
+                  <SelectItem value="auditor">Auditor</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <UsersTable
-              users={filteredUsers}
+              users={displayedUsers}
               isLoading={isLoading}
               onInvite={handleInvite}
               onResend={handleResend}

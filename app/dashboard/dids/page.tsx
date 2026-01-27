@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { RoleGuard } from "@/lib/guards";
 import { UserRole } from "@/lib/types/roles";
 import { useDIDs } from "@/lib/features/did/hooks/useDIDs";
+import { useDIDsStats } from "@/lib/features/did/hooks/useDIDsStats";
 import { DIDTable } from "@/components/features/did/list/DIDTable";
 import { PaginationControl } from "@/components/common/PaginationControl";
 import { DIDSearchBar } from "@/components/features/did/list/DIDSearchBar";
@@ -15,10 +16,19 @@ import { DeactivateDIDModal } from "@/components/features/did/list/DeactivateDID
 import { DIDKeysModal } from "@/components/features/did/list/DIDKeysModal";
 import { useToast } from "@/components/ui/use-toast";
 import { DID } from "@/lib/features/did/types";
+import { DIDStatsCards } from "@/lib/features/did/components/DIDStatsCards";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function DIDListPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { stats, isLoading: isStatsLoading, error: statsError } = useDIDsStats();
   const { dids, isLoading, searchQuery, setSearchQuery, deactivateDID, publishDID, pagination } =
     useDIDs();
 
@@ -27,6 +37,14 @@ export default function DIDListPage() {
 
   const [isKeysModalOpen, setIsKeysModalOpen] = useState(false);
   const [selectedDidId, setSelectedDidId] = useState<string | null>(null);
+  const [environmentFilter, setEnvironmentFilter] = useState<string>("all");
+
+  // Filter DIDs by environment
+  const displayedDids = useMemo(() => {
+    if (environmentFilter === "all") return dids;
+    const isProd = environmentFilter === "prod";
+    return dids.filter((did) => (isProd ? did.is_published : !did.is_published));
+  }, [dids, environmentFilter]);
 
   const handleCreate = () => {
     router.push("/dashboard/dids/create");
@@ -112,15 +130,40 @@ export default function DIDListPage() {
           </Button>
         </div>
 
+        {/* Stats Cards */}
+        {!isStatsLoading && stats && (
+          <div className="px-8">
+            <DIDStatsCards stats={stats} />
+          </div>
+        )}
+
+        {statsError && (
+          <div className="px-8">
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg text-sm">
+              Unable to load statistics: {statsError}
+            </div>
+          </div>
+        )}
+
         <div className="px-8 space-y-6 pb-8">
           <Card className="border shadow-sm rounded-2xl overflow-hidden">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4 mb-6">
                 <DIDSearchBar value={searchQuery} onChange={setSearchQuery} />
+                <Select value={environmentFilter} onValueChange={setEnvironmentFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by env" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Environments</SelectItem>
+                    <SelectItem value="prod">Production</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <DIDTable
-                dids={dids}
+                dids={displayedDids}
                 isLoading={isLoading}
                 onDelete={handleDelete}
                 onFetchKeys={handleFetchKeys}

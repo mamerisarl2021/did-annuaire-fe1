@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   Fingerprint,
   MessageSquareDot,
+  GitPullRequestArrow,
 } from "lucide-react";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 
@@ -61,17 +62,30 @@ export function DashboardSidebar({ className }: { className?: string }) {
       icon: Users,
       roles: ["ORG_ADMIN"],
     },
+
+    {
+      title: "Dashboard",
+      href: "/dashboard/orgmember",
+      icon: LayoutDashboard,
+      roles: ["ORG_MEMBER"],
+    },
     {
       title: "DIDs",
       href: "/dashboard/dids",
       icon: Fingerprint,
-      roles: ["SUPER_USER", "ORG_ADMIN"],
+      roles: ["SUPER_USER", "ORG_ADMIN", "ORG_MEMBER"],
     },
     {
       title: "Resolve DID",
-      href: "/resolve",
+      href: "/dashboard/dids/resolve",
       icon: MessageSquareDot,
       roles: ["SUPER_USER", "ORG_ADMIN", "ORG_MEMBER", "AUDITOR"],
+    },
+    {
+      title: "Publish Requests",
+      href: "/dashboard/publish-requests",
+      icon: GitPullRequestArrow,
+      roles: ["SUPER_USER", "ORG_ADMIN"],
     },
   ];
 

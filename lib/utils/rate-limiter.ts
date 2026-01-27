@@ -1,5 +1,3 @@
-
-
 class RateLimiter {
   private attempts = new Map<string, number[]>();
 
