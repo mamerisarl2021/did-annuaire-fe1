@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { superAdminService } from "../services/superadmin.service";
 import { type OrganizationListParams } from "../../organizations/types/organization.types";
 import { useDebounce } from "@/lib/hooks/useDebounce";
@@ -32,14 +33,14 @@ export function useOrganizations() {
       const { data } = await superAdminService.getOrganizations(params);
       return data;
     },
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: QUERY_CONFIG.STALE_TIME_FAST,
   });
 
   // Separate stats query with longer cache
   const { data: statsData } = useQuery({
     queryKey: ["super-admin", "organizations", "stats"],
     queryFn: () => superAdminService.getStats(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
 
   return {

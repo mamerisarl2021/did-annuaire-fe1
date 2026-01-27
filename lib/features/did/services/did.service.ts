@@ -86,8 +86,11 @@ export const didService = {
   /**
    * Resolve a DID using the Universal Resolver API
    */
-  async resolveDID(identifier: string, env = "prod"): Promise<DIDResolutionResponse> {
-    const query = new URLSearchParams({ env });
+  async resolveDID(
+    identifier: string,
+    env: "prod" | "draft" = "prod"
+  ): Promise<DIDResolutionResponse> {
+    const query = new URLSearchParams({ environment: env });
     const encodedIdentifier = encodeURIComponent(identifier);
     const endpoint = `${API_ENDPOINTS.DID.RESOLVE(encodedIdentifier)}?${query.toString()}`;
 

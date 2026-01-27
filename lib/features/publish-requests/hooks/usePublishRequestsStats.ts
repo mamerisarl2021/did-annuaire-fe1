@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { publishRequestService } from "../services/publish-request.service";
 
 export function usePublishRequestsStats(org_id?: string) {
@@ -11,7 +12,7 @@ export function usePublishRequestsStats(org_id?: string) {
       return publishRequestService.getPublishRequestsStats(org_id);
     },
     enabled: !!org_id,
-    staleTime: 5 * 60 * 1000, // 5 minutes - stats don't change frequently
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD, 
   });
 
   return {

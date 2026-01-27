@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { publishRequestService } from "../services/publish-request.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
@@ -25,7 +26,7 @@ export function usePublishRequests(org_id?: string) {
       });
     },
     enabled: !!org_id,
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: QUERY_CONFIG.STALE_TIME_FAST,
   });
 
   // Client-side filtering for instant feedback

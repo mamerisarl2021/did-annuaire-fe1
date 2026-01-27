@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import { type AuthUser } from "../types/auth.types";
 import { logger } from "@/lib/shared/services/logger.service";
 import { UserRoleType } from "@/lib/types";
+import { UserStatus } from "../../users/types/users.types";
 
 interface JWTPayload {
   user_id?: string;
@@ -19,6 +20,9 @@ interface UserApiResponse {
   is_staff?: boolean;
   organization?: { id: string; name: string };
   full_name?: string;
+  functions?: string[];
+  status?: string;
+  phone?: string;
 }
 
 export const authMapper = {
@@ -97,6 +101,9 @@ export const authMapper = {
       organization: apiData.organization,
       is_active: true,
       full_name: apiData.full_name || "",
+      functions: apiData.functions,
+      status: apiData.status as UserStatus,
+      phone: apiData.phone,
     };
   },
 

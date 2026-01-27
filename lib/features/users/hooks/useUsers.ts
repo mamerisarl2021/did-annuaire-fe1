@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { usersService } from "../services/users.service";
 import {
   GetUsersParams,
@@ -37,7 +38,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["users", params],
     queryFn: async () => usersService.getUsers(params),
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: QUERY_CONFIG.STALE_TIME_FAST,
   });
 
   const pagination = data?.data?.pagination || {

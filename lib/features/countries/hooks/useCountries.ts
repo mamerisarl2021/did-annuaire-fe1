@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { countryService } from "../services/country.service";
 
 /**
@@ -11,8 +12,8 @@ export function useCountries() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["countries"],
     queryFn: () => countryService.getAllCountries(),
-    staleTime: Infinity, // Countries list rarely changes
-    gcTime: Infinity, // Keep in cache forever
+    staleTime: QUERY_CONFIG.STALE_TIME_INFINITE,
+    gcTime: QUERY_CONFIG.GC_TIME_INFINITE,
   });
 
   return {

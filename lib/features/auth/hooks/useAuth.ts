@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { authService } from "@/lib/features/auth/services/auth.service";
 import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
 import { logger } from "@/lib/shared/services/logger.service";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 
 /**
  * Hook to manage authentication state
@@ -34,9 +35,9 @@ export function useAuth() {
         return null;
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes - user session doesn't change often
-    gcTime: 10 * 60 * 1000, // 10 minutes
-    retry: 1, // Only retry once on failure
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
+    gcTime: QUERY_CONFIG.GC_TIME_STANDARD,
+    retry: QUERY_CONFIG.RETRY_COUNT_STANDARD,
   });
 
   return {

@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { organizationService } from "../services/organization.service";
 import {
   type OrganizationListItem,
@@ -71,14 +72,13 @@ export function useOrganizations(initialPageSize = 10): UseOrganizationsReturn {
       };
       return organizationService.getOrganizationsList(params);
     },
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: QUERY_CONFIG.STALE_TIME_FAST,
   });
 
-  // Separate stats query with longer cache time
   const { data: statsData } = useQuery({
     queryKey: ["organizations", "stats"],
     queryFn: () => organizationService.getOrganizationsStats(),
-    staleTime: 5 * 60 * 1000, // 5 minutes - stats don't change often
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
 
   return {

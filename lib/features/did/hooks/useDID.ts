@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { didService } from "../services/did.service";
 import { DID, DIDDocument } from "../types";
 
@@ -40,8 +41,8 @@ export function useDID(didId: string, environment: "draft" | "prod" = "prod") {
       return mappedDid;
     },
     enabled: !!didId && didId !== "undefined",
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    retry: 1,
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
+    retry: QUERY_CONFIG.RETRY_COUNT_STANDARD,
   });
 
   return {

@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { organizationService } from "../services/organization.service";
 
 interface UseOrganizationStatusReturn {
@@ -23,8 +24,8 @@ export function useOrganizationStatus(organizationId?: string): UseOrganizationS
       return organizationService.getOrganizationStatus(organizationId);
     },
     enabled: !!organizationId && organizationId !== "undefined" && organizationId !== "null",
-    staleTime: 30 * 1000, // 30 seconds
-    retry: 2,
+    staleTime: QUERY_CONFIG.STALE_TIME_VOLATILE,
+    retry: QUERY_CONFIG.RETRY_COUNT_STANDARD + 1,
   });
 
   return {

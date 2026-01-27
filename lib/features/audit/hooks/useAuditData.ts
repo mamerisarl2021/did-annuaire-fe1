@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { auditService } from "../services/audit.service";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { type AuditListParams } from "../types/audit.types";
 import { type UserRoleType } from "@/lib/types/roles";
 
@@ -39,7 +40,7 @@ export function useAuditData(options: UseAuditDataOptions = {}) {
         stats: statsRes.items,
       };
     },
-    staleTime: 30 * 1000, // 30 seconds - audit logs should be relatively fresh
+    staleTime: QUERY_CONFIG.STALE_TIME_VOLATILE,
   });
 
   return {
