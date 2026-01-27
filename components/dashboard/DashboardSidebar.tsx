@@ -20,12 +20,6 @@ export function DashboardSidebar({ className }: { className?: string }) {
 
   const allItems = [
     {
-      title: "Overview",
-      href: "/dashboard/superuser",
-      icon: LayoutDashboard,
-      roles: ["SUPER_USER"],
-    },
-    {
       title: "Organizations",
       href: "/dashboard/superuser",
       icon: Building2,
@@ -42,13 +36,6 @@ export function DashboardSidebar({ className }: { className?: string }) {
       href: "/dashboard/superuser/audit",
       icon: FileText,
       roles: ["SUPER_USER"],
-    },
-
-    {
-      title: "Overview",
-      href: "/dashboard/orgadmin",
-      icon: LayoutDashboard,
-      roles: ["ORG_ADMIN"],
     },
     {
       title: "Organizations",
