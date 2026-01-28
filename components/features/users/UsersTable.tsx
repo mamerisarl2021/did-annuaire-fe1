@@ -60,7 +60,6 @@ export function UsersTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>User Id</TableHead>
             <TableHead className="w-[25%]">Full Name</TableHead>
             <TableHead>Organization</TableHead>
             <TableHead>Contact</TableHead>
@@ -72,9 +71,6 @@ export function UsersTable({
         <TableBody>
           {users?.map((user) => (
             <TableRow key={user.id} className="hover:bg-muted/50 transition-colors">
-              <TableCell className="font-medium">
-                <div>{user.id}</div>
-              </TableCell>
               <TableCell className="font-medium">
                 <div>{user.full_name}</div>
                 <div className="text-xs text-muted-foreground font-mono">{user.email}</div>

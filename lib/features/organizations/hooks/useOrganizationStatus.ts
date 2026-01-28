@@ -16,7 +16,10 @@ interface UseOrganizationStatusReturn {
  * Hook to fetch organization status
  * Migrated to React Query
  */
-export function useOrganizationStatus(organizationId?: string): UseOrganizationStatusReturn {
+export function useOrganizationStatus(
+  organizationId?: string,
+  options: { refetchInterval?: number } = {}
+): UseOrganizationStatusReturn {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["organization", organizationId, "status"],
     queryFn: async () => {
@@ -26,6 +29,7 @@ export function useOrganizationStatus(organizationId?: string): UseOrganizationS
     enabled: !!organizationId && organizationId !== "undefined" && organizationId !== "null",
     staleTime: QUERY_CONFIG.STALE_TIME_VOLATILE,
     retry: QUERY_CONFIG.RETRY_COUNT_STANDARD + 1,
+    refetchInterval: options.refetchInterval,
   });
 
   return {

@@ -1,7 +1,6 @@
 "use client";
 
-import * as React from "react";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import { Building2, ArrowLeft, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,18 +22,10 @@ function StatusContent() {
   const activationToken = searchParams.get("token");
 
   // Use React Query hook - now takes organizationId as direct parameter
-  const { status, isLoading, refetch } = useOrganizationStatus(organizationId || undefined);
-
-  // Poll every 30 seconds if we have an organizationId
-  useEffect(() => {
-    if (!organizationId) return;
-
-    const interval = setInterval(() => {
-      refetch();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [organizationId, refetch]);
+  const { status, isLoading, refetch } = useOrganizationStatus(
+    organizationId || undefined,
+    { refetchInterval: organizationId ? 30000 : undefined }
+  );
 
   const currentStatus: OrganizationStatusType =
     (status as OrganizationStatusType) || OrganizationStatus.PENDING;

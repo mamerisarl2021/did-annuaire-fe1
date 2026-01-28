@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { authService } from "../services/auth.service";
 import { type LoginPayload, type AuthUser } from "../types/auth.types";
 import { ApiException } from "@/lib/shared/api/api.errors";
@@ -12,6 +13,7 @@ interface LoginResponse {
 export function useLoginApi() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const login = useCallback(async (payload: LoginPayload): Promise<LoginResponse> => {
     setIsLoading(true);
@@ -26,6 +28,10 @@ export function useLoginApi() {
 
       const otpRequired = "otp_required" in response && response.otp_required === true;
       const method = response.otp_method || "email";
+
+      if (!otpRequired) {
+        await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      }
 
       return {
         user: currentUser,
@@ -65,6 +71,8 @@ export function useLoginApi() {
       if (!currentUser) {
         throw new Error("Unable to retrieve user profile.");
       }
+
+      await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
 
       return currentUser;
     } catch (err) {

@@ -13,6 +13,8 @@ export interface User {
   status: UserStatus;
   functions: string;
   organization: string;
+  can_publish_prod?: boolean;
+  isAuditor?: boolean;
   totp_enabled?: boolean;
   created_at?: string;
   last_login?: string;
@@ -47,7 +49,21 @@ export interface CreateUserPayload {
   last_name: string;
   phone: string;
   functions: string;
-  role: UserRoleType;
+  can_publish_prod: boolean;
+  isAuditor?: boolean;
+}
+
+export interface UserCreateModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (payload: CreateUserPayload) => Promise<void>;
+}
+
+export interface FunctionsInputProps {
+  value: string;
+  functions: string[];
+  onFunctionsChange: (functions: string[]) => void;
+  disabled?: boolean;
 }
 
 export interface UpdateUserPayload {
@@ -57,6 +73,8 @@ export interface UpdateUserPayload {
   phone?: string;
   functions?: string;
   status?: UserStatus;
+  can_publish_prod?: boolean;
+  isAuditor?: boolean;
 }
 
 export interface GetUsersParams {

@@ -12,7 +12,7 @@ export function usePublishRequestsStats(org_id?: string) {
       return publishRequestService.getPublishRequestsStats(org_id);
     },
     enabled: !!org_id,
-    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD, 
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
 
   return {

@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 import {
   Users,
   Building2,
-  FileText,
   LayoutDashboard,
   Fingerprint,
   MessageSquareDot,
   GitPullRequestArrow,
+  BrickWallShield,
 } from "lucide-react";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 
@@ -34,8 +34,8 @@ export function DashboardSidebar({ className }: { className?: string }) {
     {
       title: "Audit",
       href: "/dashboard/superuser/audit",
-      icon: FileText,
-      roles: ["SUPER_USER"],
+      icon: BrickWallShield,
+      roles: ["SUPER_USER", "ORG_ADMIN","AUDITOR"],
     },
     {
       title: "Organizations",

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,9 +11,20 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { User, UpdateUserPayload } from "@/lib/features/users/types/users.types";
 import { Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { User, UpdateUserPayload } from "@/lib/features/users/types/users.types";
+import { useUserUpdateForm } from "@/lib/features/users/hooks/useUserUpdateForm";
+import { FunctionsInput } from "@/components/FunctionsInput";
+import { UserUpdateFormData } from "@/lib/validations/user.schema";
 
 interface UserUpdateModalProps {
   isOpen: boolean;
@@ -23,113 +34,201 @@ interface UserUpdateModalProps {
 }
 
 export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdateModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<UpdateUserPayload>({});
-  const [funcInput, setFuncInput] = useState("");
+  const {
+    form,
+    isLoading,
+    functions,
+    handleFunctionsChange,
+    handleSubmit,
+  } = useUserUpdateForm({
+    user,
+    onSuccess: onClose,
+  });
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        phone: user.phone,
-        functions: user.functions,
-        status: user.status,
-      });
-      setFuncInput(user.functions || "");
-    }
-  }, [user]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-    setIsLoading(true);
-    try {
-      await onConfirm(user.id, formData);
-      onClose();
-    } catch (error) {
-      console.error("Failed to update user", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit = (data: UserUpdateFormData) => {
+    handleSubmit(data, onConfirm);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
-          <DialogTitle>Update User Profile</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl font-semibold">
+            Update User Profile
+          </DialogTitle>
+          <DialogDescription className="text-gray-600">
             Modify the user&apos;s personal information and roles.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="u_first_name">First Name</Label>
-              <Input
-                id="u_first_name"
-                value={formData.first_name || ""}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="first_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter first name"
+                        {...field}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="last_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name <span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter last name"
+                        {...field}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="u_last_name">Last Name</Label>
-              <Input
-                id="u_last_name"
-                value={formData.last_name || ""}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address <span className="text-red-500">*</span></FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="user@company.com"
+                      {...field}
+                      disabled={isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number <span className="text-red-500">*</span></FormLabel>
+                  <FormControl>
+                    <Input
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      {...field}
+                      disabled={isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="functions"
+              render={() => (
+                <FunctionsInput
+                  value=""
+                  functions={functions}
+                  onFunctionsChange={handleFunctionsChange}
+                  disabled={isLoading}
+                />
+              )}
+            />
+
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="isAuditor"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-3 p-4 border rounded-lg">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <div className="space-y-1">
+                      <FormLabel className="font-medium cursor-pointer">
+                        Auditor Role
+                      </FormLabel>
+                      <p className="text-sm text-gray-500">
+                        User will have auditor permissions and access
+                      </p>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="can_publish_prod"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-3 p-4 border rounded-lg">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <div className="space-y-1">
+                      <FormLabel className="font-medium cursor-pointer">
+                        Production Publishing
+                      </FormLabel>
+                      <p className="text-sm text-gray-500">
+                        User can publish to production environment
+                      </p>
+                    </div>
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="u_email">Email Address</Label>
-            <Input
-              id="u_email"
-              type="email"
-              value={formData.email || ""}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="u_phone">Phone Number</Label>
-            <Input
-              id="u_phone"
-              type="tel"
-              value={formData.phone || ""}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="u_functions">Functions (comma separated)</Label>
-            <Input
-              id="u_functions"
-              value={funcInput}
-              onChange={(e) => {
-                setFuncInput(e.target.value);
-                setFormData({
-                  ...formData,
-                  functions: e.target.value,
-                });
-              }}
-            />
-          </div>
-
-          <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="pt-6 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isLoading}
+                className="min-w-[100px]"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-blue-600 hover:bg-blue-700 min-w-[120px]"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
