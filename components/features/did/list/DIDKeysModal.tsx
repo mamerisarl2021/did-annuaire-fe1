@@ -22,7 +22,6 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { useDIDKeys } from "@/lib/features/did/hooks/useDIDKeys";
 
-
 interface DIDKeysModalProps {
   isOpen: boolean;
   onClose: () => void;

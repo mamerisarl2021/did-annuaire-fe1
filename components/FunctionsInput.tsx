@@ -26,7 +26,7 @@ export function FunctionsInput({
   };
 
   const handleRemoveFunction = (funcToRemove: string) => {
-    const newFunctions = functions.filter(func => func !== funcToRemove);
+    const newFunctions = functions.filter((func) => func !== funcToRemove);
     onFunctionsChange(newFunctions);
   };
 
@@ -60,7 +60,7 @@ export function FunctionsInput({
           Add
         </Button>
       </div>
-      
+
       {functions.length > 0 && (
         <div className="flex flex-wrap gap-2 pt-2" role="list" aria-label="Selected functions">
           {functions.map((func) => (

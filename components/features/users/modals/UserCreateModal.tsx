@@ -27,16 +27,10 @@ import { UserCreateFormData } from "@/lib/validations/user.schema";
 import { FunctionsInput } from "@/components/FunctionsInput";
 
 export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalProps) {
-  const {
-    form,
-    isLoading,
-    functions,
-    handleFunctionsChange,
-    handleSubmit,
-    resetForm,
-  } = useUserCreateForm({
-    onSuccess: onClose,
-  });
+  const { form, isLoading, functions, handleFunctionsChange, handleSubmit, resetForm } =
+    useUserCreateForm({
+      onSuccess: onClose,
+    });
 
   const handleClose = () => {
     resetForm();
@@ -51,9 +45,7 @@ export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalP
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
-            Create New Team Member
-          </DialogTitle>
+          <DialogTitle className="text-xl font-semibold">Create New Team Member</DialogTitle>
           <DialogDescription className="text-gray-600">
             Add a new user account. The user will be created in PENDING state.
           </DialogDescription>
@@ -67,7 +59,9 @@ export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalP
                 name="first_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name <span className="text-red-500">*</span></FormLabel>
+                    <FormLabel>
+                      First Name <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter first name"
@@ -86,7 +80,9 @@ export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalP
                 name="last_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name <span className="text-red-500">*</span></FormLabel>
+                    <FormLabel>
+                      Last Name <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter last name"
@@ -106,7 +102,9 @@ export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalP
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address <span className="text-red-500">*</span></FormLabel>
+                  <FormLabel>
+                    Email Address <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -126,7 +124,9 @@ export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalP
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number <span className="text-red-500">*</span></FormLabel>
+                  <FormLabel>
+                    Phone Number <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
@@ -169,9 +169,7 @@ export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalP
                       />
                     </FormControl>
                     <div className="space-y-1">
-                      <FormLabel className="font-medium cursor-pointer">
-                        Auditor Role
-                      </FormLabel>
+                      <FormLabel className="font-medium cursor-pointer">Auditor Role</FormLabel>
                       <p className="text-sm text-gray-500">
                         User will have auditor permissions and access
                       </p>

@@ -208,7 +208,6 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         onConfirm={onConfirmCreate}
       />
 
-
       <UserResendModal
         isOpen={isResendModalOpen}
         onClose={() => {
@@ -264,7 +263,11 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
           <DialogFooter className="sm:justify-center">
             <Button
               onClick={() => setInvitationResponse(null)}
-              className={invitationResponse?.success ? "bg-emerald-600 hover:bg-emerald-700" : "bg-rose-600 hover:bg-rose-700"}
+              className={
+                invitationResponse?.success
+                  ? "bg-emerald-600 hover:bg-emerald-700"
+                  : "bg-rose-600 hover:bg-rose-700"
+              }
             >
               Close
             </Button>

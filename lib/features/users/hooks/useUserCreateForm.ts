@@ -63,9 +63,7 @@ export function useUserCreateForm({ onSuccess, onError }: UseUserCreateFormProps
       resetForm();
       onSuccess?.();
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Failed to create user";
+      const errorMessage = error instanceof Error ? error.message : "Failed to create user";
 
       addToast(errorMessage, "error");
       onError?.(error as Error);

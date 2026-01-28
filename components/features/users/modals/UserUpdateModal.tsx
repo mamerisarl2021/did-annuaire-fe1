@@ -34,13 +34,7 @@ interface UserUpdateModalProps {
 }
 
 export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdateModalProps) {
-  const {
-    form,
-    isLoading,
-    functions,
-    handleFunctionsChange,
-    handleSubmit,
-  } = useUserUpdateForm({
+  const { form, isLoading, functions, handleFunctionsChange, handleSubmit } = useUserUpdateForm({
     user,
     onSuccess: onClose,
   });
@@ -53,9 +47,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
-            Update User Profile
-          </DialogTitle>
+          <DialogTitle className="text-xl font-semibold">Update User Profile</DialogTitle>
           <DialogDescription className="text-gray-600">
             Modify the user&apos;s personal information and roles.
           </DialogDescription>
@@ -69,13 +61,11 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                 name="first_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name <span className="text-red-500">*</span></FormLabel>
+                    <FormLabel>
+                      First Name <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter first name"
-                        {...field}
-                        disabled={isLoading}
-                      />
+                      <Input placeholder="Enter first name" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -87,13 +77,11 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                 name="last_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name <span className="text-red-500">*</span></FormLabel>
+                    <FormLabel>
+                      Last Name <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter last name"
-                        {...field}
-                        disabled={isLoading}
-                      />
+                      <Input placeholder="Enter last name" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -106,7 +94,9 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address <span className="text-red-500">*</span></FormLabel>
+                  <FormLabel>
+                    Email Address <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -125,7 +115,9 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number <span className="text-red-500">*</span></FormLabel>
+                  <FormLabel>
+                    Phone Number <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
@@ -166,9 +158,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                       />
                     </FormControl>
                     <div className="space-y-1">
-                      <FormLabel className="font-medium cursor-pointer">
-                        Auditor Role
-                      </FormLabel>
+                      <FormLabel className="font-medium cursor-pointer">Auditor Role</FormLabel>
                       <p className="text-sm text-gray-500">
                         User will have auditor permissions and access
                       </p>

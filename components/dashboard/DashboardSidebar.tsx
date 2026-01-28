@@ -35,7 +35,7 @@ export function DashboardSidebar({ className }: { className?: string }) {
       title: "Audit",
       href: "/dashboard/superuser/audit",
       icon: BrickWallShield,
-      roles: ["SUPER_USER", "ORG_ADMIN","AUDITOR"],
+      roles: ["SUPER_USER", "ORG_ADMIN", "AUDITOR"],
     },
     {
       title: "Organizations",

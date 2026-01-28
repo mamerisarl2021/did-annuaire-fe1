@@ -22,10 +22,9 @@ function StatusContent() {
   const activationToken = searchParams.get("token");
 
   // Use React Query hook - now takes organizationId as direct parameter
-  const { status, isLoading, refetch } = useOrganizationStatus(
-    organizationId || undefined,
-    { refetchInterval: organizationId ? 30000 : undefined }
-  );
+  const { status, isLoading, refetch } = useOrganizationStatus(organizationId || undefined, {
+    refetchInterval: organizationId ? 30000 : undefined,
+  });
 
   const currentStatus: OrganizationStatusType =
     (status as OrganizationStatusType) || OrganizationStatus.PENDING;

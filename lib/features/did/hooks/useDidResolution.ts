@@ -17,7 +17,6 @@ export type DidResolutionState =
   | { status: "error"; error: string }
   | { status: "success"; data: DidResolutionResult };
 
-
 export function useDidResolution() {
   const mutation = useMutation({
     mutationFn: (input: string) => didService.resolveDID(input),
@@ -46,7 +45,15 @@ export function useDidResolution() {
       };
     }
     return { status: "idle" };
-  }, [mutation.isIdle, mutation.isPending, mutation.isError, mutation.isSuccess, mutation.data, mutation.error, mutation.variables]);
+  }, [
+    mutation.isIdle,
+    mutation.isPending,
+    mutation.isError,
+    mutation.isSuccess,
+    mutation.data,
+    mutation.error,
+    mutation.variables,
+  ]);
 
   return { state, resolve: mutation.mutate };
 }
