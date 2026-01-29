@@ -25,6 +25,7 @@ export interface AuthUser {
   id: string;
   email: string;
   role: UserRoleType;
+  roles: string[];
   organization_id?: string;
   organization?: {
     id: string;

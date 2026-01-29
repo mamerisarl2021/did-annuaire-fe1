@@ -13,6 +13,7 @@ import {
   BrickWallShield,
 } from "lucide-react";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
+import { UserRole } from "@/lib/types/roles";
 
 export function DashboardSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
@@ -23,60 +24,72 @@ export function DashboardSidebar({ className }: { className?: string }) {
       title: "Organizations",
       href: "/dashboard/superuser",
       icon: Building2,
-      roles: ["SUPER_USER"],
+      roles: [UserRole.SUPER_USER],
     },
     {
       title: "Users",
       href: "/dashboard/superuser/users",
       icon: Users,
-      roles: ["SUPER_USER"],
+      roles: [UserRole.SUPER_USER],
     },
     {
       title: "Audit",
       href: "/dashboard/superuser/audit",
       icon: BrickWallShield,
-      roles: ["SUPER_USER", "ORG_ADMIN", "AUDITOR"],
+      roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN, UserRole.AUDITOR],
     },
     {
       title: "Organizations",
       href: "/dashboard/orgadmin/organizations",
       icon: Building2,
-      roles: ["ORG_ADMIN"],
+      roles: [UserRole.ORG_ADMIN],
     },
     {
       title: "Users",
       href: "/dashboard/orgadmin/users",
       icon: Users,
-      roles: ["ORG_ADMIN"],
+      roles: [UserRole.ORG_ADMIN],
     },
 
     {
       title: "Dashboard",
       href: "/dashboard/orgmember",
       icon: LayoutDashboard,
-      roles: ["ORG_MEMBER"],
+      roles: [UserRole.ORG_MEMBER],
     },
     {
       title: "DIDs",
       href: "/dashboard/dids",
       icon: Fingerprint,
-      roles: ["SUPER_USER", "ORG_ADMIN", "ORG_MEMBER"],
+      roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN, UserRole.ORG_MEMBER],
     },
     {
       title: "Resolve DID",
       href: "/dashboard/dids/resolve",
       icon: MessageSquareDot,
-      roles: ["SUPER_USER", "ORG_ADMIN", "ORG_MEMBER", "AUDITOR"],
+      roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN, UserRole.ORG_MEMBER, UserRole.AUDITOR],
     },
     {
       title: "Publish Requests",
       href: "/dashboard/publish-requests",
       icon: GitPullRequestArrow,
-      roles: ["SUPER_USER", "ORG_ADMIN"],
+      roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN],
     },
   ];
 
-  const items = allItems.filter((item) => !user?.role || item.roles.includes(user.role));
+  const items = allItems.filter((item) => {
+    if (!user) return false;
+
+    // Check against all user's roles (list)
+    const userRoles = Array.isArray(user.roles) ? user.roles : [];
+    const hasMatchInList = userRoles.some((r) => item.roles.includes(r as any));
+    if (hasMatchInList) return true;
+
+    // Fallback: Check against primary role
+    if (user.role && item.roles.includes(user.role as any)) return true;
+
+    return false;
+  });
 
   return (
     <div className={cn("pb-12 min-h-[calc(100vh-64px)] border-r bg-background", className)}>

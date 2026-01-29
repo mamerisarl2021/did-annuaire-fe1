@@ -20,6 +20,7 @@ export function AuditContainer() {
   const { logs, stats, totalCount, isLoading, error, refresh } = useAuditData({
     ...filters,
     userRole: user?.role,
+    organization_id: user?.role === "SUPER_USER" ? filters.organization_id : user?.organization_id,
   });
 
   const {
@@ -77,7 +78,7 @@ export function AuditContainer() {
             severity={filters.severity || "all"}
             onSeverityChange={setSeverity}
             totalCount={totalCount}
-            // organization_id filter could be added here if isSuperuser
+          // organization_id filter could be added here if isSuperuser
           />
 
           {/* Error Message */}
