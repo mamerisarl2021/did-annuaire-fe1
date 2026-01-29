@@ -62,27 +62,27 @@ export function FunctionsInput({
       </div>
 
       {functions.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-2" role="list" aria-label="Selected functions">
+        <ul className="flex flex-wrap gap-2 pt-2" aria-label="Selected functions">
           {functions.map((func) => (
-            <Badge
-              key={func}
-              variant="secondary"
-              className="px-3 py-1 flex items-center gap-1"
-              role="listitem"
-            >
-              {func}
-              <button
-                type="button"
-                onClick={() => handleRemoveFunction(func)}
-                className="ml-1 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
-                disabled={disabled}
-                aria-label={`Remove ${func}`}
+            <li key={func}>
+              <Badge
+                variant="secondary"
+                className="px-3 py-1 flex items-center gap-1"
               >
-                <X className="h-3 w-3" />
-              </button>
-            </Badge>
+                {func}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFunction(func)}
+                  className="ml-1 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+                  disabled={disabled}
+                  aria-label={`Remove ${func}`}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );
