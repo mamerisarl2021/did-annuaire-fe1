@@ -1,14 +1,21 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { Plus, Send } from "lucide-react";
+import { useState } from "react";
+import { Plus } from "lucide-react";
 import { useUsers } from "@/lib/features/users/hooks/useUsers";
 import { useUsersStats } from "@/lib/features/users/hooks/useUsersStats";
 import { UsersTable } from "./UsersTable";
 import { UsersSearchBar } from "./UsersSearchBar";
 import { UserCreateModal } from "./modals/UserCreateModal";
-import { UserInviteModal } from "./modals/UserInviteModal";
 import { UserDeactivateModal } from "./modals/UserDeactivateModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +23,7 @@ import { User, CreateUserPayload, UpdateUserPayload } from "@/lib/features/users
 import { UserUpdateModal } from "./modals/UserUpdateModal";
 import { UserResendModal } from "./modals/UserResendModal";
 import { UserStatsCards } from "@/lib/features/users/components/UserStatsCards";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -38,37 +46,45 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     createUser,
     inviteUser,
     updateUser,
-    deactivateUser,
+    toggleUserStatus,
     setClientSearch,
+    setStatus,
   } = useUsers({
     org_id: orgId,
   });
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
     setClientSearch(value);
   };
 
-  // Filter users by role
-  const displayedUsers = useMemo(() => {
-    if (roleFilter === "all") return filteredUsers;
-    return filteredUsers.filter((user) => user.role === roleFilter);
-  }, [filteredUsers, roleFilter]);
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+    setStatus(value);
+  };
 
   // Modal States
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isResendModalOpen, setIsResendModalOpen] = useState(false);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [invitationResponse, setInvitationResponse] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
 
-  const handleInvite = (user: User) => {
+  const handleInvite = async (user: User) => {
     setSelectedUser(user);
-    setIsInviteModalOpen(true);
+    try {
+      await onConfirmInvite(user.id);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to send invitation.";
+      setInvitationResponse({ success: false, message: msg });
+    }
   };
 
   const handleResend = (user: User) => {
@@ -81,7 +97,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     setIsUpdateModalOpen(true);
   };
 
-  const handleDeactivate = (user: User) => {
+  const handleToggleStatus = (user: User) => {
     setSelectedUser(user);
     setIsDeactivateModalOpen(true);
   };
@@ -92,12 +108,17 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   };
 
   const onConfirmInvite = async (userId: string) => {
-    await inviteUser(userId);
-    toast({ title: "Success", description: "Invitation sent successfully." });
+    try {
+      await inviteUser(userId);
+      setInvitationResponse({ success: true, message: "Invitation sent successfully." });
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to send invitation.";
+      setInvitationResponse({ success: false, message: msg });
+    }
   };
 
   const onConfirmResend = async (userId: string) => {
-    await inviteUser(userId); // Assuming invite is same endpoint as resend
+    await inviteUser(userId);
     toast({ title: "Success", description: "Invitation resent successfully." });
   };
 
@@ -106,8 +127,8 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     toast({ title: "Success", description: "Profile updated successfully." });
   };
 
-  const onConfirmDeactivate = async (userId: string) => {
-    await deactivateUser(userId);
+  const onConfirmToggleStatus = async (userId: string) => {
+    await toggleUserStatus(userId);
     toast({ title: "Success", description: "User status updated successfully." });
   };
 
@@ -125,14 +146,6 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         </div>
 
         <div className="flex items-center gap-3">
-          <Button
-            onClick={() => setIsInviteModalOpen(true)}
-            variant="outline"
-            className="gap-2 h-11 px-6 border-blue-200 text-blue-700 hover:bg-blue-50 rounded-xl"
-          >
-            <Send size={16} />
-            Invite user
-          </Button>
           <Button
             onClick={() => setIsCreateModalOpen(true)}
             className="gap-2 bg-blue-600 hover:bg-blue-700 text-white h-11 px-6 shadow-lg shadow-blue-500/20 rounded-xl transition-all hover:-translate-y-0.5 active:translate-y-0"
@@ -163,26 +176,27 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
           <CardContent className="pt-6">
             <div className="flex items-center gap-4 mb-6">
               <UsersSearchBar value={searchQuery} onChange={handleSearchChange} />
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <Select value={statusFilter} onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by role" />
+                  <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="org_admin">Org Admin</SelectItem>
-                  <SelectItem value="org_member">Org Member</SelectItem>
-                  <SelectItem value="auditor">Auditor</SelectItem>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="INVITED">Invited</SelectItem>
+                  <SelectItem value="DEACTIVATED">Deactivated</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <UsersTable
-              users={displayedUsers}
+              users={filteredUsers}
               isLoading={isLoading}
               onInvite={handleInvite}
               onResend={handleResend}
               onUpdate={handleUpdate}
-              onDeactivate={handleDeactivate}
+              onToggleStatus={handleToggleStatus}
             />
           </CardContent>
         </Card>
@@ -193,16 +207,6 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onConfirm={onConfirmCreate}
-      />
-
-      <UserInviteModal
-        isOpen={isInviteModalOpen}
-        onClose={() => {
-          setIsInviteModalOpen(false);
-          setSelectedUser(null);
-        }}
-        onConfirm={onConfirmInvite}
-        initialUserId={selectedUser?.id}
       />
 
       <UserResendModal
@@ -231,9 +235,46 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
           setIsDeactivateModalOpen(false);
           setSelectedUser(null);
         }}
-        onConfirm={onConfirmDeactivate}
+        onConfirm={onConfirmToggleStatus}
         user={selectedUser}
       />
+
+      {/* Invitation Response Modal */}
+      <Dialog open={!!invitationResponse} onOpenChange={() => setInvitationResponse(null)}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full mb-4">
+              {invitationResponse?.success ? (
+                <div className="bg-emerald-100 p-3 rounded-full">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                </div>
+              ) : (
+                <div className="bg-rose-100 p-3 rounded-full">
+                  <AlertCircle className="h-6 w-6 text-rose-600" />
+                </div>
+              )}
+            </div>
+            <DialogTitle className="text-center">
+              {invitationResponse?.success ? "Invitation Sent" : "Invitation Failed"}
+            </DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              {invitationResponse?.message}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center">
+            <Button
+              onClick={() => setInvitationResponse(null)}
+              className={
+                invitationResponse?.success
+                  ? "bg-emerald-600 hover:bg-emerald-700"
+                  : "bg-rose-600 hover:bg-rose-700"
+              }
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

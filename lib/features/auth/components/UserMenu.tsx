@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LayoutDashboard, Settings, LogOut } from "lucide-react";
@@ -17,8 +17,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authService } from "../services/auth.service";
 import { useRoleRedirect } from "@/lib/guards/useRoleRedirect";
-import { type AuthUser } from "../types/auth.types";
 import { logger } from "@/lib/shared/services/logger.service";
+import { useAuth } from "../hooks/useAuth";
 
 /**
  * User Menu Component
@@ -32,22 +32,8 @@ import { logger } from "@/lib/shared/services/logger.service";
 export function UserMenu() {
   const router = useRouter();
   const { redirectToRoleDashboard } = useRoleRedirect();
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const { user } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  // Load user on mount
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-      } catch (error) {
-        logger.error("Failed to load user in UserMenu", error);
-      }
-    };
-
-    loadUser();
-  }, []);
 
   /**
    * Get user initials for avatar fallback

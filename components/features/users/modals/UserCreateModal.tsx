@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,162 +11,226 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { CreateUserPayload } from "@/lib/features/users/types/users.types";
-import { UserRoleType } from "@/lib/types/roles";
 import { Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-interface UserCreateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: (payload: CreateUserPayload) => Promise<void>;
-}
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { UserCreateModalProps } from "@/lib/features/users/types/users.types";
+import { useUserCreateForm } from "@/lib/features/users/hooks/useUserCreateForm";
+import { UserCreateFormData } from "@/lib/validations/user.schema";
+import { FunctionsInput } from "@/components/FunctionsInput";
 
 export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<CreateUserPayload>({
-    email: "",
-    first_name: "",
-    last_name: "",
-    phone: "",
-    functions: "",
-    role: "ORG_MEMBER",
-  });
+  const { form, isLoading, functions, handleFunctionsChange, handleSubmit, resetForm } =
+    useUserCreateForm({
+      onSuccess: onClose,
+    });
 
-  const roleOptions: { value: UserRoleType; label: string }[] = [
-    { value: "SUPER_USER", label: "Super User" },
-    { value: "ORG_ADMIN", label: "Organization Admin" },
-    { value: "ORG_MEMBER", label: "Organization Member" },
-    { value: "AUDITOR", label: "Auditor" },
-  ];
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
-  const [funcInput, setFuncInput] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      await onConfirm(formData);
-      setFormData({
-        email: "",
-        first_name: "",
-        last_name: "",
-        phone: "",
-        functions: "",
-        role: "ORG_MEMBER",
-      });
-      setFuncInput("");
-      onClose();
-    } catch (error) {
-      console.error("Failed to create user", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit = (data: UserCreateFormData) => {
+    handleSubmit(data, onConfirm);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
-          <DialogTitle>Create New member</DialogTitle>
-          <DialogDescription>
-            Fill in the details to create a new user account in PENDING state.
+          <DialogTitle className="text-xl font-semibold">Create New Team Member</DialogTitle>
+          <DialogDescription className="text-gray-600">
+            Add a new user account. The user will be created in PENDING state.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="first_name">First Name</Label>
-              <Input
-                id="first_name"
-                required
-                value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="first_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      First Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter first name"
+                        {...field}
+                        disabled={isLoading}
+                        aria-required="true"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="last_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Last Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter last name"
+                        {...field}
+                        disabled={isLoading}
+                        aria-required="true"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="last_name">Last Name</Label>
-              <Input
-                id="last_name"
-                required
-                value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Email Address <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="user@company.com"
+                      {...field}
+                      disabled={isLoading}
+                      aria-required="true"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Phone Number <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      {...field}
+                      disabled={isLoading}
+                      aria-required="true"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="functions"
+              render={() => (
+                <FunctionsInput
+                  value=""
+                  functions={functions}
+                  onFunctionsChange={handleFunctionsChange}
+                  disabled={isLoading}
+                />
+              )}
+            />
+
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="is_auditor"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-3 p-4 border rounded-lg">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={isLoading}
+                        aria-label="Auditor role"
+                      />
+                    </FormControl>
+                    <div className="space-y-1">
+                      <FormLabel className="font-medium cursor-pointer">Auditor Role</FormLabel>
+                      <p className="text-sm text-gray-500">
+                        User will have auditor permissions and access
+                      </p>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="can_publish_prod"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-3 p-4 border rounded-lg">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={isLoading}
+                        aria-label="Production publishing permission"
+                      />
+                    </FormControl>
+                    <div className="space-y-1">
+                      <FormLabel className="font-medium cursor-pointer">
+                        Production Publishing
+                      </FormLabel>
+                      <p className="text-sm text-gray-500">
+                        User can publish to production environment
+                      </p>
+                    </div>
+                  </FormItem>
+                )}
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input
-              id="phone"
-              type="tel"
-              required
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="functions">Functions (comma separated)</Label>
-            <Input
-              id="functions"
-              value={funcInput}
-              onChange={(e) => {
-                setFuncInput(e.target.value);
-                setFormData({ ...formData, functions: e.target.value });
-              }}
-              placeholder="Manager, developer..."
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="role">Role</Label>
-            <Select
-              value={formData.role}
-              onValueChange={(value: UserRoleType) => setFormData({ ...formData, role: value })}
-            >
-              <SelectTrigger id="role">
-                <SelectValue placeholder="Select a role" />
-              </SelectTrigger>
-              <SelectContent>
-                {roleOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create User
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="pt-6 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={isLoading}
+                className="min-w-[100px]"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-blue-600 hover:bg-blue-700 min-w-[120px]"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create User"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

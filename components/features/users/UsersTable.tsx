@@ -30,7 +30,7 @@ interface UsersTableProps {
   onInvite: (user: User) => void;
   onResend: (user: User) => void;
   onUpdate: (user: User) => void;
-  onDeactivate: (user: User) => void;
+  onToggleStatus: (user: User) => void;
 }
 
 export function UsersTable({
@@ -39,7 +39,7 @@ export function UsersTable({
   onInvite,
   onResend,
   onUpdate,
-  onDeactivate,
+  onToggleStatus,
 }: UsersTableProps) {
   if (isLoading) {
     return <div className="text-center py-10 text-muted-foreground">Loading users...</div>;
@@ -60,7 +60,6 @@ export function UsersTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>User Id</TableHead>
             <TableHead className="w-[25%]">Full Name</TableHead>
             <TableHead>Organization</TableHead>
             <TableHead>Contact</TableHead>
@@ -72,9 +71,6 @@ export function UsersTable({
         <TableBody>
           {users?.map((user) => (
             <TableRow key={user.id} className="hover:bg-muted/50 transition-colors">
-              <TableCell className="font-medium">
-                <div>{user.id}</div>
-              </TableCell>
               <TableCell className="font-medium">
                 <div>{user.full_name}</div>
                 <div className="text-xs text-muted-foreground font-mono">{user.email}</div>
@@ -133,7 +129,7 @@ export function UsersTable({
                         size="sm"
                         variant="outline"
                         className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
-                        onClick={() => onDeactivate(user)}
+                        onClick={() => onToggleStatus(user)}
                       >
                         <UserX className="size-4" />
                         <span className="hidden lg:inline text-[11px] font-bold">Delete</span>
@@ -156,7 +152,7 @@ export function UsersTable({
                         size="sm"
                         variant="outline"
                         className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
-                        onClick={() => onDeactivate(user)}
+                        onClick={() => onToggleStatus(user)}
                       >
                         <UserX className="size-4" />
                         <span className="hidden lg:inline text-[11px] font-bold">Cancel</span>
@@ -183,7 +179,7 @@ export function UsersTable({
                             ? "h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
                             : "h-8 gap-1.5 text-emerald-600 border-emerald-100 hover:bg-emerald-50 dark:border-emerald-900/40 dark:hover:bg-emerald-900/20"
                         }
-                        onClick={() => onDeactivate(user)}
+                        onClick={() => onToggleStatus(user)}
                       >
                         {user.status === "ACTIVE" ? (
                           <>

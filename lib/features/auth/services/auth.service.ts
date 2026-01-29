@@ -126,7 +126,7 @@ export const authService = {
         logger.debug("Fetching user profile from /me endpoint to resolve missing fields");
         const response = await httpClient.get<{
           data?: {
-            role?: string;
+            role?: string | string[];
             is_superuser?: boolean;
             is_staff?: boolean;
             email?: string;
@@ -137,7 +137,7 @@ export const authService = {
             status?: UserStatus;
             phone?: string;
           };
-          role?: string;
+          role?: string | string[];
           is_superuser?: boolean;
           is_staff?: boolean;
           email?: string;

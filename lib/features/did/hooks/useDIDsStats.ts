@@ -8,7 +8,7 @@ export function useDIDsStats() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["dids", "stats"],
     queryFn: () => didService.getDIDsStats(),
-    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD, 
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
 
   return {

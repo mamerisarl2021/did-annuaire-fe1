@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,19 +19,8 @@ import {
 import { Copy, Check, Loader2, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { didService } from "@/lib/features/did/services/did.service";
 import { useToast } from "@/components/ui/use-toast";
-
-interface PublicKeyJwk {
-  kty: string;
-  crv?: string;
-  [key: string]: unknown;
-}
-
-interface DIDKey {
-  id: string;
-  publicKeyJwk: PublicKeyJwk;
-}
+import { useDIDKeys } from "@/lib/features/did/hooks/useDIDKeys";
 
 interface DIDKeysModalProps {
   isOpen: boolean;
@@ -40,37 +29,9 @@ interface DIDKeysModalProps {
 }
 
 export function DIDKeysModal({ isOpen, onClose, didId }: DIDKeysModalProps) {
-  const [keys, setKeys] = useState<DIDKey[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { keys, isLoading } = useDIDKeys(isOpen ? didId : null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (isOpen && didId) {
-      const fetchKeys = async () => {
-        setIsLoading(true);
-        try {
-          const fetchedKeys = await didService.fetchKeys(didId);
-          setKeys(
-            fetchedKeys.map((k) => ({
-              id: k.key_id,
-              publicKeyJwk: k.public_jwk as unknown as PublicKeyJwk,
-            }))
-          );
-        } catch (error) {
-          console.error("Failed to fetch keys:", error);
-          toast({
-            title: "Error",
-            description: "Failed to fetch public keys for this DID.",
-            variant: "destructive",
-          });
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      fetchKeys();
-    }
-  }, [isOpen, didId, toast]);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);

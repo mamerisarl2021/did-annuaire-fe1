@@ -23,7 +23,12 @@ export function useAuditData(options: UseAuditDataOptions = {}) {
     q: params.q,
     limit: params.limit,
     offset: params.offset,
-    organization_id: userRole === "SUPER_USER" ? params.organization_id : undefined,
+    organization_id:
+      userRole === "SUPER_USER"
+        ? params.organization_id
+        : userRole === "ORG_ADMIN" || userRole === "ORG_MEMBER" || userRole === "AUDITOR"
+          ? params.organization_id // This should ideally be the user's org id, let's see where it's called
+          : undefined,
   };
 
   const { data, isLoading, error, refetch } = useQuery({

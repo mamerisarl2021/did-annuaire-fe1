@@ -19,8 +19,14 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
     if (!loading) {
       if (!user) {
         router.push("/");
-      } else if (!allowedRoles.includes(user.role)) {
-        router.push("/");
+      } else {
+        const hasRoleMatch =
+          allowedRoles.includes(user.role) ||
+          (user.roles && user.roles.some((r) => allowedRoles.includes(r as UserRoleType)));
+
+        if (!hasRoleMatch) {
+          router.push("/");
+        }
       }
     }
   }, [user, loading, allowedRoles, router]);
@@ -33,7 +39,12 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
     );
   }
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  const hasRoleMatch =
+    user &&
+    (allowedRoles.includes(user.role) ||
+      (user.roles && user.roles.some((r) => allowedRoles.includes(r as UserRoleType))));
+
+  if (!user || !hasRoleMatch) {
     return null;
   }
 

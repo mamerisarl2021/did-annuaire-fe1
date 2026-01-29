@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { didService } from "../services/did.service";
 import { DIDResolutionResponse } from "../types/api.types";
 import { DIDDocument } from "../types";
@@ -17,36 +18,42 @@ export type DidResolutionState =
   | { status: "success"; data: DidResolutionResult };
 
 export function useDidResolution() {
-  const [state, setState] = useState<DidResolutionState>({
-    status: "idle",
+  const mutation = useMutation({
+    mutationFn: (input: string) => didService.resolveDID(input),
   });
 
-  const resolve = async (input: string) => {
-    if (!input.trim()) return;
-
-    setState({ status: "loading" });
-
-    try {
-      const response = await didService.resolveDID(input);
-
+  const state: DidResolutionState = useMemo(() => {
+    if (mutation.isIdle) return { status: "idle" };
+    if (mutation.isPending) return { status: "loading" };
+    if (mutation.isError) {
+      return {
+        status: "error",
+        error: mutation.error instanceof Error ? mutation.error.message : "Failed to resolve DID",
+      };
+    }
+    if (mutation.isSuccess && mutation.data) {
+      const response = mutation.data;
       const didMeta = response.didResolutionMetadata;
-
-      setState({
+      return {
         status: "success",
         data: {
-          did: didMeta.did?.didString || input,
+          did: didMeta.did?.didString || (mutation.variables as string),
           document: response.didDocument,
           url: didMeta.driverUrl || "",
           resolutionResponse: response,
         },
-      });
-    } catch (e) {
-      setState({
-        status: "error",
-        error: e instanceof Error ? e.message : "Failed to resolve DID",
-      });
+      };
     }
-  };
+    return { status: "idle" };
+  }, [
+    mutation.isIdle,
+    mutation.isPending,
+    mutation.isError,
+    mutation.isSuccess,
+    mutation.data,
+    mutation.error,
+    mutation.variables,
+  ]);
 
-  return { state, resolve };
+  return { state, resolve: mutation.mutate };
 }
