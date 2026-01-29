@@ -1,228 +1,159 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Plus } from "lucide-react";
-import Link from "next/link";
-
-import { useOrganizations } from "@/lib/features/super-admin/hooks/useOrganizations";
-import { useOrganizationActions } from "@/lib/features/super-admin/hooks/useOrganizationActions";
-import { StatsCardsRow } from "@/lib/features/organizations/components/StatsCardsRow";
-import { OrganizationFilters } from "@/lib/features/organizations/components/OrganizationFilters";
-import { OrganizationsTable } from "@/lib/features/organizations/components/OrganizationsTable";
-import { OrganizationsPagination } from "@/lib/features/organizations/components/OrganizationsPagination";
-import { OrganizationDetailsDialog } from "@/lib/features/organizations/components/OrganizationDetailsDialog";
-import { RefuseOrganizationDialog } from "@/lib/features/super-admin/components/RefuseOrganizationDialog";
-import { DeleteOrganizationDialog } from "@/lib/features/super-admin/components/DeleteOrganizationDialog";
 import {
-  type OrganizationListItem,
-  type OrganizationStatus,
-} from "@/lib/features/organizations/types/organization.types";
+  RefreshCcw,
+  Users as UsersIcon,
+  FileText,
+  ClipboardList,
+  ShieldCheck,
+  Building2,
+} from "lucide-react";
+import { RoleGuard } from "@/lib/guards";
+import { UserRole } from "@/lib/types/roles";
+import { useDIDsStats } from "@/lib/features/did/hooks/useDIDsStats";
+import { useUsersStats } from "@/lib/features/users/hooks/useUsersStats";
+import { usePublishRequestsStats } from "@/lib/features/publish-requests/hooks/usePublishRequestsStats";
+import { useOrganizations } from "@/lib/features/super-admin/hooks/useOrganizations";
+import { cn } from "@/lib/utils";
 
 export default function SuperUserDashboardPage() {
-  // Data fetching
-  const { organizations, stats, pagination, error, isLoading, refresh, filters } =
-    useOrganizations();
+  const router = useRouter();
 
-  // Actions
-  const actions = useOrganizationActions();
+  const { isLoading: isDIDLoading, refresh: refreshDIDs } = useDIDsStats();
 
-  // UI State - Dialog management
-  const [selectedOrg, setSelectedOrg] = useState<OrganizationListItem | null>(null);
-  const [showDetails, setShowDetails] = useState(false);
-  const [showRefuse, setShowRefuse] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
+  const { isLoading: isUsersLoading, refresh: refreshUsers } = useUsersStats();
 
-  // Derived state
-  const currentStatus = filters.status || "all";
-  const totalPages = pagination ? Math.ceil(pagination.count / pagination.pageSize) : 1;
-  const currentPage = pagination?.page || 1;
+  const { isLoading: isPubLoading, refresh: refreshPubs } = usePublishRequestsStats();
 
-  // Handlers
-  const handleStatusChange = useCallback(
-    (newStatus: string | undefined) => {
-      filters.setStatus(newStatus as OrganizationStatus | undefined);
-      filters.setSearch("");
-      pagination?.setPage(1);
-    },
-    [filters, pagination]
-  );
+  const { isLoading: isOrgLoading, refresh: refreshOrgs } = useOrganizations();
 
-  const handleValidate = useCallback(
-    async (orgId: string) => {
-      const success = await actions.validateOrganization(orgId);
-      if (success) {
-        setShowDetails(false);
-        refresh();
-      }
-    },
-    [actions, refresh]
-  );
+  const isLoading = isDIDLoading || isUsersLoading || isPubLoading || isOrgLoading;
 
-  const handleRefuse = useCallback(
-    async (reason: string) => {
-      if (!selectedOrg) return;
-      const success = await actions.refuseOrganization(selectedOrg.id, reason);
-      if (success) {
-        setShowRefuse(false);
-        setShowDetails(false);
-        setSelectedOrg(null);
-        refresh();
-      }
-    },
-    [selectedOrg, actions, refresh]
-  );
-
-  const handleToggle = useCallback(
-    async (orgId: string) => {
-      const success = await actions.toggleOrganizationStatus(orgId);
-      if (success) {
-        refresh();
-      }
-    },
-    [actions, refresh]
-  );
-
-  const handleDelete = useCallback(async () => {
-    if (!selectedOrg) return;
-    const success = await actions.deleteOrganization(selectedOrg.id);
-    if (success) {
-      setShowDelete(false);
-      setSelectedOrg(null);
-      refresh();
-    }
-  }, [selectedOrg, actions, refresh]);
-
-  const handlePageChange = useCallback(
-    (newPage: number) => {
-      if (newPage >= 1 && newPage <= totalPages) {
-        pagination?.setPage(newPage);
-      }
-    },
-    [pagination, totalPages]
-  );
-
-  const openDetailsDialog = useCallback(
-    async (org: OrganizationListItem) => {
-      setSelectedOrg(org);
-      setShowDetails(true);
-      try {
-        const fullOrg = await actions.getOrganizationDetails(org.id);
-        if (fullOrg) {
-          setSelectedOrg(fullOrg);
-        }
-      } catch (error) {
-        console.error("Failed to fetch organization details:", error);
-      }
-    },
-    [actions]
-  );
-
-  const openRefuseDialog = useCallback((org: OrganizationListItem) => {
-    setSelectedOrg(org);
-    setShowRefuse(true);
-  }, []);
-
-  const openDeleteDialog = useCallback((org: OrganizationListItem) => {
-    setSelectedOrg(org);
-    setShowDelete(true);
-  }, []);
+  const handleRefresh = () => {
+    refreshDIDs();
+    refreshUsers();
+    refreshPubs();
+    refreshOrgs();
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-        <div className="flex items-center space-x-2">
-          <Button onClick={() => refresh()} variant="outline" size="sm" disabled={isLoading}>
-            <RefreshCw className={`mr-2 size-4 ${isLoading ? "animate-spin" : ""}`} />
+    <RoleGuard allowedRoles={[UserRole.SUPER_USER]}>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center px-8 pt-6">
+          <h1 className="text-3xl font-bold tracking-tight">System Administration</h1>
+          <Button onClick={handleRefresh} variant="outline" size="sm" disabled={isLoading}>
+            <RefreshCcw className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")} />
             Refresh
           </Button>
-          <Link href="/auth/register">
-            <Button size="sm" className="h-9 shadow-sm">
-              <Plus className="mr-2 h-4 w-4" />
-              New Organization
-            </Button>
-          </Link>
+        </div>
+
+        <div className="px-8 space-y-6 pb-8">
+          <div className="pt-4">
+            <h2 className="text-xl font-bold mb-4">Management Dashboard</h2>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-indigo-600"
+                onClick={() => router.push("/dashboard/organizations")}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Building2 className="h-5 w-5 text-indigo-600" />
+                    Manage Organizations
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Validate, monitor, and manage all registered organizations.
+                  </p>
+                  <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
+                    View Organizations
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-blue-600"
+                onClick={() => router.push("/dashboard/dids")}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <ShieldCheck className="h-5 w-5 text-blue-600" />
+                    Global DIDs
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Overview and management of all decentralized identifiers.
+                  </p>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">View All DIDs</Button>
+                </CardContent>
+              </Card>
+
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-[#0052CC]"
+                onClick={() => router.push("/dashboard/users")}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <UsersIcon className="h-5 w-5 text-[#0052CC]" />
+                    User Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Manage system users and their roles across the platform.
+                  </p>
+                  <Button className="w-full bg-[#0052CC] hover:bg-[#0747A6]">View All Users</Button>
+                </CardContent>
+              </Card>
+
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-yellow-600"
+                onClick={() => router.push("/dashboard/publish-requests")}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <FileText className="h-5 w-5 text-yellow-600" />
+                    Publish Requests
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Monitor publication requests across all organizations.
+                  </p>
+                  <Button className="w-full bg-yellow-600 hover:bg-yellow-700">
+                    Review Requests
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card
+                className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-purple-600"
+                onClick={() => router.push("/dashboard/audit")}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <ClipboardList className="h-5 w-5 text-purple-600" />
+                    System Audit
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Trace all system modifications and administrative actions.
+                  </p>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                    View Audit Logs
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Stats Cards */}
-      <StatsCardsRow
-        stats={stats}
-        activeStatus={currentStatus}
-        onStatusClick={handleStatusChange}
-      />
-
-      {/* Content Card */}
-      <Card>
-        <CardContent className="pt-6">
-          {/* Filters */}
-          <OrganizationFilters
-            search={filters.search}
-            onSearchChange={filters.setSearch}
-            status={currentStatus as OrganizationStatus | "all"}
-            onStatusChange={(v) => handleStatusChange(v === "all" ? undefined : v)}
-            totalCount={pagination?.count || 0}
-          />
-
-          {/* Content */}
-          {isLoading ? (
-            <div className="text-center py-10 text-muted-foreground">Loading...</div>
-          ) : error ? (
-            <div className="text-center py-10 text-destructive">{error}</div>
-          ) : (
-            <>
-              <OrganizationsTable
-                organizations={organizations}
-                onRowClick={openDetailsDialog}
-                onView={openDetailsDialog}
-                onValidate={handleValidate}
-                onRefuse={openRefuseDialog}
-                onToggle={handleToggle}
-                onDelete={openDeleteDialog}
-                isActionsDisabled={actions.isLoading}
-              />
-
-              <OrganizationsPagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Dialogs */}
-      <OrganizationDetailsDialog
-        organization={selectedOrg}
-        open={showDetails}
-        onOpenChange={setShowDetails}
-        onValidate={handleValidate}
-        onRefuse={() => {
-          setShowDetails(false);
-          setShowRefuse(true);
-        }}
-        isActionsDisabled={actions.isLoading}
-      />
-
-      <RefuseOrganizationDialog
-        organizationName={selectedOrg?.name}
-        open={showRefuse}
-        onOpenChange={setShowRefuse}
-        onConfirm={handleRefuse}
-        isLoading={actions.isLoading}
-      />
-
-      <DeleteOrganizationDialog
-        organizationName={selectedOrg?.name}
-        open={showDelete}
-        onOpenChange={setShowDelete}
-        onConfirm={handleDelete}
-        isLoading={actions.isLoading}
-      />
-    </div>
+    </RoleGuard>
   );
 }

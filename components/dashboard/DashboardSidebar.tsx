@@ -13,7 +13,7 @@ import {
   BrickWallShield,
 } from "lucide-react";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
-import { UserRole } from "@/lib/types/roles";
+import { UserRole, UserRoleType } from "@/lib/types/roles";
 
 export function DashboardSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
@@ -21,36 +21,35 @@ export function DashboardSidebar({ className }: { className?: string }) {
 
   const allItems = [
     {
-      title: "Organizations",
+      title: "Dashboard",
       href: "/dashboard/superuser",
+      icon: LayoutDashboard,
+      roles: [UserRole.SUPER_USER],
+    },
+    {
+      title: "Organizations",
+      href: "/dashboard/organizations",
       icon: Building2,
       roles: [UserRole.SUPER_USER],
     },
     {
+      title: "Dashboard",
+      href: "/dashboard/orgadmin",
+      icon: LayoutDashboard,
+      roles: [UserRole.ORG_ADMIN],
+    },
+    {
       title: "Users",
-      href: "/dashboard/superuser/users",
+      href: "/dashboard/users",
       icon: Users,
-      roles: [UserRole.SUPER_USER],
+      roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN],
     },
     {
       title: "Audit",
-      href: "/dashboard/superuser/audit",
+      href: "/dashboard/audit",
       icon: BrickWallShield,
       roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN, UserRole.AUDITOR],
     },
-    {
-      title: "Organizations",
-      href: "/dashboard/orgadmin/organizations",
-      icon: Building2,
-      roles: [UserRole.ORG_ADMIN],
-    },
-    {
-      title: "Users",
-      href: "/dashboard/orgadmin/users",
-      icon: Users,
-      roles: [UserRole.ORG_ADMIN],
-    },
-
     {
       title: "Dashboard",
       href: "/dashboard/orgmember",
@@ -82,11 +81,11 @@ export function DashboardSidebar({ className }: { className?: string }) {
 
     // Check against all user's roles (list)
     const userRoles = Array.isArray(user.roles) ? user.roles : [];
-    const hasMatchInList = userRoles.some((r) => item.roles.includes(r as any));
+    const hasMatchInList = userRoles.some((r) => item.roles.includes(r as UserRoleType));
     if (hasMatchInList) return true;
 
     // Fallback: Check against primary role
-    if (user.role && item.roles.includes(user.role as any)) return true;
+    if (user.role && item.roles.includes(user.role as UserRoleType)) return true;
 
     return false;
   });

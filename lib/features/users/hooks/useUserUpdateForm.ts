@@ -27,7 +27,7 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
       phone: "",
       functions: "",
       can_publish_prod: false,
-      isAuditor: false,
+      is_auditor: false,
     },
   });
 
@@ -44,7 +44,7 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
         phone: user.phone || "",
         functions: user.functions || "",
         can_publish_prod: !!user.can_publish_prod,
-        isAuditor: !!user.isAuditor,
+        is_auditor: !!user.is_auditor,
       });
     }
   }, [user, form]);

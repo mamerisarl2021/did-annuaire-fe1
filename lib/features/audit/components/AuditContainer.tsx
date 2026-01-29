@@ -78,7 +78,7 @@ export function AuditContainer() {
             severity={filters.severity || "all"}
             onSeverityChange={setSeverity}
             totalCount={totalCount}
-          // organization_id filter could be added here if isSuperuser
+            // organization_id filter could be added here if isSuperuser
           />
 
           {/* Error Message */}

@@ -14,7 +14,7 @@ export interface User {
   functions: string;
   organization: string;
   can_publish_prod?: boolean;
-  isAuditor?: boolean;
+  is_auditor?: boolean;
   totp_enabled?: boolean;
   created_at?: string;
   last_login?: string;
@@ -50,7 +50,7 @@ export interface CreateUserPayload {
   phone: string;
   functions: string;
   can_publish_prod: boolean;
-  isAuditor?: boolean;
+  is_auditor?: boolean;
 }
 
 export interface UserCreateModalProps {
@@ -74,7 +74,7 @@ export interface UpdateUserPayload {
   functions?: string;
   status?: UserStatus;
   can_publish_prod?: boolean;
-  isAuditor?: boolean;
+  is_auditor?: boolean;
 }
 
 export interface GetUsersParams {
@@ -82,7 +82,6 @@ export interface GetUsersParams {
   page_size?: number;
   status?: string;
   search?: string;
-  role?: string;
   org_id?: string;
 }
 

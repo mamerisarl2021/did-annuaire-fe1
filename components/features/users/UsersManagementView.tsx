@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useUsers } from "@/lib/features/users/hooks/useUsers";
 import { useUsersStats } from "@/lib/features/users/hooks/useUsersStats";
@@ -46,25 +46,25 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     createUser,
     inviteUser,
     updateUser,
-    deactivateUser,
+    toggleUserStatus,
     setClientSearch,
+    setStatus,
   } = useUsers({
     org_id: orgId,
   });
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
     setClientSearch(value);
   };
 
-  // Filter users by role
-  const displayedUsers = useMemo(() => {
-    if (roleFilter === "all") return filteredUsers;
-    return filteredUsers.filter((user) => user.role === roleFilter);
-  }, [filteredUsers, roleFilter]);
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+    setStatus(value);
+  };
 
   // Modal States
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -97,7 +97,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     setIsUpdateModalOpen(true);
   };
 
-  const handleDeactivate = (user: User) => {
+  const handleToggleStatus = (user: User) => {
     setSelectedUser(user);
     setIsDeactivateModalOpen(true);
   };
@@ -127,8 +127,8 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     toast({ title: "Success", description: "Profile updated successfully." });
   };
 
-  const onConfirmDeactivate = async (userId: string) => {
-    await deactivateUser(userId);
+  const onConfirmToggleStatus = async (userId: string) => {
+    await toggleUserStatus(userId);
     toast({ title: "Success", description: "User status updated successfully." });
   };
 
@@ -176,26 +176,27 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
           <CardContent className="pt-6">
             <div className="flex items-center gap-4 mb-6">
               <UsersSearchBar value={searchQuery} onChange={handleSearchChange} />
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <Select value={statusFilter} onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by role" />
+                  <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="org_admin">Org Admin</SelectItem>
-                  <SelectItem value="org_member">Org Member</SelectItem>
-                  <SelectItem value="auditor">Auditor</SelectItem>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="INVITED">Invited</SelectItem>
+                  <SelectItem value="DEACTIVATED">Deactivated</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <UsersTable
-              users={displayedUsers}
+              users={filteredUsers}
               isLoading={isLoading}
               onInvite={handleInvite}
               onResend={handleResend}
               onUpdate={handleUpdate}
-              onDeactivate={handleDeactivate}
+              onToggleStatus={handleToggleStatus}
             />
           </CardContent>
         </Card>
@@ -234,7 +235,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
           setIsDeactivateModalOpen(false);
           setSelectedUser(null);
         }}
-        onConfirm={onConfirmDeactivate}
+        onConfirm={onConfirmToggleStatus}
         user={selectedUser}
       />
 

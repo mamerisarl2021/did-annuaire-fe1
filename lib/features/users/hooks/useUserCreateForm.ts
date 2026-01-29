@@ -26,7 +26,7 @@ export function useUserCreateForm({ onSuccess, onError }: UseUserCreateFormProps
       phone: "",
       functions: "",
       can_publish_prod: false,
-      isAuditor: false,
+      is_auditor: false,
     },
   });
 
@@ -45,7 +45,7 @@ export function useUserCreateForm({ onSuccess, onError }: UseUserCreateFormProps
       phone: data.phone.trim(),
       functions: data.functions || "",
       can_publish_prod: data.can_publish_prod,
-      isAuditor: data.isAuditor,
+      is_auditor: data.is_auditor,
     };
   };
 

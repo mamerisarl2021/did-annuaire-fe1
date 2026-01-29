@@ -8,7 +8,6 @@ import {
   GetUsersParams,
   CreateUserPayload,
   UpdateUserPayload,
-  UserStatus,
 } from "../types/users.types";
 import { logger } from "@/lib/shared/services/logger.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
@@ -22,6 +21,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   const [page, setPage] = useState(initialParams.page || 1);
   const [pageSize, setPageSize] = useState(initialParams.page_size || 10);
   const [serverSearch, setServerSearch] = useState(initialParams.search || "");
+  const [status, setStatus] = useState<string | undefined>(initialParams.status);
 
   // Debounce server search
   const debouncedServerSearch = useDebounce(serverSearch, 300);
@@ -30,8 +30,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     page,
     page_size: pageSize,
     search: debouncedServerSearch.trim() || undefined,
-    status: initialParams.status,
-    role: initialParams.role,
+    status: status === "all" ? undefined : status,
     org_id: initialParams.org_id,
   };
 
@@ -106,20 +105,20 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     }
   };
 
-  const deactivateUser = async (userId: string, options: { autoRefresh?: boolean } = {}) => {
+  const toggleUserStatus = async (userId: string, options: { autoRefresh?: boolean } = {}) => {
     const { autoRefresh = true } = options;
     try {
-      await usersService.updateUser(userId, { status: "DEACTIVATED" as UserStatus });
+      await usersService.toggleUserStatus(userId);
       if (autoRefresh) await refetch();
     } catch (err) {
-      logger.error("[useUsers] Deactivate error:", err);
+      logger.error("[useUsers] Toggle status error:", err);
       throw err;
     }
   };
 
   const setSearch = (search: string) => {
     setServerSearch(search);
-    setPage(1); // Reset to first page on search
+    setPage(1);
   };
 
   return {
@@ -133,10 +132,14 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     setPageSize,
     setSearch,
     setClientSearch,
+    setStatus: (newStatus: string | undefined) => {
+      setStatus(newStatus);
+      setPage(1);
+    },
     refresh: refetch,
     createUser,
     inviteUser,
     updateUser,
-    deactivateUser,
+    toggleUserStatus,
   };
 }

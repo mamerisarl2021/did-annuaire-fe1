@@ -17,7 +17,7 @@ export const userCreateSchema = z.object({
     .regex(/^[+]?[\d\s\-()]+$/, "Please enter a valid phone number"),
   functions: z.string().optional(),
   can_publish_prod: z.boolean(),
-  isAuditor: z.boolean(),
+  is_auditor: z.boolean(),
 });
 
 export type UserCreateFormData = z.infer<typeof userCreateSchema>;
@@ -42,7 +42,7 @@ export const userUpdateSchema = z.object({
     .optional(),
   functions: z.string().optional(),
   can_publish_prod: z.boolean().optional(),
-  isAuditor: z.boolean().optional(),
+  is_auditor: z.boolean().optional(),
 });
 
 export type UserUpdateFormData = z.infer<typeof userUpdateSchema>;

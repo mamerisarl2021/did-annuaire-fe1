@@ -4,7 +4,7 @@ import { RoleGuard } from "@/lib/guards";
 import { UserRole } from "@/lib/types/roles";
 import { ResolveContent } from "@/lib/features/did/components/ResolveContent";
 
-export default function DashboardResolvePage() {
+export default function ResolvePage() {
   return (
     <RoleGuard
       allowedRoles={[

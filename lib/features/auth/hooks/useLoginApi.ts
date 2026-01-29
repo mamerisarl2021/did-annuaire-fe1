@@ -15,37 +15,40 @@ export function useLoginApi() {
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const login = useCallback(async (payload: LoginPayload): Promise<LoginResponse> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await authService.login(payload);
-      const currentUser = await authService.getCurrentUser();
+  const login = useCallback(
+    async (payload: LoginPayload): Promise<LoginResponse> => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await authService.login(payload);
+        const currentUser = await authService.getCurrentUser();
 
-      if (!currentUser) {
-        throw new Error("Unable to recover user profile.");
+        if (!currentUser) {
+          throw new Error("Unable to recover user profile.");
+        }
+
+        const otpRequired = "otp_required" in response && response.otp_required === true;
+        const method = response.otp_method || "email";
+
+        if (!otpRequired) {
+          await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+        }
+
+        return {
+          user: currentUser,
+          otpRequired,
+          otpMethod: otpRequired ? method : null,
+        };
+      } catch (err) {
+        const message = ApiException.getMessage(err);
+        setError(message);
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
-
-      const otpRequired = "otp_required" in response && response.otp_required === true;
-      const method = response.otp_method || "email";
-
-      if (!otpRequired) {
-        await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      }
-
-      return {
-        user: currentUser,
-        otpRequired,
-        otpMethod: otpRequired ? method : null,
-      };
-    } catch (err) {
-      const message = ApiException.getMessage(err);
-      setError(message);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [queryClient]
+  );
 
   const generateEmailOTP = useCallback(async () => {
     setIsLoading(true);
@@ -61,28 +64,31 @@ export function useLoginApi() {
     }
   }, []);
 
-  const verifyOTP = useCallback(async (code: string): Promise<AuthUser> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await authService.verifyOTP(code);
-      const currentUser = await authService.getCurrentUser();
+  const verifyOTP = useCallback(
+    async (code: string): Promise<AuthUser> => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        await authService.verifyOTP(code);
+        const currentUser = await authService.getCurrentUser();
 
-      if (!currentUser) {
-        throw new Error("Unable to retrieve user profile.");
+        if (!currentUser) {
+          throw new Error("Unable to retrieve user profile.");
+        }
+
+        await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+
+        return currentUser;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Invalid or expired OTP code.";
+        setError(message);
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
-
-      await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-
-      return currentUser;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Invalid or expired OTP code.";
-      setError(message);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [queryClient]
+  );
 
   const clearError = useCallback(() => setError(null), []);
 

@@ -157,7 +157,7 @@ export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalP
             <div className="space-y-4">
               <FormField
                 control={form.control}
-                name="isAuditor"
+                name="is_auditor"
                 render={({ field }) => (
                   <FormItem className="flex items-center space-x-3 p-4 border rounded-lg">
                     <FormControl>

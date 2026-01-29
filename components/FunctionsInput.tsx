@@ -65,10 +65,7 @@ export function FunctionsInput({
         <ul className="flex flex-wrap gap-2 pt-2" aria-label="Selected functions">
           {functions.map((func) => (
             <li key={func}>
-              <Badge
-                variant="secondary"
-                className="px-3 py-1 flex items-center gap-1"
-              >
+              <Badge variant="secondary" className="px-3 py-1 flex items-center gap-1">
                 {func}
                 <button
                   type="button"

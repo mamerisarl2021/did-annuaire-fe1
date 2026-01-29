@@ -22,7 +22,6 @@ export const usersApiClient = {
     if (params.page_size) query.append("page_size", params.page_size.toString());
     if (params.status) query.append("status", params.status);
     if (params.search) query.append("search", params.search);
-    if (params.role) query.append("role", params.role);
     if (params.org_id) query.append("org_id", params.org_id);
 
     const endpoint = `${API_ENDPOINTS.USERS.LIST}?${query.toString()}`;
