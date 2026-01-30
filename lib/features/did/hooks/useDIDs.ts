@@ -1,32 +1,29 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
+import { useState, useMemo } from "react";
 import { DID, DIDDocument } from "../types";
 import { didService } from "../services/did.service";
 import { logger } from "@/lib/shared/services/logger.service";
-import { DIDListPagination } from "../types/api.types";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 export function useDIDs() {
-  const [dids, setDids] = useState<DID[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Pagination State
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [pagination, setPagination] = useState<DIDListPagination>({
-    page: 1,
-    page_size: 10,
-    total: 0,
-    total_pages: 1,
-  });
 
-  const fetchDIDs = useCallback(async () => {
-    setIsLoading(true);
-    try {
+  // Debounce search for server-side filtering
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["dids", { page, pageSize, search: debouncedSearch }],
+    queryFn: async () => {
       const response = await didService.getAllDIDs({
         page,
         page_size: pageSize,
       });
+
       const rawItems = response.items || [];
       const items: DID[] = rawItems.map((item) => ({
         id: item.did,
@@ -43,27 +40,29 @@ export function useDIDs() {
         is_published: item.is_published ?? false,
       }));
 
-      setDids(items);
+      return {
+        items,
+        pagination: response.pagination || {
+          page: 1,
+          page_size: 10,
+          total: 0,
+          total_pages: 1,
+        },
+      };
+    },
+    staleTime: QUERY_CONFIG.STALE_TIME_FAST,
+  });
 
-      // Handle different pagination structures
-      if (response.pagination) {
-        setPagination(response.pagination);
-      }
+  const pagination = data?.pagination || {
+    page: 1,
+    page_size: 10,
+    total: 0,
+    total_pages: 1,
+  };
 
-      setError(null);
-    } catch (err) {
-      setError("Failed to fetch DIDs");
-      logger.error("Failed to fetch DIDs", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, pageSize]);
-
-  useEffect(() => {
-    fetchDIDs();
-  }, [fetchDIDs]);
-
+  // Client-side filtering for instant feedback
   const filteredDIDs = useMemo(() => {
+    const dids = data?.items || [];
     if (!searchQuery) return dids;
     const lowerQuery = searchQuery.toLowerCase();
     return dids.filter(
@@ -72,13 +71,13 @@ export function useDIDs() {
         did.method.toLowerCase().includes(lowerQuery) ||
         (did.organization_name && did.organization_name.toLowerCase().includes(lowerQuery))
     );
-  }, [dids, searchQuery]);
+  }, [data?.items, searchQuery]);
 
   const deactivateDID = async (did: string) => {
     try {
       const response = await didService.deactivateDID(did);
       logger.info(`[useDIDs] Deactivated DID ${did}`, { response });
-      await fetchDIDs();
+      await refetch();
       return response;
     } catch (err) {
       logger.error(`[useDIDs] Failed to deactivate DID ${did}:`, err);
@@ -100,10 +99,10 @@ export function useDIDs() {
   return {
     dids: filteredDIDs,
     isLoading,
-    error,
+    error: error ? (error as Error).message : null,
     searchQuery,
     setSearchQuery,
-    refreshDIDs: fetchDIDs,
+    refreshDIDs: refetch,
     deactivateDID,
     publishDID,
     pagination: {

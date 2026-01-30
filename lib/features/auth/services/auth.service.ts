@@ -8,6 +8,7 @@ import {
 } from "@/lib/features/auth/types/auth.types";
 import { logger } from "@/lib/shared/services/logger.service";
 import { authMapper } from "../mappers/auth.mapper";
+import { UserStatus } from "../../users/types/users.types";
 
 interface LoginResponse extends TokenPairResponse {
   otp_required?: boolean;
@@ -125,18 +126,24 @@ export const authService = {
         logger.debug("Fetching user profile from /me endpoint to resolve missing fields");
         const response = await httpClient.get<{
           data?: {
-            role?: string;
+            role?: string | string[];
             is_superuser?: boolean;
             is_staff?: boolean;
             email?: string;
             organization?: { id: string; name: string };
             full_name?: string;
             id?: string;
+            functions?: string[];
+            status?: UserStatus;
+            phone?: string;
           };
-          role?: string;
+          role?: string | string[];
           is_superuser?: boolean;
           is_staff?: boolean;
           email?: string;
+          functions?: string[];
+          status?: UserStatus;
+          phone?: string;
           organization?: { id: string; name: string };
         }>(API_ENDPOINTS.USERS.ME);
 

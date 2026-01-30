@@ -1,46 +1,24 @@
-import { useState, useEffect, useMemo } from "react";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { countryService } from "../services/country.service";
-import { type Country } from "../types/country.types";
 
+/**
+ * Hook to fetch countries list
+ * Migrated to React Query with infinite cache (data rarely changes)
+ */
 export function useCountries() {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchCountries = async () => {
-      try {
-        const data = await countryService.getAllCountries();
-        if (mounted) {
-          setCountries(data);
-          setError(null);
-        }
-      } catch (err) {
-        if (mounted) {
-          setError(err instanceof Error ? err.message : "Error loading countries");
-        }
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    fetchCountries();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const getCountryByCode = useMemo(() => {
-    return (code: string) => countries.find((c) => c.code === code);
-  }, [countries]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["countries"],
+    queryFn: () => countryService.getAllCountries(),
+    staleTime: QUERY_CONFIG.STALE_TIME_INFINITE,
+    gcTime: QUERY_CONFIG.GC_TIME_INFINITE,
+  });
 
   return {
-    countries,
-    loading,
-    error,
-    getCountryByCode,
+    countries: data || [],
+    isLoading,
+    error: error ? (error as Error).message : null,
   };
 }

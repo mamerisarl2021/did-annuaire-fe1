@@ -1,4 +1,5 @@
 import { type UserRoleType } from "@/lib/types/roles";
+import { UserStatus } from "../../users/types/users.types";
 
 export interface LoginPayload {
   email: string;
@@ -24,6 +25,7 @@ export interface AuthUser {
   id: string;
   email: string;
   role: UserRoleType;
+  roles: string[];
   organization_id?: string;
   organization?: {
     id: string;
@@ -31,6 +33,12 @@ export interface AuthUser {
   };
   is_active: boolean;
   full_name?: string;
+  functions?: string[];
+  status?: UserStatus;
+  phone?: string;
+  totp_enabled?: boolean;
+  can_publish_prod?: boolean;
+  last_login?: string;
 }
 
 export interface AuthState {

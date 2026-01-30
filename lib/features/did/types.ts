@@ -88,3 +88,14 @@ export interface CreateDIDResponse {
     [key: string]: unknown;
   };
 }
+
+export interface DIDStats {
+  total: number;
+  published: number;
+  draft: number;
+  deactivated: number;
+  by_environment: {
+    prod: number;
+    draft: number;
+  };
+}

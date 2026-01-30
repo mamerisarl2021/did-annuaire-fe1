@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 import { type UserRoleType } from "@/lib/types/roles";
@@ -15,15 +15,22 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  const hasRoleMatch = useMemo(() => {
+    if (!user) return false;
+
+    return (
+      allowedRoles.includes(user.role) ||
+      user.roles?.some((r) => allowedRoles.includes(r as UserRoleType))
+    );
+  }, [user, allowedRoles]);
+
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push("/");
-      } else if (!allowedRoles.includes(user.role)) {
-        router.push("/");
-      }
+    if (loading) return;
+
+    if (!user || !hasRoleMatch) {
+      router.replace("/");
     }
-  }, [user, loading, allowedRoles, router]);
+  }, [loading, user, hasRoleMatch, router]);
 
   if (loading) {
     return (
@@ -33,7 +40,7 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
     );
   }
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!user || !hasRoleMatch) {
     return null;
   }
 

@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DIDCreator } from "@/components/features/did/creator/DIDCreator";
-import { didService } from "@/lib/features/did/services/did.service";
-import { DID, DIDDocument } from "@/lib/features/did/types";
+import { useDID } from "@/lib/features/did/hooks/useDID";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 
@@ -17,52 +16,23 @@ export default function EditDIDPage() {
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
 
-  const [did, setDid] = useState<DID | null>(null);
-  const [isDidLoading, setIsDidLoading] = useState(true);
-
   const didId = decodeURIComponent(params.id as string);
   const organizationId = user?.organization_id;
 
-  useEffect(() => {
-    const fetchDID = async () => {
-      try {
-        const data = await didService.getDID(didId, "prod");
-        if (data && data.didState) {
-          const mappedDid: DID = {
-            id: data.didState.did || "",
-            method: "WEB",
-            didDocument: data.didState.didDocument || ({} as DIDDocument),
-            created: new Date().toISOString(),
-            organization_id: data.didState.organization_id || organizationId,
-            owner_id: data.didState.owner_id || (user?.id as string),
-            document_type: data.didDocumentMetadata?.document_type || "document",
-            public_key_version: data.didDocumentMetadata?.key?.public_key_version,
-            public_key_jwk: data.didDocumentMetadata?.key?.public_key_jwk,
-            metadata: {
-              version: data.didDocumentMetadata?.versionId,
-              environment: data.didState.environment,
-              certificate_id: data.didDocumentMetadata?.key?.certificate?.id,
-              options: data.didDocumentMetadata?.key?.purposes,
-            },
-          };
-          setDid(mappedDid);
-        } else {
-          toast({
-            title: "NotFound",
-            description: "The requested DID does not exist.",
-            variant: "destructive",
-          });
-          router.push("/dashboard/dids");
-        }
-      } catch (error) {
-        console.error("Error fetching DID:", error);
-      } finally {
-        setIsDidLoading(false);
-      }
-    };
+  // Use React Query hook instead of manual useEffect
+  const { did, isLoading: isDidLoading, error } = useDID(didId, "prod");
 
-    fetchDID();
-  }, [didId, router, toast, organizationId, user?.id]);
+  // Handle error
+  React.useEffect(() => {
+    if (error) {
+      toast({
+        title: "Not Found",
+        description: "The requested DID does not exist.",
+        variant: "destructive",
+      });
+      router.push("/dashboard/dids");
+    }
+  }, [error, router, toast]);
 
   if (authLoading || isDidLoading) {
     return (

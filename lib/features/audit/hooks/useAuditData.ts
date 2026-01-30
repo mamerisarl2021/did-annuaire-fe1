@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { auditService } from "../services/audit.service";
-import { type AuditAction, type AuditStats, type AuditListParams } from "../types/audit.types";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
+import { type AuditListParams } from "../types/audit.types";
 import { type UserRoleType } from "@/lib/types/roles";
 
 interface UseAuditDataOptions extends AuditListParams {
@@ -12,80 +13,47 @@ interface UseAuditDataOptions extends AuditListParams {
 export function useAuditData(options: UseAuditDataOptions = {}) {
   const { userRole, ...params } = options;
 
-  const [logs, setLogs] = useState<AuditAction[]>([]);
-  const [stats, setStats] = useState<AuditStats[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const fetchParams: AuditListParams = {
+    category: params.category,
+    action: params.action,
+    user_id: params.user_id,
+    severity: params.severity,
+    date_from: params.date_from,
+    date_to: params.date_to,
+    q: params.q,
+    limit: params.limit,
+    offset: params.offset,
+    organization_id:
+      userRole === "SUPER_USER"
+        ? params.organization_id
+        : userRole === "ORG_ADMIN" || userRole === "ORG_MEMBER" || userRole === "AUDITOR"
+          ? params.organization_id // This should ideally be the user's org id, let's see where it's called
+          : undefined,
+  };
 
-  // Destructure params to avoid object reference comparison issues
-  const {
-    category,
-    action,
-    user_id,
-    severity,
-    date_from,
-    date_to,
-    q,
-    limit,
-    offset,
-    organization_id,
-  } = params;
-
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const fetchParams: AuditListParams = {
-        category,
-        action,
-        user_id,
-        severity,
-        date_from,
-        date_to,
-        q,
-        limit,
-        offset,
-        organization_id: userRole === "SUPER_USER" ? organization_id : undefined,
-      };
-
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["audit-logs", fetchParams],
+    queryFn: async () => {
       const [actionsRes, statsRes] = await Promise.all([
         auditService.getAuditActions(fetchParams),
         auditService.getAuditStats({ organization_id: fetchParams.organization_id }),
       ]);
 
-      setLogs(actionsRes.items);
-      setTotalCount(actionsRes.count);
-      setStats(statsRes.items);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch audit data");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    category,
-    action,
-    user_id,
-    severity,
-    date_from,
-    date_to,
-    q,
-    limit,
-    offset,
-    organization_id,
-    userRole,
-  ]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+      return {
+        logs: actionsRes.items,
+        totalCount: actionsRes.count,
+        stats: statsRes.items,
+      };
+    },
+    staleTime: QUERY_CONFIG.STALE_TIME_VOLATILE,
+  });
 
   return {
-    logs,
-    stats,
-    totalCount,
+    logs: data?.logs || [],
+    stats: data?.stats || [],
+    totalCount: data?.totalCount || 0,
     isLoading,
-    error,
-    refresh: fetchData,
+    error: error ? (error as Error).message : null,
+    refresh: refetch,
   };
 }

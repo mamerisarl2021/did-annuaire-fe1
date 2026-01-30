@@ -20,6 +20,7 @@ export function AuditContainer() {
   const { logs, stats, totalCount, isLoading, error, refresh } = useAuditData({
     ...filters,
     userRole: user?.role,
+    organization_id: user?.role === "SUPER_USER" ? filters.organization_id : user?.organization_id,
   });
 
   const {
@@ -47,7 +48,7 @@ export function AuditContainer() {
           </p>
         </div>
         <Button
-          onClick={refresh}
+          onClick={() => refresh()}
           variant="outline"
           disabled={isLoading}
           className="border-[#dfe1e6] text-[#172b4d]"

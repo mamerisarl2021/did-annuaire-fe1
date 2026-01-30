@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import { type AuthUser } from "../types/auth.types";
 import { logger } from "@/lib/shared/services/logger.service";
 import { UserRoleType } from "@/lib/types";
+import { UserStatus } from "../../users/types/users.types";
 
 interface JWTPayload {
   user_id?: string;
@@ -14,11 +15,14 @@ interface JWTPayload {
 interface UserApiResponse {
   id?: string;
   email?: string;
-  role?: string;
+  role?: string | string[];
   is_superuser?: boolean;
   is_staff?: boolean;
   organization?: { id: string; name: string };
   full_name?: string;
+  functions?: string[];
+  status?: string;
+  phone?: string;
 }
 
 export const authMapper = {
@@ -49,12 +53,36 @@ export const authMapper = {
     }
   },
 
-  normalizeRole(role?: string): UserRoleType {
+  normalizeRole(role?: string | string[]): UserRoleType {
     if (!role) return "ORG_MEMBER";
+
+    // Handle array format from backend
+    if (Array.isArray(role)) {
+      if (role.length === 0) return "SUPER_USER";
+
+      // Map each role to our normalized standard
+      const normalizedRoles = role.map((r) => this.normalizeSingleRole(r));
+
+      // Priority: SUPER_USER, ORG_ADMIN, ORG_MEMBER, AUDITOR
+      if (normalizedRoles.includes("SUPER_USER")) return "SUPER_USER";
+      if (normalizedRoles.includes("ORG_ADMIN")) return "ORG_ADMIN";
+      if (normalizedRoles.includes("ORG_MEMBER")) return "ORG_MEMBER";
+      if (normalizedRoles.includes("AUDITOR")) return "AUDITOR";
+
+      return "ORG_MEMBER";
+    }
+
+    return this.normalizeSingleRole(role);
+  },
+
+  /**
+   * Internal helper to normalize a single role string
+   */
+  normalizeSingleRole(role: string): UserRoleType {
     const normalized = role.toUpperCase();
-    if (normalized === "SUPERUSER") return "SUPER_USER";
-    if (normalized === "SUPER_USER") return "SUPER_USER";
+    if (normalized === "SUPERUSER" || normalized === "SUPER_USER") return "SUPER_USER";
     if (normalized === "ORG_ADMIN") return "ORG_ADMIN";
+    if (normalized === "ORG_MEMBER") return "ORG_MEMBER";
     if (normalized === "AUDITOR") return "AUDITOR";
     return "ORG_MEMBER";
   },
@@ -71,6 +99,7 @@ export const authMapper = {
         id: jwtData.id || "",
         email: jwtData.email || "",
         role: jwtData.role || "ORG_MEMBER",
+        roles: jwtData.role ? [jwtData.role] : [],
         organization_id: jwtData.organization_id || "",
         is_active: true,
         full_name: "",
@@ -83,20 +112,47 @@ export const authMapper = {
         ? this.inferRoleFromFlags(apiData.is_superuser, apiData.is_staff)
         : jwtData.role || "ORG_MEMBER";
 
+    // Ensure we have a list of normalized roles for easier UI checks
+    let normalizedRoles: string[] = [];
+    if (Array.isArray(apiData.role)) {
+      if (apiData.role.length === 0 && role === "SUPER_USER") {
+        normalizedRoles = ["SUPER_USER"];
+      } else {
+        // Map EACH role to our internal standards
+        normalizedRoles = apiData.role.map((r) => this.normalizeSingleRole(r));
+      }
+    } else if (apiData.role) {
+      normalizedRoles = [this.normalizeSingleRole(apiData.role)];
+    } else if (role) {
+      normalizedRoles = [role];
+    }
+
     const organizationId = apiData.organization?.id || jwtData.organization_id || "";
 
     if (!organizationId && role !== "SUPER_USER") {
       logger.warn("No organization ID found for non-superuser", { apiData });
     }
 
+    // Final safeguard: ensure roles array contains at least the primary role
+    if ((!normalizedRoles || normalizedRoles.length === 0) && role) {
+      normalizedRoles = [role];
+    }
+
+    // Remove duplicates and logs
+    normalizedRoles = Array.from(new Set(normalizedRoles));
+
     return {
       id: apiData.id || jwtData.id || "",
       email: apiData.email || jwtData.email || "",
       role,
+      roles: normalizedRoles,
       organization_id: organizationId,
       organization: apiData.organization,
       is_active: true,
       full_name: apiData.full_name || "",
+      functions: apiData.functions,
+      status: apiData.status as UserStatus,
+      phone: apiData.phone,
     };
   },
 

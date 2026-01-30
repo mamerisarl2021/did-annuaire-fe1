@@ -1,41 +1,20 @@
-import { useState, useEffect } from "react";
-import { didService } from "../services/did.service";
-import type { DIDMethod } from "../types/api.types";
-import { logger } from "@/lib/shared/services/logger.service";
+"use client";
 
-export interface UseDIDMethodsReturn {
-  methods: DIDMethod[];
-  isLoading: boolean;
-  error: string | null;
-}
+import { useQuery } from "@tanstack/react-query";
+import { didApiClient } from "../api/didApiClient";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 
-/**
- * Hook to fetch and manage the list of supported DID methods from the backend.
- */
-export function useDIDMethods(): UseDIDMethodsReturn {
-  const [methods, setMethods] = useState<DIDMethod[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function useDIDMethods() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["did-methods"],
+    queryFn: () => didApiClient.getDIDMethods(),
+    staleTime: QUERY_CONFIG.STALE_TIME_INFINITE,
+    gcTime: QUERY_CONFIG.GC_TIME_INFINITE,
+  });
 
-  useEffect(() => {
-    async function fetchMethods() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await didService.getDIDMethods();
-        setMethods(data);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to load DID methods";
-        logger.error("[useDIDMethods] Error:", message);
-        setError(message);
-        setMethods(["web"]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchMethods();
-  }, []);
-
-  return { methods, isLoading, error };
+  return {
+    methods: data || [],
+    isLoading,
+    error: error ? (error as Error).message : null,
+  };
 }

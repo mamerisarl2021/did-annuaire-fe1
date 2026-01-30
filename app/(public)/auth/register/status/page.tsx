@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { Suspense } from "react";
 import Link from "next/link";
 import { Building2, ArrowLeft, RefreshCw } from "lucide-react";
@@ -18,17 +17,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function StatusContent() {
   const searchParams = useSearchParams();
-  const organizationId = searchParams.get("organizationId");
+  const organizationId = searchParams.get("organization_id");
   const organizationName = searchParams.get("organizationName") || "My Organization";
   const activationToken = searchParams.get("token");
 
-  const { status, isLoading, refetch } = useOrganizationStatus({
-    organizationId: organizationId || undefined,
-    pollingInterval: 30000,
-    enabled: !!organizationId,
+  // Use React Query hook - now takes organizationId as direct parameter
+  const { status, isLoading, refetch } = useOrganizationStatus(organizationId || undefined, {
+    refetchInterval: organizationId ? 30000 : undefined,
   });
 
-  const currentStatus: OrganizationStatusType = status || OrganizationStatus.PENDING;
+  const currentStatus: OrganizationStatusType =
+    (status as OrganizationStatusType) || OrganizationStatus.PENDING;
   const steps = getRegistrationSteps(currentStatus);
 
   if (isLoading && !status) {

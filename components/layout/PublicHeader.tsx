@@ -13,29 +13,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserMenu } from "@/lib/features/auth/components/UserMenu";
 import { authService } from "@/lib/features/auth/services/auth.service";
+import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 import { ModeToggle } from "@/components/mode-toggle";
 
 export function PublicHeader() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // Check if user is authenticated
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const user = await authService.getCurrentUser();
-        setIsAuthenticated(!!user);
-      } catch {
-        setIsAuthenticated(false);
-      }
-    };
-    checkAuth();
-  }, []);
+  const { isAuthenticated } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -158,7 +146,6 @@ export function PublicHeader() {
                       onClick={async () => {
                         setIsOpen(false);
                         await authService.logout();
-                        setIsAuthenticated(false);
                         router.push("/");
                       }}
                       className="justify-start gap-3 h-11 text-destructive hover:bg-destructive/10 hover:text-destructive"

@@ -1,57 +1,43 @@
-import { useState, useEffect, useCallback } from "react";
-import { organizationService } from "../services/organization.service";
-import { type OrganizationStatusType } from "@/lib/types/organization-status";
-import { logger } from "@/lib/shared/services/logger.service";
+"use client";
 
-interface UseOrganizationStatusOptions {
-  organizationId?: string;
-  pollingInterval?: number;
-  enabled?: boolean;
+import { useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
+import { organizationService } from "../services/organization.service";
+
+interface UseOrganizationStatusReturn {
+  status: string | null;
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => void;
 }
 
-export function useOrganizationStatus({
-  organizationId,
-  pollingInterval = 30000,
-  enabled = true,
-}: UseOrganizationStatusOptions) {
-  const [status, setStatus] = useState<OrganizationStatusType | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchStatus = useCallback(async () => {
-    if (!organizationId || !enabled) return;
-
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await organizationService.getOrganizationStatus(organizationId);
-      logger.info("Organization status fetched", { status: data.status, organizationId });
-      setStatus(data.status as OrganizationStatusType);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch status";
-      setError(message);
-      logger.error("Failed to fetch organization status", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [organizationId, enabled]);
-
-  useEffect(() => {
-    if (!enabled || !organizationId) return;
-
-    fetchStatus();
-
-    const shouldPoll = status === "PENDING";
-    if (!shouldPoll) return;
-
-    const interval = setInterval(fetchStatus, pollingInterval);
-    return () => clearInterval(interval);
-  }, [fetchStatus, pollingInterval, status, enabled, organizationId]);
+/**
+ * Hook to fetch organization status
+ * Migrated to React Query
+ */
+export function useOrganizationStatus(
+  organizationId?: string,
+  options: { refetchInterval?: number } = {}
+): UseOrganizationStatusReturn {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["organization", organizationId, "status"],
+    queryFn: async () => {
+      if (!organizationId) throw new Error("Organization ID is required");
+      return organizationService.getOrganizationStatus(organizationId);
+    },
+    enabled: !!organizationId && organizationId !== "undefined" && organizationId !== "null",
+    staleTime: QUERY_CONFIG.STALE_TIME_VOLATILE,
+    retry: QUERY_CONFIG.RETRY_COUNT_STANDARD + 1,
+    refetchInterval: options.refetchInterval,
+  });
 
   return {
-    status,
+    status: data?.status || null,
     isLoading,
-    error,
-    refetch: fetchStatus,
+    error: error ? (error as Error).message : null,
+    refetch: useCallback(() => {
+      refetch();
+    }, [refetch]),
   };
 }

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { organizationService } from "../services/organization.service";
 import {
   type OrganizationListItem,
@@ -8,6 +10,7 @@ import {
   type OrganizationListParams,
 } from "../types/organization.types";
 import { type OrganizationStatusType } from "@/lib/types/organization-status";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 interface UseOrganizationsReturn {
   /** The list of organizations */
@@ -40,68 +43,54 @@ interface UseOrganizationsReturn {
   /** Update search query */
   setSearch: (query: string) => void;
   /** Refresh the data */
-  refresh: () => Promise<void>;
+  refresh: () => void;
 }
 
 /**
  * Hook to manage organizations list for ORG_ADMIN
+ * Migrated to React Query for better caching and performance
  */
 export function useOrganizations(initialPageSize = 10): UseOrganizationsReturn {
-  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
-  const [stats, setStats] = useState<OrganizationStats | null>(null);
-  const [totalCount, setTotalCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   // Filters and pagination state
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [statusFilter, setStatusFilter] = useState<OrganizationStatusType | "all">("all");
   const [search, setSearch] = useState("");
 
-  const fetchOrganizations = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
+  // Debounce search to avoid excessive API calls
+  const debouncedSearch = useDebounce(search, 300);
+
+  // Main organizations query
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["organizations", { page, pageSize, status: statusFilter, search: debouncedSearch }],
+    queryFn: async () => {
       const params: OrganizationListParams = {
         page,
         page_size: pageSize,
         status: statusFilter === "all" ? undefined : statusFilter,
-        search: search.trim() || undefined,
+        search: debouncedSearch.trim() || undefined,
       };
+      return organizationService.getOrganizationsList(params);
+    },
+    staleTime: QUERY_CONFIG.STALE_TIME_FAST,
+  });
 
-      const response = await organizationService.getOrganizationsList(params);
-      setOrganizations(response.results);
-      setTotalCount(response.count);
-      if (response.stats) {
-        setStats(response.stats);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch organizations");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, pageSize, statusFilter, search]);
-
-  // Handle data fetching
-  useEffect(() => {
-    fetchOrganizations();
-  }, [fetchOrganizations]);
-
-  const refresh = useCallback(async () => {
-    await fetchOrganizations();
-  }, [fetchOrganizations]);
+  const { data: statsData } = useQuery({
+    queryKey: ["organizations", "stats"],
+    queryFn: () => organizationService.getOrganizationsStats(),
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
+  });
 
   return {
-    organizations,
+    organizations: data?.results || [],
     isLoading,
-    error,
-    stats,
-    totalCount,
+    error: error ? (error as Error).message : null,
+    stats: data?.stats || statsData || null,
+    totalCount: data?.count || 0,
     pagination: {
       page,
       pageSize,
-      totalPages: Math.ceil(totalCount / pageSize),
+      totalPages: Math.ceil((data?.count || 0) / pageSize),
     },
     filters: {
       status: statusFilter,
@@ -111,6 +100,6 @@ export function useOrganizations(initialPageSize = 10): UseOrganizationsReturn {
     setPageSize,
     setStatusFilter,
     setSearch,
-    refresh,
+    refresh: refetch,
   };
 }
