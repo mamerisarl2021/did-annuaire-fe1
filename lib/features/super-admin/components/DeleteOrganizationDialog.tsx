@@ -12,15 +12,10 @@ import { Button } from "@/components/ui/button";
 import { Loader2, AlertTriangle } from "lucide-react";
 
 interface DeleteOrganizationDialogProps {
-  /** Name of the organization being deleted (for display) */
   organizationName?: string;
-  /** Whether the dialog is open */
   open: boolean;
-  /** Callback when dialog should close */
   onOpenChange: (open: boolean) => void;
-  /** Callback when delete is confirmed */
   onConfirm: () => Promise<void>;
-  /** Whether the action is in progress */
   isLoading?: boolean;
 }
 
