@@ -4,11 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { usersService } from "../services/users.service";
-import {
-  GetUsersParams,
-  CreateUserPayload,
-  UpdateUserPayload,
-} from "../types/users.types";
+import { GetUsersParams, CreateUserPayload, UpdateUserPayload } from "../types/users.types";
 import { logger } from "@/lib/shared/services/logger.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
