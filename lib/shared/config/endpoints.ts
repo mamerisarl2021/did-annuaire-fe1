@@ -42,7 +42,7 @@ export const API_ENDPOINTS = {
     VALIDATE: (id: string) => `/api/superadmin/organizations/${id}/validate`,
     REFUSE: (id: string) => `/api/superadmin/organizations/${id}/refuse`,
     TOGGLE_ACTIVATION: (id: string) => `/api/superadmin/organizations/${id}/toggle-activation`,
-    DELETE: (id: string) => `/api/superadmin/organizations/${id}/delete`,
+    DELETE: (id: string) => `/api/superadmin/organizations/${id}`,
   },
   DID: {
     LIST: "/api/registry/dids",
