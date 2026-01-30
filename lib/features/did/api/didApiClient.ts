@@ -115,7 +115,7 @@ export const didApiClient = {
   /**
    * Publication du DID en PROD
    */
-  async publishDID(did: string, version?: string): Promise<DIDStateEnvelope> {
+  async publishDID(did: string, version?: number): Promise<DIDStateEnvelope> {
     return await httpClient.post<DIDStateEnvelope>(
       API_ENDPOINTS.DID.PUBLISH(did),
       { version },

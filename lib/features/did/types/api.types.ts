@@ -16,7 +16,7 @@ export interface DIDStateEnvelope {
     owner_id?: string;
   };
   didDocumentMetadata?: {
-    versionId?: string | number;
+    version?: number;
     published?: boolean;
     environment?: string;
     document_type?: string;

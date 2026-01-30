@@ -117,7 +117,7 @@ export const didService = {
   /**
    * Publication du DID en PROD
    */
-  async publishDID(did: string, version?: string): Promise<DIDStateEnvelope> {
+  async publishDID(did: string, version?: number): Promise<DIDStateEnvelope> {
     return await httpClient.post<DIDStateEnvelope>(
       API_ENDPOINTS.DID.PUBLISH(did),
       { version },
@@ -139,8 +139,15 @@ export const didService = {
   /**
    * Get DID Details
    */
-  async getDID(didId: string, target: "draft" | "prod"): Promise<DIDStateEnvelope> {
+  async getDID(
+    didId: string,
+    target: "draft" | "prod",
+    version?: number
+  ): Promise<DIDStateEnvelope> {
     const query = new URLSearchParams({ target });
+    if (version) {
+      query.append("version", version.toString());
+    }
     const endpoint = `${API_ENDPOINTS.DID.DETAILS(didId)}?${query.toString()}`;
     return await httpClient.get<DIDStateEnvelope>(endpoint, {
       requiresAuth: true,

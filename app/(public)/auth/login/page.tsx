@@ -9,15 +9,18 @@ import { useLoginWorkflow } from "@/lib/features/auth/hooks/useLoginWorkflow";
 import { LoginFormComponent } from "@/lib/features/auth/components/LoginFormComponent";
 import { OTPForm } from "@/lib/features/auth/components/OTPForm";
 import { EmailOTPForm } from "@/lib/features/auth/components/EmailOTPForm";
+import { getDashboardRoute } from "@/lib/types/roles";
+import { type AuthUser } from "@/lib/features/auth/types/auth.types";
 
 export default function LoginPage() {
   const router = useRouter();
 
   /**
-   * Handle successful login - redirect to landing page
+   * Handle successful login - redirect to specific dashboard based on role
    */
-  const handleLoginComplete = () => {
-    router.push("/");
+  const handleLoginComplete = (user: AuthUser) => {
+    const targetRoute = getDashboardRoute(user.role);
+    router.push(targetRoute);
   };
 
   const {

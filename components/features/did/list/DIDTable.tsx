@@ -128,8 +128,13 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-8 gap-1.5 text-emerald-600 border-emerald-100 hover:bg-emerald-50 dark:border-emerald-900/40 dark:hover:bg-emerald-900/20"
+                    className={`h-8 gap-1.5 border-emerald-100 dark:border-emerald-900/40 ${
+                      did.is_published
+                        ? "text-emerald-300 dark:text-emerald-900/40 cursor-not-allowed opacity-50"
+                        : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                    }`}
                     onClick={() => onPublish(did)}
+                    disabled={did.is_published}
                   >
                     <QrCode className="size-4" />
                     <span className="hidden lg:inline text-[11px] font-bold">Publish</span>

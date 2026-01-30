@@ -27,7 +27,7 @@ export function DidResponseView({ result }: Props) {
   const documentMetadata = resolutionResponse?.didDocumentMetadata ?? {
     created: docAny.created,
     updated: docAny.updated,
-    versionId: docAny.versionId,
+    version: docAny.version,
     deactivated: docAny.deactivated,
   };
 

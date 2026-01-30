@@ -19,8 +19,7 @@ export default function EditDIDPage() {
   const didId = decodeURIComponent(params.id as string);
   const organizationId = user?.organization_id;
 
-  // Use React Query hook instead of manual useEffect
-  const { did, isLoading: isDidLoading, error } = useDID(didId, "prod");
+  const { did, isLoading: isDidLoading, error } = useDID(didId);
 
   // Handle error
   React.useEffect(() => {

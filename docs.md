@@ -26,7 +26,7 @@ Voici les workflows de bout en bout — des entrées utilisateur jusqu’à la d
 - Entrées: organization_id, document_type, (certificate_id + key_id + purposes[]).
 - Endpoint: POST /api/registry/dids
 - Effets: création DID, UploadedPublicKey(version=1), DIDDocument v1 en DRAFT (canonical_sha256).
-- Sortie: { didState:"wait", did, didDocument, environment:"DRAFT", didDocumentMetadata{versionId,published:false}, didRegistrationMetadata{requestId} }.
+- Sortie: { didState:"wait", did, didDocument, environment:"DRAFT", didDocumentMetadata{version,published:false}, didRegistrationMetadata{requestId} }.
 - Permissions: utilisateur de l’org (créateur = owner).
 
 4. Publier en PREPROD (BYOS — 2 phases)
