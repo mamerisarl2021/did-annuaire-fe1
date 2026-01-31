@@ -190,7 +190,7 @@ export default function RegisterPage() {
       </Card>
 
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-        <DialogContent className="w-full max-w-sm" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogContent className="w-full max-w-sm">
           <DialogHeader className="flex flex-col items-center text-center">
             <div className="rounded-full bg-green-100 p-3 mb-4">
               <CheckCircle className="h-8 w-8 text-green-600" />

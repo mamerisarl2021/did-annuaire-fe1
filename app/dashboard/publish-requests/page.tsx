@@ -66,9 +66,6 @@ export default function PublishRequestsPage() {
         id: selectedRequest.id,
         payload: { note },
       });
-
-      refresh();
-      refreshStats();
     } catch (error) {
       throw error;
     }
@@ -82,9 +79,6 @@ export default function PublishRequestsPage() {
         id: selectedRequest.id,
         payload: { note },
       });
-
-      refresh();
-      refreshStats();
     } catch (error) {
       throw error;
     }
@@ -169,6 +163,8 @@ export default function PublishRequestsPage() {
           onClose={() => {
             setIsApproveModalOpen(false);
             setSelectedRequest(null);
+            refresh();
+            refreshStats();
           }}
         />
 
@@ -180,6 +176,8 @@ export default function PublishRequestsPage() {
           onClose={() => {
             setIsRejectModalOpen(false);
             setSelectedRequest(null);
+            refresh();
+            refreshStats();
           }}
         />
       </div>

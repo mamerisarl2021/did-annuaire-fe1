@@ -46,6 +46,10 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
     try {
       await onConfirm(note.trim() || undefined);
       setFeedback({ type: "success", message: "Publish request approved successfully." });
+      setTimeout(() => {
+        onClose();
+        resetState();
+      }, 300);
     } catch (error) {
       setFeedback({
         type: "error",

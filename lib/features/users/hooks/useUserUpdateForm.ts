@@ -20,19 +20,19 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [functions, setFunctions] = useState<string[]>([]);
   const { addToast } = useToast();
+  const userId = user?.id;
 
-   const { data: detailedUser, isLoading: isFetching } = useQuery({
-    queryKey: ["user", user?.id],
-    enabled: !!user?.id,
+  const { data: detailedUser, isLoading: isFetching } = useQuery({
+    queryKey: ["user", userId],
+    enabled: !!userId,
     queryFn: async () => {
-      if (!user?.id) throw new Error("User ID is missing");
-      return usersService.getUser(user.id);
+      if (!userId) {
+        return Promise.reject(new Error("User ID is missing"));
+      }
+      return usersService.getUser(userId);
     },
     staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
-
-
-
   const form = useForm<UserUpdateFormData>({
     resolver: zodResolver(userUpdateSchema),
     defaultValues: {
@@ -97,7 +97,8 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
 
   return {
     form,
-    isLoading: isSubmitting || isFetching,
+    isSubmitting,
+    isFetching,
     functions,
     handleFunctionsChange,
     handleSubmit,

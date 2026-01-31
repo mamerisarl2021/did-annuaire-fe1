@@ -46,7 +46,7 @@ export function AuditDetailsModal({ audit, isOpen, onClose, isLoading }: AuditDe
               <div>
                 <Label className="text-xs text-muted-foreground">Timestamp</Label>
                 <div className="font-medium text-sm">
-                  {new Date(audit!.timestamp).toISOString()}
+                  {new Date(audit!.timestamp).toLocaleString()}
                 </div>
               </div>
               <div>

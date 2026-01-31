@@ -59,7 +59,7 @@ export function AuditTable({ logs, isLoading, onRowClick }: AuditTableProps) {
               onClick={() => onRowClick?.(log)}
             >
               <TableCell className="text-[#5e6c84] text-sm whitespace-nowrap">
-                {log.timestamp}
+                {new Date(log.timestamp).toLocaleString()}
               </TableCell>
               <TableCell>
                 <Badge
