@@ -3,18 +3,27 @@
 import React from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DIDCreator } from "@/components/features/did/creator/DIDCreator";
 import { useDID } from "@/lib/features/did/hooks/useDID";
-import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function EditDIDPage() {
   const params = useParams();
   const router = useRouter();
-  const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
+
+  const [showErrorModal, setShowErrorModal] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   const didId = decodeURIComponent(params.id as string);
   const organizationId = user?.organization_id;
@@ -24,14 +33,10 @@ export default function EditDIDPage() {
   // Handle error
   React.useEffect(() => {
     if (error) {
-      toast({
-        title: "Not Found",
-        description: "The requested DID does not exist.",
-        variant: "destructive",
-      });
-      router.push("/dashboard/dids");
+      setErrorMessage("The requested DID does not exist or could not be loaded.");
+      setShowErrorModal(true);
     }
-  }, [error, router, toast]);
+  }, [error]);
 
   if (authLoading || isDidLoading) {
     return (
@@ -83,6 +88,32 @@ export default function EditDIDPage() {
           </div>
         )}
       </div>
+
+      <Dialog
+        open={showErrorModal}
+        onOpenChange={(open) => {
+          if (!open) router.push("/dashboard/dids");
+          setShowErrorModal(open);
+        }}
+      >
+        <DialogContent className="w-full max-w-sm">
+          <DialogHeader className="flex flex-col items-center justify-center text-center">
+            <div className="bg-red-100 p-3 rounded-full mb-4">
+              <AlertCircle className="h-6 w-6 text-red-600" />
+            </div>
+            <DialogTitle className="text-center">Error</DialogTitle>
+            <DialogDescription className="text-center pt-2">{errorMessage}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center pt-4">
+            <Button
+              onClick={() => router.push("/dashboard/dids")}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Return to List
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

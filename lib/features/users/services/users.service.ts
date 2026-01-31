@@ -50,6 +50,15 @@ export const usersService = {
   },
 
   /**
+   * Get a single user's details
+   */
+  async getUser(userId: string): Promise<User> {
+    return await httpClient.get<User>(API_ENDPOINTS.USERS.DETAIL(userId), {
+      requiresAuth: true,
+    });
+  },
+
+  /**
    * Update user details
    */
   async updateUser(userId: string, payload: UpdateUserPayload): Promise<User> {

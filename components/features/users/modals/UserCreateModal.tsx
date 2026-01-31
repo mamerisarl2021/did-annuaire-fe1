@@ -43,7 +43,7 @@ export function UserCreateModal({ isOpen, onClose, onConfirm }: UserCreateModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Create New Team Member</DialogTitle>
           <DialogDescription className="text-gray-600">

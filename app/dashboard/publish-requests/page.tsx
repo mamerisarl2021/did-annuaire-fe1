@@ -15,13 +15,11 @@ import { RejectModal } from "@/lib/features/publish-requests/components/RejectMo
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 import { PublishRequest } from "@/lib/features/publish-requests/types/publish-request.types";
 import { cn } from "@/lib/utils";
 
 export default function PublishRequestsPage() {
   const { user } = useAuth();
-  const { toast } = useToast();
   const org_id = user?.organization_id;
 
   const {
@@ -48,6 +46,8 @@ export default function PublishRequestsPage() {
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
+  /* ---------- Actions ---------- */
+
   const handleApprove = (request: PublishRequest) => {
     setSelectedRequest(request);
     setIsApproveModalOpen(true);
@@ -60,35 +60,35 @@ export default function PublishRequestsPage() {
 
   const handleConfirmApprove = async (note?: string) => {
     if (!selectedRequest) return;
+
     try {
-      await approveRequest({ id: selectedRequest.id, payload: { note } });
-      toast({
-        title: "Request Approved",
-        description: "The publish request has been approved successfully.",
+      await approveRequest({
+        id: selectedRequest.id,
+        payload: { note },
       });
-    } catch (err) {
-      toast({
-        title: "Approval Failed",
-        description: err instanceof Error ? err.message : "Failed to approve request",
-        variant: "destructive",
-      });
+      setIsApproveModalOpen(false);
+      setSelectedRequest(null);
+      refresh();
+      refreshStats();
+    } catch (error) {
+      throw error;
     }
   };
 
   const handleConfirmReject = async (note?: string) => {
     if (!selectedRequest) return;
+
     try {
-      await rejectRequest({ id: selectedRequest.id, payload: { note } });
-      toast({
-        title: "Request Rejected",
-        description: "The publish request has been rejected.",
+      await rejectRequest({
+        id: selectedRequest.id,
+        payload: { note },
       });
-    } catch (err) {
-      toast({
-        title: "Rejection Failed",
-        description: err instanceof Error ? err.message : "Failed to reject request",
-        variant: "destructive",
-      });
+      setIsRejectModalOpen(false);
+      setSelectedRequest(null);
+      refresh();
+      refreshStats();
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -96,6 +96,8 @@ export default function PublishRequestsPage() {
     refresh();
     refreshStats();
   };
+
+  /* ---------- Render ---------- */
 
   return (
     <RoleGuard allowedRoles={[UserRole.SUPER_USER, UserRole.ORG_ADMIN]}>
@@ -108,6 +110,7 @@ export default function PublishRequestsPage() {
               Review and approve DID publication requests.
             </p>
           </div>
+
           <Button onClick={handleRefresh} variant="outline" size="sm" disabled={isLoading}>
             <RefreshCcw className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")} />
             Refresh
@@ -115,7 +118,7 @@ export default function PublishRequestsPage() {
         </div>
 
         <div className="px-8 space-y-6 pb-8">
-          {/* Stats Cards */}
+          {/* Stats */}
           {!isStatsLoading && stats && <PublishRequestStatsCards stats={stats} />}
 
           {statsError && (
@@ -124,7 +127,7 @@ export default function PublishRequestsPage() {
             </div>
           )}
 
-          {/* Content Card */}
+          {/* Table */}
           <Card>
             <CardContent className="pt-6">
               <PublishRequestFilters
@@ -152,23 +155,25 @@ export default function PublishRequestsPage() {
 
         {/* Modals */}
         <ApproveModal
+          key={selectedRequest?.id}
           isOpen={isApproveModalOpen}
+          request={selectedRequest}
+          onConfirm={handleConfirmApprove}
           onClose={() => {
             setIsApproveModalOpen(false);
             setSelectedRequest(null);
           }}
-          onConfirm={handleConfirmApprove}
-          request={selectedRequest}
         />
 
         <RejectModal
+          key={selectedRequest?.id}
           isOpen={isRejectModalOpen}
+          request={selectedRequest}
+          onConfirm={handleConfirmReject}
           onClose={() => {
             setIsRejectModalOpen(false);
             setSelectedRequest(null);
           }}
-          onConfirm={handleConfirmReject}
-          request={selectedRequest}
         />
       </div>
     </RoleGuard>

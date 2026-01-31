@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { organizationService } from "../services/organization.service";
 import { type OrgCreatePayload } from "../types/organization.types";

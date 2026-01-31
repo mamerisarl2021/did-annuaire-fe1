@@ -37,8 +37,6 @@ export function UserDeactivateModal({
     try {
       await onConfirm(user.id);
       onClose();
-    } catch (error) {
-      console.error(`Failed to ${isActive ? "deactivate" : "reactivate"} user`, error);
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +44,7 @@ export function UserDeactivateModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 mb-4">
             <AlertTriangle className="h-6 w-6 text-rose-600" />

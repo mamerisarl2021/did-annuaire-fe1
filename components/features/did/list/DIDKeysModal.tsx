@@ -19,7 +19,6 @@ import {
 import { Copy, Check, Loader2, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
 import { useDIDKeys } from "@/lib/features/did/hooks/useDIDKeys";
 
 interface DIDKeysModalProps {
@@ -31,20 +30,15 @@ interface DIDKeysModalProps {
 export function DIDKeysModal({ isOpen, onClose, didId }: DIDKeysModalProps) {
   const { keys, isLoading } = useDIDKeys(isOpen ? didId : null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const { toast } = useToast();
-
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
-    toast({
-      description: "Key copied to clipboard",
-    });
     setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <div className="flex items-center gap-2 mb-2">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">

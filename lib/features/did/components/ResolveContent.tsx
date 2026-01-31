@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { useDidResolution } from "../hooks/useDidResolution";
@@ -17,28 +16,9 @@ import { DidResponseView } from "../components/DidResponseView";
 export function ResolveContent() {
   const { state, resolve } = useDidResolution();
   const [input, setInput] = useState("");
-  const { toast } = useToast();
-
   // Derive active tab from state instead of using useState + useEffect
   const activeTab =
     state.status === "success" ? "response" : state.status === "error" ? "error" : "request";
-
-  // Show toast on success
-  useEffect(() => {
-    if (state.status === "success" && state.data) {
-      toast({
-        title: "DID Resolved",
-        description: (
-          <div className="flex flex-col gap-1">
-            <span>Successfully resolved DID:</span>
-            <span className="font-mono text-xs font-bold text-slate-200 bg-slate-800 px-2 py-0.5 rounded w-fit">
-              {state.data.did}
-            </span>
-          </div>
-        ),
-      });
-    }
-  }, [state.status, state, toast]);
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">

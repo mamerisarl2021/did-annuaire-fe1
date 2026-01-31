@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
 import { User, CreateUserPayload, UpdateUserPayload } from "@/lib/features/users/types/users.types";
 import { UserUpdateModal } from "./modals/UserUpdateModal";
 import { UserResendModal } from "./modals/UserResendModal";
@@ -38,7 +37,6 @@ interface UsersManagementViewProps {
 }
 
 export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) {
-  const { toast } = useToast();
   const { stats, isLoading: isStatsLoading, error: statsError } = useUsersStats();
   const {
     filteredUsers,
@@ -72,8 +70,9 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const [isResendModalOpen, setIsResendModalOpen] = useState(false);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [invitationResponse, setInvitationResponse] = useState<{
+  const [actionFeedback, setActionFeedback] = useState<{
     success: boolean;
+    title: string;
     message: string;
   } | null>(null);
 
@@ -83,7 +82,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
       await onConfirmInvite(user.id);
     } catch (error) {
       const msg = error instanceof Error ? error.message : "Failed to send invitation.";
-      setInvitationResponse({ success: false, message: msg });
+      setActionFeedback({ success: false, title: "Invitation Failed", message: msg });
     }
   };
 
@@ -103,33 +102,89 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   };
 
   const onConfirmCreate = async (payload: CreateUserPayload) => {
-    await createUser(payload);
-    toast({ title: "Success", description: "User created in PENDING state." });
+    try {
+      await createUser(payload);
+      setActionFeedback({
+        success: true,
+        title: "User Created",
+        message: "User created in PENDING state.",
+      });
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      setActionFeedback({
+        success: false,
+        title: "Creation Failed",
+        message: error instanceof Error ? error.message : "Failed to create user",
+      });
+    }
   };
 
   const onConfirmInvite = async (userId: string) => {
     try {
       await inviteUser(userId);
-      setInvitationResponse({ success: true, message: "Invitation sent successfully." });
+      setActionFeedback({
+        success: true,
+        title: "Invitation Sent",
+        message: "Invitation sent successfully.",
+      });
     } catch (error) {
       const msg = error instanceof Error ? error.message : "Failed to send invitation.";
-      setInvitationResponse({ success: false, message: msg });
+      setActionFeedback({ success: false, title: "Invitation Failed", message: msg });
     }
   };
 
   const onConfirmResend = async (userId: string) => {
-    await inviteUser(userId);
-    toast({ title: "Success", description: "Invitation resent successfully." });
+    try {
+      await inviteUser(userId);
+      setActionFeedback({
+        success: true,
+        title: "Invitation Resent",
+        message: "Invitation resent successfully.",
+      });
+      setIsResendModalOpen(false);
+    } catch (error) {
+      setActionFeedback({
+        success: false,
+        title: "Invitation Failure",
+        message: error instanceof Error ? error.message : "Failed to resend invitation",
+      });
+    }
   };
 
   const onConfirmUpdate = async (userId: string, payload: UpdateUserPayload) => {
-    await updateUser(userId, payload);
-    toast({ title: "Success", description: "Profile updated successfully." });
+    try {
+      await updateUser(userId, payload);
+      setActionFeedback({
+        success: true,
+        title: "Profile Updated",
+        message: "Profile updated successfully.",
+      });
+      setIsUpdateModalOpen(false);
+    } catch (error) {
+      setActionFeedback({
+        success: false,
+        title: "Update Failed",
+        message: error instanceof Error ? error.message : "Failed to update profile",
+      });
+    }
   };
 
   const onConfirmToggleStatus = async (userId: string) => {
-    await toggleUserStatus(userId);
-    toast({ title: "Success", description: "User status updated successfully." });
+    try {
+      await toggleUserStatus(userId);
+      setActionFeedback({
+        success: true,
+        title: "Status Updated",
+        message: "User status updated successfully.",
+      });
+      setIsDeactivateModalOpen(false);
+    } catch (error) {
+      setActionFeedback({
+        success: false,
+        title: "Update Failed",
+        message: error instanceof Error ? error.message : "Failed to update status",
+      });
+    }
   };
 
   return (
@@ -239,12 +294,12 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         user={selectedUser}
       />
 
-      {/* Invitation Response Modal */}
-      <Dialog open={!!invitationResponse} onOpenChange={() => setInvitationResponse(null)}>
-        <DialogContent className="sm:max-w-[400px]">
+      {/* Action Response Modal (Success/Error) */}
+      <Dialog open={!!actionFeedback} onOpenChange={() => setActionFeedback(null)}>
+        <DialogContent className="w-full max-w-sm">
           <DialogHeader>
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full mb-4">
-              {invitationResponse?.success ? (
+              {actionFeedback?.success ? (
                 <div className="bg-emerald-100 p-3 rounded-full">
                   <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                 </div>
@@ -254,18 +309,16 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
                 </div>
               )}
             </div>
-            <DialogTitle className="text-center">
-              {invitationResponse?.success ? "Invitation Sent" : "Invitation Failed"}
-            </DialogTitle>
+            <DialogTitle className="text-center">{actionFeedback?.title}</DialogTitle>
             <DialogDescription className="text-center pt-2">
-              {invitationResponse?.message}
+              {actionFeedback?.message}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center">
             <Button
-              onClick={() => setInvitationResponse(null)}
+              onClick={() => setActionFeedback(null)}
               className={
-                invitationResponse?.success
+                actionFeedback?.success
                   ? "bg-emerald-600 hover:bg-emerald-700"
                   : "bg-rose-600 hover:bg-rose-700"
               }
