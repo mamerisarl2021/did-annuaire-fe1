@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { PublishRequest } from "../types/publish-request.types";
-import { CheckCircle, AlertCircle } from "lucide-react";
+import { AlertCircle, XCircle } from "lucide-react";
 
 interface RejectModalProps {
   isOpen: boolean;
@@ -34,16 +34,13 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
   };
 
   const handleClose = () => {
-    if (feedback?.type === "success") {
-      onClose();
-      resetState();
-    } else {
-      onClose();
-      resetState();
-    }
+    onClose();
+    if (feedback?.type === "success") setTimeout(resetState, 300);
+    else resetState();
   };
 
   const handleConfirm = async () => {
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setFeedback(null);
     try {
@@ -64,8 +61,8 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
       <DialogContent className="w-full max-w-sm">
         {feedback?.type === "success" ? (
           <div className="flex flex-col items-center justify-center py-6 text-center">
-            <div className="bg-green-100 p-3 rounded-full mb-4">
-              <CheckCircle className="h-8 w-8 text-green-600" />
+            <div className="bg-red-100 p-3 rounded-full mb-4">
+              <XCircle className="h-8 w-8 text-red-600" />
             </div>
             <DialogTitle className="text-xl mb-2">Rejected</DialogTitle>
             <DialogDescription className="text-center mb-6">{feedback.message}</DialogDescription>

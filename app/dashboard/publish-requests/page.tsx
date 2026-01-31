@@ -46,6 +46,8 @@ export default function PublishRequestsPage() {
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
+  /* ---------- Actions ---------- */
+
   const handleApprove = (request: PublishRequest) => {
     setSelectedRequest(request);
     setIsApproveModalOpen(true);
@@ -58,22 +60,43 @@ export default function PublishRequestsPage() {
 
   const handleConfirmApprove = async (note?: string) => {
     if (!selectedRequest) return;
-    await approveRequest({ id: selectedRequest.id, payload: { note } });
-    refresh();
-    refreshStats();
+
+    try {
+      await approveRequest({
+        id: selectedRequest.id,
+        payload: { note },
+      });
+
+      refresh();
+      refreshStats();
+    } catch (error) {
+      throw error;
+    }
   };
 
   const handleConfirmReject = async (note?: string) => {
     if (!selectedRequest) return;
-    await rejectRequest({ id: selectedRequest.id, payload: { note } });
-    refresh();
-    refreshStats();
+
+    try {
+      await rejectRequest({
+        id: selectedRequest.id,
+        payload: { note },
+      });
+
+      refresh();
+      refreshStats();
+    } catch (error) {
+      // Idem : feedback géré dans RejectModal
+      throw error;
+    }
   };
 
   const handleRefresh = () => {
     refresh();
     refreshStats();
   };
+
+  /* ---------- Render ---------- */
 
   return (
     <RoleGuard allowedRoles={[UserRole.SUPER_USER, UserRole.ORG_ADMIN]}>
@@ -86,15 +109,25 @@ export default function PublishRequestsPage() {
               Review and approve DID publication requests.
             </p>
           </div>
-          <Button onClick={handleRefresh} variant="outline" size="sm" disabled={isLoading}>
-            <RefreshCcw className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")} />
+
+          <Button
+            onClick={handleRefresh}
+            variant="outline"
+            size="sm"
+            disabled={isLoading}
+          >
+            <RefreshCcw
+              className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")}
+            />
             Refresh
           </Button>
         </div>
 
         <div className="px-8 space-y-6 pb-8">
-          {/* Stats Cards */}
-          {!isStatsLoading && stats && <PublishRequestStatsCards stats={stats} />}
+          {/* Stats */}
+          {!isStatsLoading && stats && (
+            <PublishRequestStatsCards stats={stats} />
+          )}
 
           {statsError && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg text-sm">
@@ -102,7 +135,7 @@ export default function PublishRequestsPage() {
             </div>
           )}
 
-          {/* Content Card */}
+          {/* Table */}
           <Card>
             <CardContent className="pt-6">
               <PublishRequestFilters
@@ -130,23 +163,25 @@ export default function PublishRequestsPage() {
 
         {/* Modals */}
         <ApproveModal
+          key={selectedRequest?.id}
           isOpen={isApproveModalOpen}
+          request={selectedRequest}
+          onConfirm={handleConfirmApprove}
           onClose={() => {
             setIsApproveModalOpen(false);
             setSelectedRequest(null);
           }}
-          onConfirm={handleConfirmApprove}
-          request={selectedRequest}
         />
 
         <RejectModal
+          key={selectedRequest?.id}
           isOpen={isRejectModalOpen}
+          request={selectedRequest}
+          onConfirm={handleConfirmReject}
           onClose={() => {
             setIsRejectModalOpen(false);
             setSelectedRequest(null);
           }}
-          onConfirm={handleConfirmReject}
-          request={selectedRequest}
         />
       </div>
     </RoleGuard>

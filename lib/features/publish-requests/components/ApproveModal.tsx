@@ -34,17 +34,13 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
   };
 
   const handleClose = () => {
-    if (feedback?.type === "success") {
-      onClose();
-      // Delay reset to avoid flicker if re-opened quickly (though typically instance based)
-      setTimeout(resetState, 300);
-    } else {
-      onClose();
-      resetState();
-    }
+    onClose();
+    if (feedback?.type === "success") setTimeout(resetState, 300);
+    else resetState();
   };
 
   const handleConfirm = async () => {
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setFeedback(null);
     try {

@@ -21,12 +21,17 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
   const [functions, setFunctions] = useState<string[]>([]);
   const { addToast } = useToast();
 
-  const { data: detailedUser, isLoading: isFetching } = useQuery({
+   const { data: detailedUser, isLoading: isFetching } = useQuery({
     queryKey: ["user", user?.id],
-    queryFn: () => usersService.getUser(user!.id),
     enabled: !!user?.id,
+    queryFn: async () => {
+      if (!user?.id) throw new Error("User ID is missing");
+      return usersService.getUser(user.id);
+    },
     staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
+
+
 
   const form = useForm<UserUpdateFormData>({
     resolver: zodResolver(userUpdateSchema),
