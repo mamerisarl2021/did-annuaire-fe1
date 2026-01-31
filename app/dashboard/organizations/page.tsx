@@ -19,7 +19,15 @@ import {
   type OrganizationListItem,
   type OrganizationStatus,
 } from "@/lib/features/organizations/types/organization.types";
-import { toast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { AlertCircle } from "lucide-react";
 
 export default function OrganizationsPage() {
   // Data fetching
@@ -34,6 +42,7 @@ export default function OrganizationsPage() {
   const [showDetails, setShowDetails] = useState(false);
   const [showRefuse, setShowRefuse] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
 
   // Derived state
   const currentStatus = filters.status || "all";
@@ -114,11 +123,7 @@ export default function OrganizationsPage() {
           setSelectedOrg(fullOrg);
         }
       } catch (error) {
-        toast({
-          variant: "destructive",
-          title: `Failed to fetch organization details ${error}`,
-          description: "Please try again later.",
-        });
+        setErrorDetails(`Failed to fetch organization details: ${error}`);
       }
     },
     [actions]
@@ -228,6 +233,23 @@ export default function OrganizationsPage() {
         onConfirm={handleDelete}
         isLoading={actions.isLoading}
       />
+
+      <Dialog open={!!errorDetails} onOpenChange={() => setErrorDetails(null)}>
+        <DialogContent className="w-full max-w-sm">
+          <DialogHeader className="flex flex-col items-center justify-center text-center">
+            <div className="bg-red-100 p-3 rounded-full mb-4">
+              <AlertCircle className="h-6 w-6 text-red-600" />
+            </div>
+            <DialogTitle className="text-center">Error</DialogTitle>
+            <DialogDescription className="text-center pt-2">{errorDetails}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center pt-4">
+            <Button onClick={() => setErrorDetails(null)} className="bg-red-600 hover:bg-red-700">
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

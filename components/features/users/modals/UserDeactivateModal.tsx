@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { User } from "@/lib/features/users/types/users.types";
 import { Loader2, AlertTriangle } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
 
 interface UserDeactivateModalProps {
   isOpen: boolean;
@@ -35,23 +34,14 @@ export function UserDeactivateModal({
 
   const handleConfirm = async () => {
     setIsLoading(true);
-    try {
-      await onConfirm(user.id);
-      onClose();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: `Failed to ${isActive ? "deactivate" : "reactivate"} user ${error}`,
-        description: "Please try again later.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    await onConfirm(user.id);
+    onClose();
+    setIsLoading(false);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 mb-4">
             <AlertTriangle className="h-6 w-6 text-rose-600" />

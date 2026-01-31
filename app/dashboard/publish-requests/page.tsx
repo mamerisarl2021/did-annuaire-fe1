@@ -15,13 +15,11 @@ import { RejectModal } from "@/lib/features/publish-requests/components/RejectMo
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 import { PublishRequest } from "@/lib/features/publish-requests/types/publish-request.types";
 import { cn } from "@/lib/utils";
 
 export default function PublishRequestsPage() {
   const { user } = useAuth();
-  const { toast } = useToast();
   const org_id = user?.organization_id;
 
   const {
@@ -60,36 +58,16 @@ export default function PublishRequestsPage() {
 
   const handleConfirmApprove = async (note?: string) => {
     if (!selectedRequest) return;
-    try {
-      await approveRequest({ id: selectedRequest.id, payload: { note } });
-      toast({
-        title: "Request Approved",
-        description: "The publish request has been approved successfully.",
-      });
-    } catch (err) {
-      toast({
-        title: "Approval Failed",
-        description: err instanceof Error ? err.message : "Failed to approve request",
-        variant: "destructive",
-      });
-    }
+    await approveRequest({ id: selectedRequest.id, payload: { note } });
+    refresh();
+    refreshStats();
   };
 
   const handleConfirmReject = async (note?: string) => {
     if (!selectedRequest) return;
-    try {
-      await rejectRequest({ id: selectedRequest.id, payload: { note } });
-      toast({
-        title: "Request Rejected",
-        description: "The publish request has been rejected.",
-      });
-    } catch (err) {
-      toast({
-        title: "Rejection Failed",
-        description: err instanceof Error ? err.message : "Failed to reject request",
-        variant: "destructive",
-      });
-    }
+    await rejectRequest({ id: selectedRequest.id, payload: { note } });
+    refresh();
+    refreshStats();
   };
 
   const handleRefresh = () => {

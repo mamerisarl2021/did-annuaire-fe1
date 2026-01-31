@@ -45,7 +45,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Update User Profile</DialogTitle>
           <DialogDescription className="text-gray-600">

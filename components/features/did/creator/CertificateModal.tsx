@@ -83,7 +83,7 @@ export function CertificateModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-[700px] p-0 overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl rounded-lg"
+        className="w-full max-w-sm p-0 overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl rounded-lg"
       >
         <div className="bg-white dark:bg-slate-950 p-8 space-y-8">
           <DialogHeader className="flex-row items-center justify-between space-y-0">

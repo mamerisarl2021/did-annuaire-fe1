@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { userUpdateSchema, UserUpdateFormData } from "@/lib/validations/user.schema";
 import { User, UpdateUserPayload } from "../types/users.types";
 import { useToast } from "@/components/ui/use-toast";
+import { usersService } from "../services/users.service";
+import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 
 interface UseUserUpdateFormProps {
   user: User | null;
@@ -14,9 +17,16 @@ interface UseUserUpdateFormProps {
 }
 
 export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [functions, setFunctions] = useState<string[]>([]);
   const { addToast } = useToast();
+
+  const { data: detailedUser, isLoading: isFetching } = useQuery({
+    queryKey: ["user", user?.id],
+    queryFn: () => usersService.getUser(user!.id),
+    enabled: !!user?.id,
+    staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
+  });
 
   const form = useForm<UserUpdateFormData>({
     resolver: zodResolver(userUpdateSchema),
@@ -31,23 +41,26 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
     },
   });
 
-  // Initialize form when user changes
   useEffect(() => {
-    if (user) {
-      const userFunctions = user.functions ? user.functions.split(",").map((f) => f.trim()) : [];
+    const userData = detailedUser || user;
+
+    if (userData && detailedUser) {
+      const userFunctions = userData.functions
+        ? userData.functions.split(",").map((f) => f.trim())
+        : [];
       setFunctions(userFunctions);
 
       form.reset({
-        email: user.email || "",
-        first_name: user.first_name || "",
-        last_name: user.last_name || "",
-        phone: user.phone || "",
-        functions: user.functions || "",
-        can_publish_prod: !!user.can_publish_prod,
-        is_auditor: !!user.is_auditor,
+        email: userData.email || "",
+        first_name: userData.first_name || "",
+        last_name: userData.last_name || "",
+        phone: userData.phone || "",
+        functions: userData.functions || "",
+        can_publish_prod: !!userData.can_publish_prod,
+        is_auditor: !!userData.is_auditor,
       });
     }
-  }, [user, form]);
+  }, [detailedUser, user, form]);
 
   const handleFunctionsChange = (newFunctions: string[]) => {
     setFunctions(newFunctions);
@@ -61,7 +74,7 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
     onConfirm: (userId: string, payload: UpdateUserPayload) => Promise<void>
   ) => {
     if (!user) return;
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     try {
       await onConfirm(user.id, data);
@@ -73,13 +86,13 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
       addToast(errorMessage, "error");
       onError?.(error as Error);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return {
     form,
-    isLoading,
+    isLoading: isSubmitting || isFetching,
     functions,
     handleFunctionsChange,
     handleSubmit,

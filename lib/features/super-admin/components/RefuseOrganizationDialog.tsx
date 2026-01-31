@@ -59,7 +59,7 @@ export function RefuseOrganizationDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <DialogTitle>Refuse Organization</DialogTitle>
           <DialogDescription>

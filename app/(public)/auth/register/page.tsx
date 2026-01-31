@@ -1,13 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Loader2, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Stepper,
   Step1Organization,
@@ -30,7 +37,9 @@ export default function RegisterPage() {
   const { currentStep, isFirstStep, isLastStep, next, prev } = useStepper({
     totalSteps: REGISTER_STEPS.length,
   });
-  const { toast } = useToast();
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successData, setSuccessData] = useState<{ orgId: string; name: string } | null>(null);
 
   const { form, validateStep, onSubmit, isSubmitting: isFormSubmitting } = useRegisterForm();
 
@@ -76,24 +85,14 @@ export default function RegisterPage() {
       };
 
       const createdOrg = await createOrganization(payload);
-      const orgId = createdOrg.id;
-      const statusUrl = `/auth/register/status?organizationId=${orgId}&organizationName=${encodeURIComponent(data.name)}`;
 
-      toast({
-        title: "Organization created successfully",
-        description: "Your organization creation request has been submitted.",
-        action: (
-          <ToastAction altText="View Status" onClick={() => router.push(statusUrl)}>
-            View Status
-          </ToastAction>
-        ),
+      setSuccessData({
+        orgId: createdOrg.id,
+        name: data.name,
       });
+      setShowSuccessModal(true);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: `Registration failed ${error}`,
-        description: "Please try again later.",
-      });
+      console.error("Registration failed", error);
     }
   };
 
@@ -189,6 +188,38 @@ export default function RegisterPage() {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="w-full max-w-sm" onInteractOutside={(e) => e.preventDefault()}>
+          <DialogHeader className="flex flex-col items-center text-center">
+            <div className="rounded-full bg-green-100 p-3 mb-4">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <DialogTitle className="text-xl">Organization Created Successfully</DialogTitle>
+            <DialogDescription className="pt-2">
+              Your organization <strong>{successData?.name}</strong> has been registered.
+              <br />
+              Please proceed to check the validation status.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center pt-2">
+            <Button
+              className="w-full sm:w-auto"
+              onClick={() => {
+                if (successData) {
+                  router.push(
+                    `/auth/register/status?organizationId=${successData.orgId}&organizationName=${encodeURIComponent(
+                      successData.name
+                    )}`
+                  );
+                }
+              }}
+            >
+              View Registration Status
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

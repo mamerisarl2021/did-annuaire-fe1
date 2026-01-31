@@ -24,7 +24,7 @@ export function DeactivateDIDModal({ isOpen, onClose, onConfirm, did }: Deactiva
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-none shadow-2xl">
+      <DialogContent className="w-full max-w-sm p-0 overflow-hidden border-none shadow-2xl">
         <div className="p-6 pt-8">
           <div className="flex items-start gap-4">
             <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-full">

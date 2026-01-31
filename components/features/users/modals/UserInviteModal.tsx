@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
 
 interface UserInviteModalProps {
   isOpen: boolean;
@@ -40,24 +39,16 @@ export function UserInviteModal({
     e.preventDefault();
     if (!userId.trim()) return;
     setIsLoading(true);
-    try {
-      await onConfirm(userId);
-      setUserId("");
-      onClose();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: `Failed to invite user ${error}`,
-        description: "Please try again later.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    // Error handling is managed by parent
+    await onConfirm(userId);
+    setUserId("");
+    onClose();
+    setIsLoading(false);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <DialogTitle>Invite Member</DialogTitle>
           <DialogDescription>

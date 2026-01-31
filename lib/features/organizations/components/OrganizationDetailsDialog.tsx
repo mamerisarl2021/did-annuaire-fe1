@@ -45,7 +45,7 @@ export function OrganizationDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <DialogTitle>{organization.name}</DialogTitle>
           <DialogDescription>Organization Details</DialogDescription>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Plus } from "lucide-react";
+import { Plus, CheckCircle2, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { RoleGuard } from "@/lib/guards";
 import { UserRole } from "@/lib/types/roles";
@@ -14,9 +14,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DeactivateDIDModal } from "@/components/features/did/list/DeactivateDIDModal";
 import { DIDKeysModal } from "@/components/features/did/list/DIDKeysModal";
-import { useToast } from "@/components/ui/use-toast";
 import { DID } from "@/lib/features/did/types";
 import { DIDStatsCards } from "@/lib/features/did/components/DIDStatsCards";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -27,10 +34,15 @@ import {
 
 export default function DIDListPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const { stats, isLoading: isStatsLoading, error: statsError } = useDIDsStats();
   const { dids, isLoading, searchQuery, setSearchQuery, deactivateDID, publishDID, pagination } =
     useDIDs();
+
+  const [actionResult, setActionResult] = useState<{
+    success: boolean;
+    title: string;
+    message: string;
+  } | null>(null);
 
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [didToDeactivate, setDidToDeactivate] = useState<DID | null>(null);
@@ -60,29 +72,29 @@ export default function DIDListPage() {
       const result = await publishDID(did.id);
 
       if (result.didState?.state === "finished") {
-        toast({
+        setActionResult({
+          success: true,
           title: "DID Published",
-          description: `The DID has been successfully published to PROD.`,
-          variant: "default",
+          message: "The DID has been successfully published to PROD.",
         });
       } else if (result.didState?.state === "wait") {
-        toast({
+        setActionResult({
+          success: true,
           title: "Publication Requested",
-          description: "Your publication request is awaiting approval from an administrator.",
-          variant: "default",
+          message: "Your publication request is awaiting approval from an administrator.",
         });
       } else {
-        toast({
+        setActionResult({
+          success: true,
           title: "Publication Sent",
-          description: "The publication process has been initiated.",
-          variant: "default",
+          message: "The publication process has been initiated.",
         });
       }
     } catch (err) {
-      toast({
+      setActionResult({
+        success: false,
         title: "Publication Failed",
-        description: err instanceof Error ? err.message : "An error occurred during publication.",
-        variant: "destructive",
+        message: err instanceof Error ? err.message : "An error occurred during publication.",
       });
     }
   };
@@ -95,15 +107,16 @@ export default function DIDListPage() {
   const handleConfirmDeactivate = async (did: DID) => {
     try {
       await deactivateDID(did.id);
-      toast({
+      setActionResult({
+        success: true,
         title: "DID Deactivated",
-        description: "The DID has been successfully deactivated.",
+        message: "The DID has been successfully deactivated.",
       });
     } catch (err) {
-      toast({
+      setActionResult({
+        success: false,
         title: "Deactivation Failed",
-        description: err instanceof Error ? err.message : "An error occurred during deactivation.",
-        variant: "destructive",
+        message: err instanceof Error ? err.message : "An error occurred during deactivation.",
       });
     } finally {
       setIsDeactivateModalOpen(false);
@@ -193,6 +206,41 @@ export default function DIDListPage() {
           onConfirm={handleConfirmDeactivate}
           did={didToDeactivate}
         />
+
+        {/* Action Response Modal */}
+        <Dialog open={!!actionResult} onOpenChange={() => setActionResult(null)}>
+          <DialogContent className="w-full max-w-sm">
+            <DialogHeader>
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full mb-4">
+                {actionResult?.success ? (
+                  <div className="bg-emerald-100 p-3 rounded-full">
+                    <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                  </div>
+                ) : (
+                  <div className="bg-rose-100 p-3 rounded-full">
+                    <AlertCircle className="h-6 w-6 text-rose-600" />
+                  </div>
+                )}
+              </div>
+              <DialogTitle className="text-center">{actionResult?.title}</DialogTitle>
+              <DialogDescription className="text-center pt-2">
+                {actionResult?.message}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="sm:justify-center">
+              <Button
+                onClick={() => setActionResult(null)}
+                className={
+                  actionResult?.success
+                    ? "bg-emerald-600 hover:bg-emerald-700"
+                    : "bg-rose-600 hover:bg-rose-700"
+                }
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </RoleGuard>
   );

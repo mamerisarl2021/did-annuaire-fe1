@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, RefreshCw } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
 
 interface UserResendModalProps {
   isOpen: boolean;
@@ -29,33 +28,22 @@ export function UserResendModal({
   userId: initialUserId,
 }: UserResendModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [userId, setUserId] = useState(initialUserId || "");
+  const [internalUserId, setInternalUserId] = useState("");
 
-  useEffect(() => {
-    if (initialUserId) setUserId(initialUserId);
-  }, [initialUserId]);
+  const userId = initialUserId || internalUserId;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId.trim()) return;
     setIsLoading(true);
-    try {
-      await onConfirm(userId);
-      onClose();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Failed to resend invitation",
-        description: "Please try again later.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    await onConfirm(userId);
+    onClose();
+    setIsLoading(false);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 mb-4">
             <RefreshCw className="h-6 w-6 text-blue-600" />
@@ -74,7 +62,7 @@ export function UserResendModal({
               required
               readOnly={!!initialUserId}
               value={userId}
-              onChange={(e) => setUserId(e.target.value)}
+              onChange={(e) => setInternalUserId(e.target.value)}
               className={initialUserId ? "bg-slate-50" : ""}
             />
           </div>
