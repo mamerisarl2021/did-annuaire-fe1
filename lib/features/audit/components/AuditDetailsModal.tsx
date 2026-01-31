@@ -25,7 +25,7 @@ export function AuditDetailsModal({ audit, isOpen, onClose, isLoading }: AuditDe
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-sm[">
+      <DialogContent className="w-full max-w-sm">
         <DialogHeader>
           <div className="flex items-center justify-between mr-4">
             <DialogTitle>Audit Action Details</DialogTitle>
@@ -46,7 +46,7 @@ export function AuditDetailsModal({ audit, isOpen, onClose, isLoading }: AuditDe
               <div>
                 <Label className="text-xs text-muted-foreground">Timestamp</Label>
                 <div className="font-medium text-sm">
-                  {new Date(audit!.timestamp).toISOString().split("T")[0]}
+                  {new Date(audit!.timestamp).toISOString()}
                 </div>
               </div>
               <div>

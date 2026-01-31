@@ -44,7 +44,7 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
   useEffect(() => {
     const userData = detailedUser || user;
 
-    if (userData && detailedUser) {
+    if (userData) {
       const userFunctions = userData.functions
         ? userData.functions.split(",").map((f) => f.trim())
         : [];

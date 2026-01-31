@@ -36,9 +36,12 @@ export function UserResendModal({
     e.preventDefault();
     if (!userId.trim()) return;
     setIsLoading(true);
-    await onConfirm(userId);
-    onClose();
-    setIsLoading(false);
+    try {
+      await onConfirm(userId);
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

@@ -40,10 +40,13 @@ export function UserInviteModal({
     if (!userId.trim()) return;
     setIsLoading(true);
     // Error handling is managed by parent
-    await onConfirm(userId);
-    setUserId("");
-    onClose();
-    setIsLoading(false);
+    try {
+      await onConfirm(userId);
+    } finally {
+      setUserId("");
+      onClose();
+      setIsLoading(false);
+    }
   };
 
   return (

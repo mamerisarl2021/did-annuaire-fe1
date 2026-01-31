@@ -34,9 +34,12 @@ export function UserDeactivateModal({
 
   const handleConfirm = async () => {
     setIsLoading(true);
-    await onConfirm(user.id);
-    onClose();
-    setIsLoading(false);
+    try {
+      await onConfirm(user.id);
+    } finally {
+      onClose();
+      setIsLoading(false);
+    }
   };
 
   return (

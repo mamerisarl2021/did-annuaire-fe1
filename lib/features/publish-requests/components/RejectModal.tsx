@@ -36,8 +36,7 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
   const handleClose = () => {
     if (feedback?.type === "success") {
       onClose();
-      // Delay reset to avoid flicker
-      setTimeout(resetState, 300);
+      resetState();
     } else {
       onClose();
       resetState();
