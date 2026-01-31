@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight, Loader2, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 import {
   Stepper,
   Step1Organization,
@@ -28,6 +30,7 @@ export default function RegisterPage() {
   const { currentStep, isFirstStep, isLastStep, next, prev } = useStepper({
     totalSteps: REGISTER_STEPS.length,
   });
+  const { toast } = useToast();
 
   const { form, validateStep, onSubmit, isSubmitting: isFormSubmitting } = useRegisterForm();
 
@@ -74,12 +77,23 @@ export default function RegisterPage() {
 
       const createdOrg = await createOrganization(payload);
       const orgId = createdOrg.id;
+      const statusUrl = `/auth/register/status?organizationId=${orgId}&organizationName=${encodeURIComponent(data.name)}`;
 
-      router.push(
-        `/auth/register/status?organizationId=${orgId}&organizationName=${encodeURIComponent(data.name)}`
-      );
+      toast({
+        title: "Organization created successfully",
+        description: "Your organization creation request has been submitted.",
+        action: (
+          <ToastAction altText="View Status" onClick={() => router.push(statusUrl)}>
+            View Status
+          </ToastAction>
+        ),
+      });
     } catch (error) {
-      console.error("Registration failed", error);
+      toast({
+        variant: "destructive",
+        title: `Registration failed ${error}`,
+        description: "Please try again later.",
+      });
     }
   };
 

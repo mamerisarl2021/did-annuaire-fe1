@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { PublishRequest } from "../types/publish-request.types";
+import { toast } from "@/components/ui/use-toast";
 
 interface ApproveModalProps {
   isOpen: boolean;
@@ -30,7 +31,11 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
       setNote("");
       onClose();
     } catch (error) {
-      console.error("Approve error:", error);
+      toast({
+        variant: "destructive",
+        title: `Failed to approve publish request ${error}`,
+        description: "Please try again later.",
+      });
     } finally {
       setIsSubmitting(false);
     }

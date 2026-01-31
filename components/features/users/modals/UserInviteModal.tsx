@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 interface UserInviteModalProps {
   isOpen: boolean;
@@ -44,7 +45,11 @@ export function UserInviteModal({
       setUserId("");
       onClose();
     } catch (error) {
-      console.error("Failed to invite user", error);
+      toast({
+        variant: "destructive",
+        title: `Failed to invite user ${error}`,
+        description: "Please try again later.",
+      });
     } finally {
       setIsLoading(false);
     }

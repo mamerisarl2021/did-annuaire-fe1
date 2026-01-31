@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, RefreshCw } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 interface UserResendModalProps {
   isOpen: boolean;
@@ -42,7 +43,11 @@ export function UserResendModal({
       await onConfirm(userId);
       onClose();
     } catch (error) {
-      console.error("Failed to resend invitation", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to resend invitation",
+        description: "Please try again later.",
+      });
     } finally {
       setIsLoading(false);
     }

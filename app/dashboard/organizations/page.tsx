@@ -19,6 +19,7 @@ import {
   type OrganizationListItem,
   type OrganizationStatus,
 } from "@/lib/features/organizations/types/organization.types";
+import { toast } from "@/components/ui/use-toast";
 
 export default function OrganizationsPage() {
   // Data fetching
@@ -113,7 +114,11 @@ export default function OrganizationsPage() {
           setSelectedOrg(fullOrg);
         }
       } catch (error) {
-        console.error("Failed to fetch organization details:", error);
+        toast({
+          variant: "destructive",
+          title: `Failed to fetch organization details ${error}`,
+          description: "Please try again later.",
+        });
       }
     },
     [actions]
