@@ -86,7 +86,6 @@ export default function PublishRequestsPage() {
       refresh();
       refreshStats();
     } catch (error) {
-      // Idem : feedback géré dans RejectModal
       throw error;
     }
   };
