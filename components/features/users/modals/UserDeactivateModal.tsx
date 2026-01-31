@@ -36,6 +36,7 @@ export function UserDeactivateModal({
     setIsLoading(true);
     try {
       await onConfirm(user.id);
+      onClose();
     } finally {
       setIsLoading(false);
     }

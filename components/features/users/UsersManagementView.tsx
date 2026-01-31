@@ -70,7 +70,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const [isResendModalOpen, setIsResendModalOpen] = useState(false);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [actionResult, setActionResult] = useState<{
+  const [actionFeedback, setActionFeedback] = useState<{
     success: boolean;
     title: string;
     message: string;
@@ -82,7 +82,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
       await onConfirmInvite(user.id);
     } catch (error) {
       const msg = error instanceof Error ? error.message : "Failed to send invitation.";
-      setActionResult({ success: false, title: "Invitation Failed", message: msg });
+      setActionFeedback({ success: false, title: "Invitation Failed", message: msg });
     }
   };
 
@@ -104,14 +104,14 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const onConfirmCreate = async (payload: CreateUserPayload) => {
     try {
       await createUser(payload);
-      setActionResult({
+      setActionFeedback({
         success: true,
         title: "User Created",
         message: "User created in PENDING state.",
       });
       setIsCreateModalOpen(false);
     } catch (error) {
-      setActionResult({
+      setActionFeedback({
         success: false,
         title: "Creation Failed",
         message: error instanceof Error ? error.message : "Failed to create user",
@@ -122,28 +122,28 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const onConfirmInvite = async (userId: string) => {
     try {
       await inviteUser(userId);
-      setActionResult({
+      setActionFeedback({
         success: true,
         title: "Invitation Sent",
         message: "Invitation sent successfully.",
       });
     } catch (error) {
       const msg = error instanceof Error ? error.message : "Failed to send invitation.";
-      setActionResult({ success: false, title: "Invitation Failed", message: msg });
+      setActionFeedback({ success: false, title: "Invitation Failed", message: msg });
     }
   };
 
   const onConfirmResend = async (userId: string) => {
     try {
       await inviteUser(userId);
-      setActionResult({
+      setActionFeedback({
         success: true,
         title: "Invitation Resent",
         message: "Invitation resent successfully.",
       });
       setIsResendModalOpen(false);
     } catch (error) {
-      setActionResult({
+      setActionFeedback({
         success: false,
         title: "Invitation Failure",
         message: error instanceof Error ? error.message : "Failed to resend invitation",
@@ -154,14 +154,14 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const onConfirmUpdate = async (userId: string, payload: UpdateUserPayload) => {
     try {
       await updateUser(userId, payload);
-      setActionResult({
+      setActionFeedback({
         success: true,
         title: "Profile Updated",
         message: "Profile updated successfully.",
       });
       setIsUpdateModalOpen(false);
     } catch (error) {
-      setActionResult({
+      setActionFeedback({
         success: false,
         title: "Update Failed",
         message: error instanceof Error ? error.message : "Failed to update profile",
@@ -172,14 +172,14 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const onConfirmToggleStatus = async (userId: string) => {
     try {
       await toggleUserStatus(userId);
-      setActionResult({
+      setActionFeedback({
         success: true,
         title: "Status Updated",
         message: "User status updated successfully.",
       });
       setIsDeactivateModalOpen(false);
     } catch (error) {
-      setActionResult({
+      setActionFeedback({
         success: false,
         title: "Update Failed",
         message: error instanceof Error ? error.message : "Failed to update status",
@@ -295,11 +295,11 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
       />
 
       {/* Action Response Modal (Success/Error) */}
-      <Dialog open={!!actionResult} onOpenChange={() => setActionResult(null)}>
+      <Dialog open={!!actionFeedback} onOpenChange={() => setActionFeedback(null)}>
         <DialogContent className="w-full max-w-sm">
           <DialogHeader>
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full mb-4">
-              {actionResult?.success ? (
+              {actionFeedback?.success ? (
                 <div className="bg-emerald-100 p-3 rounded-full">
                   <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                 </div>
@@ -309,16 +309,16 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
                 </div>
               )}
             </div>
-            <DialogTitle className="text-center">{actionResult?.title}</DialogTitle>
+            <DialogTitle className="text-center">{actionFeedback?.title}</DialogTitle>
             <DialogDescription className="text-center pt-2">
-              {actionResult?.message}
+              {actionFeedback?.message}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center">
             <Button
-              onClick={() => setActionResult(null)}
+              onClick={() => setActionFeedback(null)}
               className={
-                actionResult?.success
+                actionFeedback?.success
                   ? "bg-emerald-600 hover:bg-emerald-700"
                   : "bg-rose-600 hover:bg-rose-700"
               }

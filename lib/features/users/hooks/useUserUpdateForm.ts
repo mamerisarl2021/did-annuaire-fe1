@@ -22,15 +22,10 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
   const { addToast } = useToast();
   const userId = user?.id;
 
-  const { data: detailedUser, isLoading: isFetching } = useQuery({
+  const { data: detailedUser, isLoading: isUserLoading } = useQuery({
     queryKey: ["user", userId],
     enabled: !!userId,
-    queryFn: async () => {
-      if (!userId) {
-        return Promise.reject(new Error("User ID is missing"));
-      }
-      return usersService.getUser(userId);
-    },
+    queryFn: async () => usersService.getUser(userId as string),
     staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
   const form = useForm<UserUpdateFormData>({
@@ -98,7 +93,7 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
   return {
     form,
     isSubmitting,
-    isFetching,
+    isUserLoading,
     functions,
     handleFunctionsChange,
     handleSubmit,
