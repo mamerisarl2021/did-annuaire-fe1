@@ -36,6 +36,10 @@ export function UserInviteModal({
     if (initialUserId) setUserId(initialUserId);
   }, [initialUserId]);
 
+  useEffect(() => {
+    if (isOpen) setError(null);
+  }, [isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId.trim()) return;

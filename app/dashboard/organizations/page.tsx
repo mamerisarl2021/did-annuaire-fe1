@@ -123,7 +123,8 @@ export default function OrganizationsPage() {
           setSelectedOrg(fullOrg);
         }
       } catch (error) {
-        setErrorDetails(`Failed to fetch organization details: ${error}`);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        setErrorDetails(`Failed to fetch organization details: ${errorMessage}`);
       }
     },
     [actions]

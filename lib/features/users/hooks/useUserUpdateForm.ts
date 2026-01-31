@@ -25,7 +25,12 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
   const { data: detailedUser, isLoading: isUserLoading } = useQuery({
     queryKey: ["user", userId],
     enabled: !!userId,
-    queryFn: async () => usersService.getUser(userId as string),
+    queryFn: async () => {
+      if (!userId) {
+        throw new Error("No userId");
+      }
+      return usersService.getUser(userId);
+    },
     staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
   const form = useForm<UserUpdateFormData>({

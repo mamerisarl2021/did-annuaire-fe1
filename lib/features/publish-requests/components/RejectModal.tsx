@@ -46,7 +46,6 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
     try {
       await onConfirm(note.trim() || undefined);
       setFeedback({ type: "success", message: "Publish request rejected." });
-      resetState();
     } catch (error) {
       setFeedback({
         type: "error",

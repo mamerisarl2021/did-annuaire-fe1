@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function StatusContent() {
   const searchParams = useSearchParams();
-  const organizationId = searchParams.get("organization_id") || searchParams.get("organizationId");
+  const organizationId = searchParams.get("organizationId");
   const organizationName = searchParams.get("organizationName") || "My Organization";
   const activationToken = searchParams.get("token");
 

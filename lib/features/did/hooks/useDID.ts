@@ -23,7 +23,7 @@ export function useDID(didId: string, environment?: "draft" | "prod", version?: 
           usedEnv = "draft";
           result = await didService.getDID(didId, "draft", version);
         } catch (err) {
-          console.warn(`Draft not found, attempting prod fetch... ${err}`);
+          console.warn("Draft not found, attempting prod fetch...", err);
           usedEnv = "prod";
           result = await didService.getDID(didId, "prod", version);
         }

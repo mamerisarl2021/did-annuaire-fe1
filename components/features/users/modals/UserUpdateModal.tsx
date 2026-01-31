@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -34,7 +33,7 @@ interface UserUpdateModalProps {
 }
 
 export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdateModalProps) {
-  const { form, isLoading, functions, handleFunctionsChange, handleSubmit } = useUserUpdateForm({
+  const { form, functions, handleFunctionsChange, handleSubmit } = useUserUpdateForm({
     user,
     onSuccess: onClose,
   });
@@ -65,7 +64,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                       First Name <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter first name" {...field} disabled={isLoading} />
+                      <Input placeholder="Enter first name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -81,7 +80,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                       Last Name <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter last name" {...field} disabled={isLoading} />
+                      <Input placeholder="Enter last name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -98,12 +97,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                     Email Address <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="user@company.com"
-                      {...field}
-                      disabled={isLoading}
-                    />
+                    <Input type="email" placeholder="user@company.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -119,12 +113,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                     Phone Number <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      {...field}
-                      disabled={isLoading}
-                    />
+                    <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -139,7 +128,6 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                   value=""
                   functions={functions}
                   onFunctionsChange={handleFunctionsChange}
-                  disabled={isLoading}
                 />
               )}
             />
@@ -151,11 +139,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                 render={({ field }) => (
                   <FormItem className="flex items-center space-x-3 p-4 border rounded-lg">
                     <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        disabled={isLoading}
-                      />
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div className="space-y-1">
                       <FormLabel className="font-medium cursor-pointer">Auditor Role</FormLabel>
@@ -176,7 +160,7 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        disabled={isLoading}
+                        disabled={form.formState.isSubmitting}
                       />
                     </FormControl>
                     <div className="space-y-1">
@@ -193,28 +177,11 @@ export function UserUpdateModal({ isOpen, onClose, onConfirm, user }: UserUpdate
             </div>
 
             <DialogFooter className="pt-6 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                disabled={isLoading}
-                className="min-w-[100px]"
-              >
+              <Button type="button" variant="outline" onClick={onClose} className="min-w-[100px]">
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="bg-blue-600 hover:bg-blue-700 min-w-[120px]"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  "Save Changes"
-                )}
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700 min-w-[120px]">
+                Save Changes
               </Button>
             </DialogFooter>
           </form>

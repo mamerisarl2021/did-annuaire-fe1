@@ -66,6 +66,10 @@ export default function PublishRequestsPage() {
         id: selectedRequest.id,
         payload: { note },
       });
+      setIsApproveModalOpen(false);
+      setSelectedRequest(null);
+      refresh();
+      refreshStats();
     } catch (error) {
       throw error;
     }
@@ -79,6 +83,10 @@ export default function PublishRequestsPage() {
         id: selectedRequest.id,
         payload: { note },
       });
+      setIsRejectModalOpen(false);
+      setSelectedRequest(null);
+      refresh();
+      refreshStats();
     } catch (error) {
       throw error;
     }
@@ -103,24 +111,15 @@ export default function PublishRequestsPage() {
             </p>
           </div>
 
-          <Button
-            onClick={handleRefresh}
-            variant="outline"
-            size="sm"
-            disabled={isLoading}
-          >
-            <RefreshCcw
-              className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")}
-            />
+          <Button onClick={handleRefresh} variant="outline" size="sm" disabled={isLoading}>
+            <RefreshCcw className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")} />
             Refresh
           </Button>
         </div>
 
         <div className="px-8 space-y-6 pb-8">
           {/* Stats */}
-          {!isStatsLoading && stats && (
-            <PublishRequestStatsCards stats={stats} />
-          )}
+          {!isStatsLoading && stats && <PublishRequestStatsCards stats={stats} />}
 
           {statsError && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg text-sm">
@@ -163,8 +162,6 @@ export default function PublishRequestsPage() {
           onClose={() => {
             setIsApproveModalOpen(false);
             setSelectedRequest(null);
-            refresh();
-            refreshStats();
           }}
         />
 
@@ -176,8 +173,6 @@ export default function PublishRequestsPage() {
           onClose={() => {
             setIsRejectModalOpen(false);
             setSelectedRequest(null);
-            refresh();
-            refreshStats();
           }}
         />
       </div>
