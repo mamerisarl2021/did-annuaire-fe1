@@ -28,7 +28,6 @@ export function CertificateTypeSelector({ value, onChange }: CertificateTypeSele
           <SelectItem value="DER">DER</SelectItem>
           <SelectItem value="PKCS7">PKCS7</SelectItem>
           <SelectItem value="PKCS12">PKCS12</SelectItem>
-          <SelectItem value="JWK">JWK</SelectItem>
           <SelectItem value="CRT">CRT</SelectItem>
           <SelectItem value="AUTO">AUTO</SelectItem>
         </SelectContent>

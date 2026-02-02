@@ -53,7 +53,6 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
         ? userData.functions.split(",").map((f) => f.trim())
         : [];
       setFunctions(userFunctions);
-
       form.setValue("email", userData.email || "");
       form.setValue("first_name", userData.first_name || "");
       form.setValue("last_name", userData.last_name || "");

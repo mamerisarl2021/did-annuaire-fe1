@@ -98,7 +98,7 @@ export function DIDDocumentSection({
 
                 <div className="space-y-0.5 pt-1">
                   <p className="text-[11px] font-medium text-blue-500 dark:text-blue-400">
-                    JWK Extraction:
+                    Extraction:
                   </p>
                   <p className="text-[12px] font-mono font-bold text-blue-700 dark:text-blue-200 truncate italic">
                     {certificateKey.extracted_jwk.kty} (

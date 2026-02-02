@@ -52,16 +52,14 @@ export function CertificateFileUpload({
   };
 
   const getAcceptedFormats = () => {
-    return certificateType === "JWK" ? ".pem" : ".pem,.der,.p12,.pfx,.p7b,.json";
+    return certificateType ? ".pem" : ".pem,.der,.p12,.pfx,.p7b,.json";
   };
 
   const getHelpText = () => {
     if (file) {
       return `${(file.size / 1024).toFixed(2)} KB`;
     }
-    return certificateType === "JWK"
-      ? "Public key file (.pem) only"
-      : "PEM, DER, PKCS7, or PKCS12 files";
+    return certificateType ? "Public key file (.pem) only" : "PEM, DER, PKCS7, or PKCS12 files";
   };
 
   return (

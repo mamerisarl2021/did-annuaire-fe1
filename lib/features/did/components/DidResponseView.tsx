@@ -130,7 +130,7 @@ export function DidResponseView({ result }: Props) {
                     <ParserRow label="ID" value={vm.id} />
                     <ParserRow label="TYPE" value={vm.type} />
                     <ParserRow
-                      label="PUBLIC KEY (JWK)"
+                      label="PUBLIC KEY"
                       value={JSON.stringify(vm.public_key_jwk)}
                       truncate
                     />

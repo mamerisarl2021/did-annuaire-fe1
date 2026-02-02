@@ -33,7 +33,7 @@ export function CertificateModal({
   const [uploadedKey, setUploadedKey] = useState<CertificateKey | null>(null);
 
   const handleFileSelect = async (selectedFile: File) => {
-    if (certificateType === "JWK" && !selectedFile.name.toLowerCase().endsWith(".pem")) {
+    if (certificateType && !selectedFile.name.toLowerCase().endsWith(".pem")) {
     }
 
     setFile(selectedFile);

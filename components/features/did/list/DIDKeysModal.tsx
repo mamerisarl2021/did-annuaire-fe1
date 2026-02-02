@@ -62,7 +62,7 @@ export function DIDKeysModal({ isOpen, onClose, didId }: DIDKeysModalProps) {
               <TableHeader>
                 <TableRow>
                   <TableHead>Type</TableHead>
-                  <TableHead>Public Key (JWK)</TableHead>
+                  <TableHead>Public Key</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
