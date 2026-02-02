@@ -27,7 +27,7 @@ export const API_ENDPOINTS = {
     OTP_GENERATE: "/api/users/otp/email/generate",
     OTP_VERIFY: "/api/users/otp/email/verify",
     ME: "/api/users/me",
-    DETAIL: (id: string) => `/api/users/${id}/`,
+    DETAIL: (id: string) => `/api/users/${id}/info`,
     STATS: "/api/users/stats",
     TOGGLE_STATUS: (id: string) => `/api/users/${id}/toggle`,
   },
