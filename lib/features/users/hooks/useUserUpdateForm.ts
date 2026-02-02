@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { userUpdateSchema, UserUpdateFormData } from "@/lib/validations/user.schema";
 import { User, UpdateUserPayload } from "../types/users.types";
-import { useToast } from "@/components/ui/use-toast";
 import { usersService } from "../services/users.service";
 import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 
@@ -19,7 +18,6 @@ interface UseUserUpdateFormProps {
 export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [functions, setFunctions] = useState<string[]>([]);
-  const { addToast } = useToast();
   const userId = user?.id;
 
   const { data: detailedUser, isLoading: isUserLoading } = useQuery({
@@ -83,12 +81,8 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
 
     try {
       await onConfirm(user.id, data);
-      addToast("User updated successfully", "success");
       onSuccess?.();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to update user";
-
-      addToast(errorMessage, "error");
       onError?.(error as Error);
     } finally {
       setIsSubmitting(false);
