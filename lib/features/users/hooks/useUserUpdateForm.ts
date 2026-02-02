@@ -45,7 +45,6 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
     },
   });
 
-  // Update form when user data is available
   useEffect(() => {
     const userData = detailedUser || user;
 
@@ -62,16 +61,6 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
       form.setValue("functions", userData.functions || "");
       form.setValue("can_publish_prod", !!userData.can_publish_prod);
       form.setValue("is_auditor", !!userData.is_auditor);
-
-      form.reset({
-        email: userData.email || "",
-        first_name: userData.first_name || "",
-        last_name: userData.last_name || "",
-        phone: userData.phone || "",
-        functions: userData.functions || "",
-        can_publish_prod: !!userData.can_publish_prod,
-        is_auditor: !!userData.is_auditor,
-      });
     }
   }, [detailedUser, user, form]);
 
