@@ -53,9 +53,11 @@ export const usersService = {
    * Get a single user's details
    */
   async getUser(userId: string): Promise<User> {
-    return await httpClient.get<User>(API_ENDPOINTS.USERS.DETAIL(userId), {
-      requiresAuth: true,
-    });
+    const response = await httpClient.get<{ success: boolean; message: string; data: User }>(
+      API_ENDPOINTS.USERS.DETAIL(userId),
+      { requiresAuth: true }
+    );
+    return response.data;
   },
 
   /**

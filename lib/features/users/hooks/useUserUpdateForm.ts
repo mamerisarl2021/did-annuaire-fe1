@@ -31,6 +31,7 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
     },
     staleTime: QUERY_CONFIG.STALE_TIME_STANDARD,
   });
+
   const form = useForm<UserUpdateFormData>({
     resolver: zodResolver(userUpdateSchema),
     defaultValues: {
@@ -44,6 +45,7 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
     },
   });
 
+  // Update form when user data is available
   useEffect(() => {
     const userData = detailedUser || user;
 
@@ -52,6 +54,14 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
         ? userData.functions.split(",").map((f) => f.trim())
         : [];
       setFunctions(userFunctions);
+
+      form.setValue("email", userData.email || "");
+      form.setValue("first_name", userData.first_name || "");
+      form.setValue("last_name", userData.last_name || "");
+      form.setValue("phone", userData.phone || "");
+      form.setValue("functions", userData.functions || "");
+      form.setValue("can_publish_prod", !!userData.can_publish_prod);
+      form.setValue("is_auditor", !!userData.is_auditor);
 
       form.reset({
         email: userData.email || "",
