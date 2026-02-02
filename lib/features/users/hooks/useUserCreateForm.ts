@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userCreateSchema, UserCreateFormData } from "@/lib/validations/user.schema";
 import { CreateUserPayload } from "../types/users.types";
-import { useToast } from "@/components/ui/use-toast";
 
 interface UseUserCreateFormProps {
   onSuccess?: () => void;
@@ -15,7 +14,6 @@ interface UseUserCreateFormProps {
 export function useUserCreateForm({ onSuccess, onError }: UseUserCreateFormProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [functions, setFunctions] = useState<string[]>([]);
-  const { addToast } = useToast();
 
   const form = useForm<UserCreateFormData>({
     resolver: zodResolver(userCreateSchema),
@@ -58,14 +56,9 @@ export function useUserCreateForm({ onSuccess, onError }: UseUserCreateFormProps
     try {
       const payload = preparePayload(data);
       await onConfirm(payload);
-
-      addToast("User created successfully", "success");
       resetForm();
       onSuccess?.();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to create user";
-
-      addToast(errorMessage, "error");
       onError?.(error as Error);
     } finally {
       setIsLoading(false);
