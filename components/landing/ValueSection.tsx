@@ -43,7 +43,8 @@ export function ValueSection() {
           </h2>
           <div className="mx-auto mt-6 h-1 w-24 rounded-full bg-gradient-to-r from-[var(--primary-600)] to-[var(--secondary-400)]" />
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            A modern approach to organizational identity verification, built for the future of trust.
+            A modern approach to organizational identity verification, built for the future of
+            trust.
           </p>
         </div>
 
@@ -55,7 +56,7 @@ export function ValueSection() {
               className="group relative overflow-hidden border-border/50 bg-card hover:border-[var(--primary-200)] hover:shadow-xl hover:shadow-[var(--primary-500)]/10 transition-all duration-300"
               style={{
                 animationDelay: `${index * 150}ms`,
-                // Adding arbitrary class for staggered entrance if utility isn't enough, 
+                // Adding arbitrary class for staggered entrance if utility isn't enough,
                 // but using 'animate-in' class wrapper below nicely
               }}
             >

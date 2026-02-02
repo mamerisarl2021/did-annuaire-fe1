@@ -27,7 +27,11 @@ export function HeroSection() {
 
         {/* Main Title */}
         <h1 className="animate-in slide-in-from-bottom-8 fade-in duration-700 delay-150 text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-          Build <span className="relative inline-block text-[var(--primary-600)] after:absolute after:bottom-2 after:left-0 after:-z-10 after:h-3 after:w-full after:bg-[var(--primary-50)]/50 after:content-['']">Trust</span> with{" "}
+          Build{" "}
+          <span className="relative inline-block text-[var(--primary-600)] after:absolute after:bottom-2 after:left-0 after:-z-10 after:h-3 after:w-full after:bg-[var(--primary-50)]/50 after:content-['']">
+            Trust
+          </span>{" "}
+          with{" "}
           <span className="bg-gradient-to-r from-[var(--primary-600)] to-[var(--secondary-400)] bg-clip-text text-transparent">
             Decentralized
           </span>{" "}
