@@ -52,9 +52,15 @@ export function CertificateFileUpload({
   };
 
   const getAcceptedFormats = () => {
-    return certificateType ? ".pem" : ".pem,.der,.p12,.pfx,.p7b,.json";
-  };
-
+  switch (certificateType) {
+    case "PEM": return ".pem";
+    case "DER": return ".der";
+    case "PKCS12": return ".p12,.pfx";
+    case "PKCS7": return ".p7b";
+    case "CRT": return ".crt";
+    case "AUTO": return ".pem,.der,.p12,.pfx,.p7b,.crt";
+  }
+};
   const getHelpText = () => {
     if (file) {
       return `${(file.size / 1024).toFixed(2)} KB`;
