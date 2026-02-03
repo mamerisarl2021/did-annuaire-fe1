@@ -71,7 +71,22 @@ export function CertificateFileUpload({
     if (file) {
       return `${(file.size / 1024).toFixed(2)} KB`;
     }
-    return certificateType ? "Public key file (.pem) only" : "PEM, DER, PKCS7, or PKCS12 files";
+    switch (certificateType) {
+      case "PEM":
+        return "Public key file (.pem) only";
+      case "DER":
+        return "DER certificate file (.der) only";
+      case "PKCS12":
+        return "PKCS#12 certificate file (.p12 or .pfx)";
+      case "PKCS7":
+        return "PKCS#7 certificate file (.p7b)";
+      case "CRT":
+        return "Certificate file (.crt)";
+      case "AUTO":
+        return "PEM, DER, PKCS7, PKCS12, or CRT files";
+      default:
+        return "PEM, DER, PKCS7, PKCS12, or CRT files";
+    }
   };
 
   return (

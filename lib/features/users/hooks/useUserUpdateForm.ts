@@ -53,13 +53,15 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
         ? userData.functions.split(",").map((f) => f.trim())
         : [];
       setFunctions(userFunctions);
-      form.setValue("email", userData.email || "");
-      form.setValue("first_name", userData.first_name || "");
-      form.setValue("last_name", userData.last_name || "");
-      form.setValue("phone", userData.phone || "");
-      form.setValue("functions", userData.functions || "");
-      form.setValue("can_publish_prod", !!userData.can_publish_prod);
-      form.setValue("is_auditor", !!userData.is_auditor);
+      form.reset({
+        email: userData.email || "",
+        first_name: userData.first_name || "",
+        last_name: userData.last_name || "",
+        phone: userData.phone || "",
+        functions: userData.functions || "",
+        can_publish_prod: !!userData.can_publish_prod,
+        is_auditor: !!userData.is_auditor,
+      });
     }
   }, [detailedUser, user, form]);
 

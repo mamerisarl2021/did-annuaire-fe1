@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { tokenStorage } from "@/lib/features/auth/utils/token.storage";
 import { logger } from "@/lib/shared/services/logger.service";
 import { useLogout } from "./useLogout";
@@ -11,7 +10,6 @@ import { useLogout } from "./useLogout";
  * Checks every 30 seconds if the token is expired
  */
 export function useTokenExpiration() {
-  const router = useRouter();
   const { logout } = useLogout();
 
   useEffect(() => {
@@ -27,7 +25,7 @@ export function useTokenExpiration() {
 
       if (isExpired) {
         logger.warn("useTokenExpiration: Access token expired, logging out");
-        logout();
+        logout("token_expired");
         return;
       }
 
@@ -47,5 +45,5 @@ export function useTokenExpiration() {
     return () => {
       clearInterval(intervalId);
     };
-  }, [logout, router]);
+  }, [logout]);
 }

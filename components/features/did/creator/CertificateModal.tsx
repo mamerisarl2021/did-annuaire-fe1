@@ -33,7 +33,33 @@ export function CertificateModal({
   const [uploadedKey, setUploadedKey] = useState<CertificateKey | null>(null);
 
   const handleFileSelect = async (selectedFile: File) => {
-    if (certificateType && !selectedFile.name.toLowerCase().endsWith(".pem")) {
+    const fileName = selectedFile.name.toLowerCase();
+
+    let allowedExtensions: string[] = [];
+
+    if (certificateType === "PEM") {
+      allowedExtensions = [".pem"];
+    } else if (certificateType === "DER") {
+      allowedExtensions = [".der"];
+    } else if (certificateType === "PKCS12") {
+      allowedExtensions = [".p12", ".pfx"];
+    } else if (certificateType === "PKCS7") {
+      allowedExtensions = [".p7b"];
+    } else if (certificateType === "CRT") {
+      allowedExtensions = [".crt"];
+    }
+    // AUTO allows any extension
+
+    if (allowedExtensions.length > 0) {
+      const matchesAllowedExtension = allowedExtensions.some((ext) => fileName.endsWith(ext));
+
+      if (!matchesAllowedExtension) {
+        window.alert(
+          `Selected file "${selectedFile.name}" does not match the expected format for certificate type "${certificateType}".` +
+          ` Please select a file with one of the following extensions: ${allowedExtensions.join(", ")}.`
+        );
+        return;
+      }
     }
 
     setFile(selectedFile);
