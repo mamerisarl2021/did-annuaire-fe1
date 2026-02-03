@@ -21,9 +21,8 @@ export function DidRequestTab({ value, loading, onChange, onResolve }: Props) {
 
   // Fallback DIDs in case API fails
   const fallbackDIDs = ["did:web:danubetech.com", "did:web:identity.foundation"];
-  const displayDIDs = randomDIDs?.items && randomDIDs.items.length > 0
-    ? randomDIDs.items
-    : fallbackDIDs;
+  const displayDIDs =
+    randomDIDs?.items && randomDIDs.items.length > 0 ? randomDIDs.items : fallbackDIDs;
 
   return (
     <div className="space-y-8">
@@ -52,7 +51,7 @@ export function DidRequestTab({ value, loading, onChange, onResolve }: Props) {
       >
         <AccordionItem value="item-1" className="border-none">
           <AccordionTrigger className="text-sm font-semibold text-slate-600 py-2">
-             Supported DID Methods and Test DIDs:
+            Supported DID Methods and Test DIDs:
           </AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 pt-4">
