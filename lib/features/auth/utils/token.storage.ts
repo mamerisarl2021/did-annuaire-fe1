@@ -61,7 +61,7 @@ export const tokenStorage = {
 
       const decoded = jwtDecode<JWTPayload>(tokenToCheck);
       return decoded.exp || null;
-    } catch (error) {
+    } catch {
       return null;
     }
   },
