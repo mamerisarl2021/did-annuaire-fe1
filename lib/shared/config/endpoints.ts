@@ -58,6 +58,7 @@ export const API_ENDPOINTS = {
     PUBLISH: (id: string) => `/api/registry/dids/${id}/publish`,
     DEACTIVATE: "/api/universal-registrar/deactivate",
     STATS: "/api/registry/stats",
+    RANDOM: "/api/registry/dids/random-urls",
   },
   PUBLISH_REQUESTS: {
     LIST: "/api/registry/publish-requests",

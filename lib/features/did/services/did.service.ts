@@ -169,6 +169,17 @@ export const didService = {
   },
 
   /**
+   * Get random DIDs for suggestions
+   */
+  async getRandomDIDs(limit: number = 10): Promise<{ items: string[]; count: number }> {
+    const query = new URLSearchParams({ limit: limit.toString() });
+    const endpoint = `${API_ENDPOINTS.DID.RANDOM}?${query.toString()}`;
+    return await httpClient.get<{ items: string[]; count: number }>(endpoint, {
+      requiresAuth: false,
+    });
+  },
+
+  /**
    * Get DIDs statistics
    */
   async getDIDsStats(): Promise<DIDStats> {
