@@ -172,10 +172,9 @@ export const didService = {
    * Get DIDs statistics
    */
   async getDIDsStats(): Promise<DIDStats> {
-    const response = await httpClient.get<{ success: boolean; message: string; data: DIDStats }>(
-      API_ENDPOINTS.DID.STATS,
-      { requiresAuth: true }
-    );
-    return response.data;
+    const response = await httpClient.get<DIDStats>(API_ENDPOINTS.DID.STATS, {
+      requiresAuth: true,
+    });
+    return response;
   },
 };

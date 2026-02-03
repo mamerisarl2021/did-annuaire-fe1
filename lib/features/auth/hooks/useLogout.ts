@@ -9,16 +9,26 @@ export function useLogout() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const logout = async () => {
+  const logout = async (reason?: "token_expired" | "user_initiated") => {
     setIsLoading(true);
     try {
       await authService.logout();
-      queryClient.setQueryData(["auth", "me"], null);
-      await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+
+      // Clear all query caches, not just auth
+      queryClient.clear();
+
+      if (reason === "token_expired") {
+        logger.info("User logged out due to token expiration");
+      } else {
+        logger.info("User initiated logout");
+      }
+
       router.push("/auth/login");
       router.refresh();
     } catch (error) {
       logger.error("Logout failed in useLogout hook", error);
+      // Even if logout API fails, clear local state and redirect
+      queryClient.clear();
       router.push("/auth/login");
     } finally {
       setIsLoading(false);

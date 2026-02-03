@@ -21,6 +21,37 @@ export const httpClient = {
     if (requiresAuth) {
       const token = tokenStorage.getAccessToken();
       if (token) {
+        // Check if token is expired before making the request
+        if (tokenStorage.isTokenExpired(token)) {
+          // Token is expired, trigger refresh or logout
+          const retryResponse = await authInterceptor.retryWithNewToken(url, {
+            ...rest,
+            headers: mergedHeaders,
+          });
+
+          if (!retryResponse) {
+            // Both tokens expired, clear storage and throw error
+            tokenStorage.clear();
+            throw new ApiException(401, "Session expired");
+          }
+
+          // Token refreshed successfully, use the new response
+          const response = retryResponse;
+
+          if (!response.ok) {
+            const errorData: ApiErrorResponse | string = await response
+              .json()
+              .catch(() => response.statusText);
+            throw new ApiException(response.status, errorData);
+          }
+
+          if (response.status === 204) {
+            return {} as T;
+          }
+
+          return await response.json();
+        }
+
         (mergedHeaders as Record<string, string>)["Authorization"] = `Bearer ${token}`;
       }
     }

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReactQueryProvider } from "@/lib/providers/ReactQueryProvider";
+import { TokenExpirationMonitor } from "@/components/auth/TokenExpirationMonitor";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ReactQueryProvider>
+          <TokenExpirationMonitor />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

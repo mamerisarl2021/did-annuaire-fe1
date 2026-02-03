@@ -57,7 +57,7 @@ export const API_ENDPOINTS = {
     UPDATE: "/api/universal-registrar/update",
     PUBLISH: (id: string) => `/api/registry/dids/${id}/publish`,
     DEACTIVATE: "/api/universal-registrar/deactivate",
-    STATS: "/api/registry/dids/stats",
+    STATS: "/api/registry/stats",
   },
   PUBLISH_REQUESTS: {
     LIST: "/api/registry/publish-requests",

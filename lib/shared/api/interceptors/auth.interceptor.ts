@@ -16,6 +16,15 @@ export const authInterceptor = {
     refreshPromise = (async () => {
       const refreshToken = tokenStorage.getRefreshToken();
       if (!refreshToken) {
+        logger.warn("No refresh token available");
+        isRefreshing = false;
+        return false;
+      }
+
+      // Check if refresh token is expired before attempting refresh
+      if (tokenStorage.isRefreshTokenExpired()) {
+        logger.warn("Refresh token is expired, cannot refresh session");
+        tokenStorage.clear();
         isRefreshing = false;
         return false;
       }

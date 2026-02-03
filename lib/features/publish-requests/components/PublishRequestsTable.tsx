@@ -62,6 +62,8 @@ export function PublishRequestsTable({
             <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
             <th className="px-4 py-3 text-left text-sm font-medium">Requested By</th>
             <th className="px-4 py-3 text-left text-sm font-medium">Requested</th>
+            <th className="px-4 py-3 text-left text-sm font-medium">Note</th>
+
             <th className="px-4 py-3 text-right text-sm font-medium">Actions</th>
           </tr>
         </thead>
@@ -80,6 +82,7 @@ export function PublishRequestsTable({
                   ? new Date(request.decided_at).toISOString().split("T")[0]
                   : "N/A"}
               </td>
+              <td className="px-4 py-3 text-sm">{request.note || "—"}</td>
               <td className="px-4 py-3 text-sm text-right">
                 {request.status === "PENDING" && (
                   <div className="flex justify-end gap-2">
