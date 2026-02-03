@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FileKey, X, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 import { CertificateFileUpload } from "./certificate/CertificateFileUpload";
 import { CertificatePasswordInput } from "./certificate/CertificatePasswordInput";
@@ -27,6 +28,7 @@ export function CertificateModal({
   const [file, setFile] = useState<File | null>(null);
   const [certificateType, setCertificateType] = useState<CertificateType>("PEM");
   const [password, setPassword] = useState("");
+  const { toast } = useToast();
 
   // Use upload hook
   const { uploadCertificate, isUploading, uploadError, clearError } = useCertificateUpload();
@@ -37,27 +39,37 @@ export function CertificateModal({
 
     let allowedExtensions: string[] = [];
 
-    if (certificateType === "PEM") {
-      allowedExtensions = [".pem"];
-    } else if (certificateType === "DER") {
-      allowedExtensions = [".der"];
-    } else if (certificateType === "PKCS12") {
-      allowedExtensions = [".p12", ".pfx"];
-    } else if (certificateType === "PKCS7") {
-      allowedExtensions = [".p7b"];
-    } else if (certificateType === "CRT") {
-      allowedExtensions = [".crt"];
+    switch (certificateType) {
+      case "PEM":
+        allowedExtensions = [".pem"];
+        break;
+      case "DER":
+        allowedExtensions = [".der"];
+        break;
+      case "PKCS12":
+        allowedExtensions = [".p12", ".pfx"];
+        break;
+      case "PKCS7":
+        allowedExtensions = [".p7b"];
+        break;
+      case "CRT":
+        allowedExtensions = [".crt"];
+        break;
+      case "AUTO":
+        // AUTO allows any extension
+        allowedExtensions = [];
+        break;
     }
-    // AUTO allows any extension
 
     if (allowedExtensions.length > 0) {
       const matchesAllowedExtension = allowedExtensions.some((ext) => fileName.endsWith(ext));
 
       if (!matchesAllowedExtension) {
-        window.alert(
-          `Selected file "${selectedFile.name}" does not match the expected format for certificate type "${certificateType}".` +
-          ` Please select a file with one of the following extensions: ${allowedExtensions.join(", ")}.`
-        );
+        toast({
+          title: "Invalid file format",
+          description: `File "${selectedFile.name}" does not match the expected format for certificate type "${certificateType}". Please select a file with one of the following extensions: ${allowedExtensions.join(", ")}.`,
+          variant: "destructive",
+        });
         return;
       }
     }
