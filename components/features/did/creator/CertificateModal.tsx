@@ -67,7 +67,7 @@ export function CertificateModal({
       if (!matchesAllowedExtension) {
         toast({
           title: "Invalid file format",
-          description: `File "${selectedFile.name}" does not match the expected format for certificate type "${certificateType}". Please select a file with one of the following extensions: ${allowedExtensions.join(", ")}.`,
+          description: `Please select a ${certificateType} file with extension: ${allowedExtensions.join(" or ")}.`,
           variant: "destructive",
         });
         return;
