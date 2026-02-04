@@ -12,6 +12,7 @@ import { DIDCreatorFooter } from "./sections/DIDCreatorFooter";
 import { DIDResponseSection } from "./sections/DIDResponseSection";
 import { ServiceModal } from "./ServiceModal";
 import { CertificateModal } from "./CertificateModal";
+import { getAllowedPurposes } from "@/lib/features/did/utils/keyUtils";
 
 export interface DIDCreatorProps {
   mode: DIDMode;
@@ -122,6 +123,7 @@ export function DIDCreator({
             selectedPurposes={selectedOptions}
             onTogglePurpose={toggleOption}
             disabled={mode === "resolve"}
+            allowedPurposes={getAllowedPurposes(certificateKey?.extracted_jwk || null)}
           />
 
           {/* Section: Footer Actions */}
@@ -131,6 +133,7 @@ export function DIDCreator({
             isSubmitting={isSubmitting}
             isCompiled={isCompiled}
             mode={mode}
+            canCompile={!!logicalIdentifier && !!certificateKey}
           />
         </div>
       </DIDCreatorLayout>

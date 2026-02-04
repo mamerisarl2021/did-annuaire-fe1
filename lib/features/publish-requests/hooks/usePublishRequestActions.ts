@@ -16,7 +16,6 @@ export function usePublishRequestActions(org_id?: string) {
     mutationFn: ({ id, payload }: { id: string; payload?: ApprovePayload }) =>
       publishRequestService.approveRequest(id, payload || {}),
     onSuccess: () => {
-      // Invalidate and refetch related queries
       queryClient.invalidateQueries({ queryKey: ["publish-requests", { org_id }] });
       queryClient.invalidateQueries({ queryKey: ["publish-requests", "stats", { org_id }] });
     },
@@ -29,7 +28,6 @@ export function usePublishRequestActions(org_id?: string) {
     mutationFn: ({ id, payload }: { id: string; payload?: RejectPayload }) =>
       publishRequestService.rejectRequest(id, payload || {}),
     onSuccess: () => {
-      // Invalidate and refetch related queries
       queryClient.invalidateQueries({ queryKey: ["publish-requests", { org_id }] });
       queryClient.invalidateQueries({ queryKey: ["publish-requests", "stats", { org_id }] });
     },

@@ -9,6 +9,7 @@ interface KeyPurposesSectionProps {
   selectedPurposes: OptionKey[];
   onTogglePurpose: (purpose: OptionKey) => void;
   disabled?: boolean;
+  allowedPurposes?: OptionKey[] | null;
 }
 
 const PURPOSES: { key: OptionKey; label: string; description: string }[] = [
@@ -43,15 +44,27 @@ export function KeyPurposesSection({
   selectedPurposes,
   onTogglePurpose,
   disabled,
+  allowedPurposes,
 }: KeyPurposesSectionProps) {
+  const visiblePurposes = allowedPurposes
+    ? PURPOSES.filter((p) => allowedPurposes.includes(p.key))
+    : PURPOSES;
+
   return (
     <div className="bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden p-8 space-y-6">
-      <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800 dark:text-slate-200 border-l-4 border-yellow-600 pl-4">
-        Key Purposes
-      </h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800 dark:text-slate-200 border-l-4 border-yellow-600 pl-4">
+          Key Purposes
+        </h3>
+        {allowedPurposes && (
+          <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">
+            Filtered by Certificate
+          </span>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {PURPOSES.map((purpose) => {
+        {visiblePurposes.map((purpose) => {
           const isSelected = selectedPurposes.includes(purpose.key);
           return (
             <div

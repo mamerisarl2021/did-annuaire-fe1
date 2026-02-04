@@ -58,6 +58,7 @@ export interface DID {
     [key: string]: unknown;
   };
   is_published?: boolean;
+  status?: "ACTIVE" | "DRAFT" | "DEACTIVATED";
 }
 
 export type TabType = "request" | "response" | "error";

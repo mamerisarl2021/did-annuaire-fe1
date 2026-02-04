@@ -12,6 +12,7 @@ import type {
   DIDResolutionResponse,
   KeysResponse,
   DEACTIVATEDIDResponse,
+  PreviewCertificateResponse,
 } from "../types/api.types";
 import type { DIDStats } from "../types";
 
@@ -26,6 +27,18 @@ export const didService = {
   async uploadCertificate(formData: FormData): Promise<UploadCertificateResponse> {
     const response = await multipartClient.upload<UploadCertificateResponse>(
       API_ENDPOINTS.DID.CERTIFICATES,
+      formData,
+      { requiresAuth: true }
+    );
+    return response;
+  },
+
+  /**
+   * Upload de certificat
+   */
+  async previewCertificate(formData: FormData): Promise<PreviewCertificateResponse> {
+    const response = await multipartClient.upload<PreviewCertificateResponse>(
+      API_ENDPOINTS.DID.CERTIFICATES_PREVIEW,
       formData,
       { requiresAuth: true }
     );

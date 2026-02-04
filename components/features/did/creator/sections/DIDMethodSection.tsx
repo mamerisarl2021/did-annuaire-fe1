@@ -79,9 +79,10 @@ export function DIDMethodSection({
 
           <div className="space-y-3">
             <label className="text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Document Type
+              Document Type <span className="text-red-500">*</span>
             </label>
             <Input
+              required
               value={logicalIdentifier}
               onChange={(e) => onLogicalIdentifierChange(e.target.value)}
               placeholder="eg: permis_qrcode"

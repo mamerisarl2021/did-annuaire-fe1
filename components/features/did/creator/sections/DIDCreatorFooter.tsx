@@ -11,6 +11,7 @@ interface DIDCreatorFooterProps {
   isSubmitting: boolean;
   isCompiled: boolean;
   mode: DIDMode;
+  canCompile?: boolean;
 }
 
 export function DIDCreatorFooter({
@@ -19,6 +20,7 @@ export function DIDCreatorFooter({
   isSubmitting,
   isCompiled,
   mode,
+  canCompile = true,
 }: DIDCreatorFooterProps) {
   if (mode === "resolve") return null;
 
@@ -31,10 +33,12 @@ export function DIDCreatorFooter({
       <button
         type="button"
         onClick={onCompile}
-        disabled={isSubmitting}
+        disabled={isSubmitting || !canCompile}
         className={cn(
           "flex-1 min-h-[56px] py-4 rounded-md font-black text-xs uppercase tracking-[0.2em] transition-all border",
-          "bg-blue-600/10 hover:bg-blue-600/20 text-blue-500 border-blue-500/40 shadow-[inset_0_0_20px_rgba(59,130,246,0.1)]",
+          !canCompile
+            ? "bg-slate-800 text-slate-500 cursor-not-allowed opacity-50 border-slate-700"
+            : "bg-blue-600/10 hover:bg-blue-600/20 text-blue-500 border-blue-500/40 shadow-[inset_0_0_20px_rgba(59,130,246,0.1)]",
           isSubmitting && "opacity-50 cursor-not-allowed"
         )}
       >

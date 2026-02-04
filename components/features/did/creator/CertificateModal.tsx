@@ -1,16 +1,15 @@
-import React, { useState } from "react";
-import { FileKey, X, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import React from "react";
+import { FileKey, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 
 import { CertificateFileUpload } from "./certificate/CertificateFileUpload";
 import { CertificatePasswordInput } from "./certificate/CertificatePasswordInput";
 import { ExtractedKeysPreview } from "./certificate/ExtractedKeysPreview";
-import { useCertificateUpload } from "@/lib/features/did/hooks/useCertificateUpload";
-import { CertificateKey, CertificateType } from "@/lib/features/did/types/certificate.types";
-import { VerificationMethod } from "@/lib/features/did/types";
 import { CertificateTypeSelector } from "./certificate/CertificateTypeSelector";
+import { CertificateStatusFeedback } from "./certificate/CertificateStatusFeedback";
+import { useCertificateModal } from "@/lib/features/did/hooks/useCertificateModal";
+import type { CertificateKey } from "@/lib/features/did/types/certificate.types";
 
 interface CertificateModalProps {
   isOpen: boolean;
@@ -19,103 +18,43 @@ interface CertificateModalProps {
   organizationId: string;
 }
 
+/**
+ * Certificate upload modal - Pure presentational component
+ * All business logic is handled by useCertificateModal hook
+ */
 export function CertificateModal({
   isOpen,
   onClose,
   onUpload,
   organizationId,
 }: CertificateModalProps) {
-  const [file, setFile] = useState<File | null>(null);
-  const [certificateType, setCertificateType] = useState<CertificateType>("PEM");
-  const [password, setPassword] = useState("");
-  const { toast } = useToast();
+  const {
+    // State
+    file,
+    certificateType,
+    password,
 
-  // Use upload hook
-  const { uploadCertificate, isUploading, uploadError, clearError } = useCertificateUpload();
-  const [uploadedKey, setUploadedKey] = useState<CertificateKey | null>(null);
+    // Computed state
+    previewKeys,
+    canSave,
+    isLoading,
 
-  const handleFileSelect = async (selectedFile: File) => {
-    const fileName = selectedFile.name.toLowerCase();
+    // Preview state
+    isPreviewing,
+    previewError,
+    previewData,
 
-    let allowedExtensions: string[] = [];
+    // Upload state
+    isUploading,
+    uploadError,
 
-    switch (certificateType) {
-      case "PEM":
-        allowedExtensions = [".pem"];
-        break;
-      case "DER":
-        allowedExtensions = [".der"];
-        break;
-      case "PKCS12":
-        allowedExtensions = [".p12", ".pfx"];
-        break;
-      case "PKCS7":
-        allowedExtensions = [".p7b"];
-        break;
-      case "CRT":
-        allowedExtensions = [".crt"];
-        break;
-      case "AUTO":
-        // AUTO allows any extension
-        allowedExtensions = [];
-        break;
-    }
-
-    if (allowedExtensions.length > 0) {
-      const matchesAllowedExtension = allowedExtensions.some((ext) => fileName.endsWith(ext));
-
-      if (!matchesAllowedExtension) {
-        toast({
-          title: "Invalid file format",
-          description: `Please select a ${certificateType} file with extension: ${allowedExtensions.join(" or ")}.`,
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
-    setFile(selectedFile);
-    clearError();
-    setUploadedKey(null);
-
-    // Immediate upload
-    const result = await uploadCertificate(
-      organizationId,
-      selectedFile,
-      certificateType as CertificateType,
-      password
-    );
-    if (result) {
-      setUploadedKey(result);
-    }
-  };
-
-  const handleFileRemove = () => {
-    setFile(null);
-    setUploadedKey(null);
-    clearError();
-  };
-
-  const handleSave = () => {
-    if (uploadedKey) {
-      onUpload(uploadedKey);
-      setFile(null);
-      setUploadedKey(null);
-      setPassword("");
-      onClose();
-    }
-  };
-
-  // Transform CertificateKey to VerificationMethod for preview
-  const previewKeys: VerificationMethod[] = uploadedKey
-    ? [
-        {
-          id: uploadedKey.certificate_id,
-          type: "JsonWebKey2020",
-          publicKeyJwk: uploadedKey.extracted_jwk,
-        },
-      ]
-    : [];
+    // Actions
+    setCertificateType,
+    setPassword,
+    handleFileSelect,
+    handleFileRemove,
+    handleSave,
+  } = useCertificateModal({ organizationId, onUpload, onClose });
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -124,6 +63,7 @@ export function CertificateModal({
         className="w-full max-w-[700px] p-0 overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl rounded-lg"
       >
         <div className="bg-white dark:bg-slate-950 p-8 space-y-8">
+          {/* Header */}
           <DialogHeader className="flex-row items-center justify-between space-y-0">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-[#e0f2fe] dark:bg-blue-900/30 rounded-full flex items-center justify-center border border-blue-100 dark:border-blue-800">
@@ -142,48 +82,25 @@ export function CertificateModal({
             </button>
           </DialogHeader>
 
+          {/* Form Content */}
           <div className="space-y-6">
             <CertificateTypeSelector value={certificateType} onChange={setCertificateType} />
 
             <CertificateFileUpload
               file={file}
               certificateType={certificateType}
-              error={uploadError || ""}
+              error={previewError || uploadError || ""}
               onFileSelect={handleFileSelect}
               onFileRemove={handleFileRemove}
             />
 
-            {/* Show loading state */}
-            {isUploading && (
-              <div className="flex items-center justify-center p-4 text-blue-600">
-                <Loader2 className="animate-spin mr-2" />
-                <span>Uploading and extracting keys...</span>
-              </div>
-            )}
-
-            {/* Show error message */}
-            {uploadError && !isUploading && (
-              <div className="flex items-start p-3 bg-red-50 text-red-700 rounded-md border border-red-200">
-                <AlertCircle className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="font-medium">Upload failed</p>
-                  <p className="text-sm mt-1">{uploadError}</p>
-                  {uploadError.includes("Authentication") && (
-                    <p className="text-sm mt-2 font-medium">
-                      Please try logging out and logging back in.
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Show success message */}
-            {uploadedKey && !isUploading && (
-              <div className="flex items-center p-3 bg-green-50 text-green-700 rounded-md border border-green-200">
-                <CheckCircle2 className="w-5 h-5 mr-2" />
-                <span>Certificate uploaded successfully!</span>
-              </div>
-            )}
+            <CertificateStatusFeedback
+              isPreviewing={isPreviewing}
+              isUploading={isUploading}
+              previewError={previewError}
+              uploadError={uploadError}
+              hasPreviewData={!!previewData}
+            />
 
             <CertificatePasswordInput
               value={password}
@@ -194,17 +111,19 @@ export function CertificateModal({
             <ExtractedKeysPreview keys={previewKeys} />
           </div>
 
+          {/* Actions */}
           <div className="flex justify-end gap-4 pt-2">
             <Button
               variant="outline"
               onClick={onClose}
+              disabled={isLoading}
               className="font-medium text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 px-6 h-10 rounded-[3px]"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
-              disabled={!uploadedKey || isUploading}
+              disabled={!canSave}
               className="bg-white hover:bg-slate-50 text-slate-800 font-medium border border-slate-300 dark:border-slate-700 px-6 h-10 rounded-[3px]"
             >
               Save
