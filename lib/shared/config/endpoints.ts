@@ -49,6 +49,7 @@ export const API_ENDPOINTS = {
     CREATE: "/api/registry/dids",
     PREVIEW: "/api/registry/dids/preview",
     CERTIFICATES: "/api/registry/certificates",
+    CERTIFICATES_PREVIEW: "/api/registry/certificates/preview",
     METHODS: "/api/universal-registrar/methods",
     RESOLVE: (identifier: string) => `/api/universal-resolver/identifiers/${identifier}`,
     DETAILS: (id: string) => `/api/registry/dids/${id}/document`,

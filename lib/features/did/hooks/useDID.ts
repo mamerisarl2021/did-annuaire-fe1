@@ -53,6 +53,7 @@ export function useDID(didId: string, environment?: "draft" | "prod", version?: 
           options: data.didDocumentMetadata?.key?.purposes,
         },
         is_published: data.didDocumentMetadata?.published,
+        status: data.didDocumentMetadata?.status,
       };
 
       return mappedDid;

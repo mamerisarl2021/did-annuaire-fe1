@@ -31,6 +31,7 @@ export interface DIDStateEnvelope {
         url: string;
       };
     };
+    status?: "ACTIVE" | "DRAFT" | "DEACTIVATED";
     [key: string]: unknown;
   };
   didRegistrationMetadata: {
@@ -48,6 +49,39 @@ export interface UploadCertificateRequest {
   format: CertificateType;
   file: File;
   password?: string;
+}
+
+/** Certificate Preview
+ *
+ */
+export interface PreviewCertificateRequest {
+  organization_id: string;
+  format: CertificateType;
+  file: File;
+  password?: string;
+}
+
+export interface PreviewCertificateResponse {
+  didState: {
+    state: "action" | "wait" | "error" | "finished" | "update";
+  };
+  didRegistrationMetadata: {
+    method: "web";
+    requestId: string;
+  };
+  didDocumentMetadata: {
+    certificate_id: string;
+    public_jwk: {
+      kty: string;
+      crv?: string;
+      x?: string;
+      y?: string;
+      n?: string;
+      e?: string;
+      [key: string]: unknown;
+    };
+    fingerprint: string;
+  };
 }
 
 export interface UploadCertificateResponse {
@@ -121,6 +155,7 @@ export interface DIDListItem {
   public_key_version?: number;
   public_key_jwk?: Record<string, unknown>;
   is_published?: boolean;
+  status?: "ACTIVE" | "DRAFT" | "DEACTIVATED";
 }
 
 export interface DIDListPagination {

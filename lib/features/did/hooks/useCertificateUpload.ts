@@ -8,7 +8,8 @@ export interface UseCertificateUploadReturn {
     organizationId: string,
     file: File,
     format: CertificateType,
-    password?: string
+    password?: string,
+    certificateId?: string
   ) => Promise<CertificateKey | null>;
   isUploading: boolean;
   uploadError: string | null;
@@ -17,7 +18,7 @@ export interface UseCertificateUploadReturn {
 
 /**
  * Hook for certificate upload
- * Handles file upload and JWK extraction
+ * Handles final certificate upload and persistence
  */
 export function useCertificateUpload(): UseCertificateUploadReturn {
   const [isUploading, setIsUploading] = useState(false);
@@ -32,7 +33,8 @@ export function useCertificateUpload(): UseCertificateUploadReturn {
       organizationId: string,
       file: File,
       format: CertificateType,
-      password?: string
+      password?: string,
+      certificateId?: string
     ): Promise<CertificateKey | null> => {
       setIsUploading(true);
       setUploadError(null);
@@ -45,7 +47,12 @@ export function useCertificateUpload(): UseCertificateUploadReturn {
         if (password) {
           formData.append("password", password);
         }
+        // If certificate_id is provided from preview, include it
+        if (certificateId) {
+          formData.append("certificate_id", certificateId);
+        }
 
+        logger.info("[useCertificateUpload] Uploading certificate for final persistence");
         const response = await didService.uploadCertificate(formData);
 
         return {

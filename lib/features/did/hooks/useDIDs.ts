@@ -38,6 +38,7 @@ export function useDIDs() {
         public_key_jwk: item.public_key_jwk as { kty: string; [key: string]: unknown },
         version: item.latest_version,
         is_published: item.is_published ?? false,
+        status: item.status,
       }));
 
       return {

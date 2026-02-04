@@ -24,11 +24,11 @@ export function CertificateTypeSelector({ value, onChange }: CertificateTypeSele
           <SelectValue placeholder="Select certificate type" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="PEM">PEM</SelectItem>
+          {/* <SelectItem value="PEM">PEM</SelectItem>
           <SelectItem value="DER">DER</SelectItem>
           <SelectItem value="PKCS7">PKCS7</SelectItem>
           <SelectItem value="PKCS12">PKCS12</SelectItem>
-          <SelectItem value="CRT">CRT</SelectItem>
+          <SelectItem value="CRT">CRT</SelectItem> */}
           <SelectItem value="AUTO">AUTO</SelectItem>
         </SelectContent>
       </Select>

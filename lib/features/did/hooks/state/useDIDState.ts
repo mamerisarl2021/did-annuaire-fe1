@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { MethodType, TabType, DIDMode, OptionKey } from "../../types";
 import type { CertificateKey } from "../../types/certificate.types";
+import { getAllowedPurposes } from "../../utils/keyUtils";
 
 // État initial vide pour le document DID
 const EMPTY_DID_DOCUMENT = "{}";
@@ -59,12 +60,32 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
   const [certificateKey, setCertificateKey] = useState<CertificateKey | null>(null);
   const [initialCertificateId, setInitialCertificateId] = useState("");
 
+  const handleSetLogicalIdentifier = useCallback((id: string) => {
+    setLogicalIdentifier(id);
+    setIsCompiled(false);
+  }, []);
+
   const toggleOption = useCallback((option: OptionKey) => {
     setSelectedOptions((prev) =>
       prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option]
     );
     setIsCompiled(false);
   }, []);
+
+  const handleSetCertificateKey = useCallback(
+    (key: CertificateKey | null) => {
+      setCertificateKey(key);
+      setIsCompiled(false);
+
+      if (key) {
+        const allowed = getAllowedPurposes(key.extracted_jwk || null);
+        if (allowed) {
+          setSelectedOptions((prev) => prev.filter((opt) => allowed.includes(opt)));
+        }
+      }
+    },
+    [setSelectedOptions]
+  );
 
   return {
     mode,
@@ -83,7 +104,7 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
     initialCertificateId,
     setMode,
     setSelectedMethod,
-    setLogicalIdentifier,
+    setLogicalIdentifier: handleSetLogicalIdentifier,
     setDidDocument,
     setSelectedOptions,
     toggleOption,
@@ -94,7 +115,7 @@ export function useDIDState(initialMode: DIDMode = "create"): DIDState {
     setError,
     setOrganizationId,
     setOwnerId,
-    setCertificateKey,
+    setCertificateKey: handleSetCertificateKey,
     setInitialCertificateId,
   };
 }
