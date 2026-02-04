@@ -155,7 +155,7 @@ export interface DIDListItem {
   public_key_version?: number;
   public_key_jwk?: Record<string, unknown>;
   is_published?: boolean;
-  status?: "Active" | "Draft" | "Deactivated";
+  status?: "ACTIVE" | "DRAFT" | "DEACTIVATED";
 }
 
 export interface DIDListPagination {
