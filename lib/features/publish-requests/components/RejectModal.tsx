@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -27,17 +27,17 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
     null
   );
 
-  const resetState = () => {
-    setNote("");
-    setFeedback(null);
-    setIsSubmitting(false);
-  };
-
-  const handleClose = () => {
-    onClose();
-    if (feedback?.type === "success") setTimeout(resetState, 300);
-    else resetState();
-  };
+  // Reset state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        setNote("");
+        setFeedback(null);
+        setIsSubmitting(false);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleConfirm = async () => {
     if (isSubmitting) return;
@@ -51,13 +51,12 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
         type: "error",
         message: error instanceof Error ? error.message : "Failed to reject request",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="w-full max-w-sm">
         {feedback?.type === "success" ? (
           <div className="flex flex-col items-center justify-center py-6 text-center">
@@ -66,7 +65,7 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
             </div>
             <DialogTitle className="text-xl mb-2">Rejected</DialogTitle>
             <DialogDescription className="text-center mb-6">{feedback.message}</DialogDescription>
-            <Button onClick={handleClose} className="w-full bg-slate-600 hover:bg-slate-700">
+            <Button onClick={onClose} className="w-full bg-slate-600 hover:bg-slate-700">
               Close
             </Button>
           </div>
@@ -108,10 +107,11 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
             )}
 
             <DialogFooter>
-              <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
+              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
                 Cancel
               </Button>
               <Button
+                type="button"
                 onClick={handleConfirm}
                 disabled={isSubmitting}
                 className="bg-red-600 hover:bg-red-700"
@@ -125,3 +125,4 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
     </Dialog>
   );
 }
+

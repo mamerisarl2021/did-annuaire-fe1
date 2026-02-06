@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -27,17 +27,16 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
     null
   );
 
-  const resetState = () => {
-    setNote("");
-    setFeedback(null);
-    setIsSubmitting(false);
-  };
-
-  const handleClose = () => {
-    onClose();
-    if (feedback?.type === "success") setTimeout(resetState, 300);
-    else resetState();
-  };
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        setNote("");
+        setFeedback(null);
+        setIsSubmitting(false);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleConfirm = async () => {
     if (isSubmitting) return;
@@ -46,22 +45,17 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
     try {
       await onConfirm(note.trim() || undefined);
       setFeedback({ type: "success", message: "Publish request approved successfully." });
-      setTimeout(() => {
-        onClose();
-        resetState();
-      }, 300);
     } catch (error) {
       setFeedback({
         type: "error",
         message: error instanceof Error ? error.message : "Failed to approve request",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="w-full max-w-sm">
         {feedback?.type === "success" ? (
           <div className="flex flex-col items-center justify-center py-6 text-center">
@@ -70,7 +64,7 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
             </div>
             <DialogTitle className="text-xl mb-2">Approved!</DialogTitle>
             <DialogDescription className="text-center mb-6">{feedback.message}</DialogDescription>
-            <Button onClick={handleClose} className="w-full bg-green-600 hover:bg-green-700">
+            <Button onClick={onClose} className="w-full bg-green-600 hover:bg-green-700">
               Close
             </Button>
           </div>
@@ -112,10 +106,11 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
             )}
 
             <DialogFooter>
-              <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
+              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
                 Cancel
               </Button>
               <Button
+                type="button"
                 onClick={handleConfirm}
                 disabled={isSubmitting}
                 className="bg-green-600 hover:bg-green-700"
@@ -129,3 +124,4 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
     </Dialog>
   );
 }
+

@@ -117,7 +117,7 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                     !did.status && "text-slate-500 border-slate-200 bg-slate-50/50"
                   )}
                 >
-                  {did.status || (did.is_published ? "Published" : "Draft")}
+                  {did.status}
                 </Badge>
               </TableCell>
 
@@ -148,12 +148,13 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   <Button
                     size="sm"
                     variant="outline"
-                    className={`h-8 gap-1.5 border-emerald-100 dark:border-emerald-900/40 ${did.status !== "DRAFT"
-                      ? "text-emerald-300 dark:text-emerald-900/40 cursor-not-allowed opacity-50"
-                      : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                    className={`h-8 gap-1.5 border-emerald-100 dark:border-emerald-900/40 ${
+                      did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "update")
+                        ? "text-emerald-300 dark:text-emerald-900/40 cursor-not-allowed opacity-50"
+                        : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
                       }`}
                     onClick={() => onPublish(did)}
-                    disabled={did.status !== "DRAFT"}
+                    disabled={did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "update")}
                   >
                     <QrCode className="size-4" />
                     <span className="hidden lg:inline text-[11px] font-bold">Publish</span>

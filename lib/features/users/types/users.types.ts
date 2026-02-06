@@ -5,13 +5,13 @@ export type UserStatus = "PENDING" | "INVITED" | "ACTIVE" | "DEACTIVATED";
 export interface User {
   id: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  first_name?: string;
+  last_name?: string;
   full_name: string;
   phone: string;
   role: UserRoleType;
   status: UserStatus;
-  functions: string;
+  functions: string | string[];
   organization: string;
   can_publish_prod?: boolean;
   is_auditor?: boolean;

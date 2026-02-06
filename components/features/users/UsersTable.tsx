@@ -101,7 +101,11 @@ export function UsersTable({
               <TableCell>
                 <div className="flex items-center gap-2">
                   <Briefcase className="size-3.5 text-muted-foreground" />
-                  <span className="capitalize">{user.functions}</span>
+                  <span className="capitalize">
+                    {Array.isArray(user.functions)
+                      ? user.functions.join(", ")
+                      : user.functions}
+                  </span>
                 </div>
               </TableCell>
 

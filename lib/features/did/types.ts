@@ -59,6 +59,7 @@ export interface DID {
   };
   is_published?: boolean;
   status?: "ACTIVE" | "DRAFT" | "DEACTIVATED";
+  state?: "action" | "wait" | "error" | "finished" | "update";
 }
 
 export type TabType = "request" | "response" | "error";

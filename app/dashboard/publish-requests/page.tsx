@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RoleGuard } from "@/lib/guards";
 import { UserRole } from "@/lib/types/roles";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
@@ -92,6 +92,19 @@ export default function PublishRequestsPage() {
     }
   };
 
+  /* ---------- Effects ---------- */
+
+  // Clear selected request when all modals are closed to prevent visual glitches
+  useEffect(() => {
+    if (!isApproveModalOpen && !isRejectModalOpen) {
+      // Small timeout to allow closing animation to complete
+      const timer = setTimeout(() => {
+        setSelectedRequest(null);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isApproveModalOpen, isRejectModalOpen]);
+
   const handleRefresh = () => {
     refresh();
     refreshStats();
@@ -103,7 +116,7 @@ export default function PublishRequestsPage() {
     <RoleGuard allowedRoles={[UserRole.SUPER_USER, UserRole.ORG_ADMIN]}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center px-8 pt-6">
+        <div className="flex justify-between items-center px-4 md:px-8 pt-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Publish Requests</h1>
             <p className="text-muted-foreground mt-1">
@@ -117,7 +130,7 @@ export default function PublishRequestsPage() {
           </Button>
         </div>
 
-        <div className="px-8 space-y-6 pb-8">
+        <div className="px-4 md:px-8 space-y-6 pb-8">
           {/* Stats */}
           {!isStatsLoading && stats && <PublishRequestStatsCards stats={stats} />}
 
@@ -155,25 +168,17 @@ export default function PublishRequestsPage() {
 
         {/* Modals */}
         <ApproveModal
-          key={selectedRequest?.id}
           isOpen={isApproveModalOpen}
           request={selectedRequest}
           onConfirm={handleConfirmApprove}
-          onClose={() => {
-            setIsApproveModalOpen(false);
-            setSelectedRequest(null);
-          }}
+          onClose={() => setIsApproveModalOpen(false)}
         />
 
         <RejectModal
-          key={selectedRequest?.id}
           isOpen={isRejectModalOpen}
           request={selectedRequest}
           onConfirm={handleConfirmReject}
-          onClose={() => {
-            setIsRejectModalOpen(false);
-            setSelectedRequest(null);
-          }}
+          onClose={() => setIsRejectModalOpen(false)}
         />
       </div>
     </RoleGuard>

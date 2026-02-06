@@ -49,16 +49,39 @@ export function useUserUpdateForm({ user, onSuccess, onError }: UseUserUpdateFor
     const userData = detailedUser || user;
 
     if (userData) {
-      const userFunctions = userData.functions
-        ? userData.functions.split(",").map((f) => f.trim())
-        : [];
+      // Handle functions: can be string (comma separated) or string array
+      const rawFunctions = userData.functions || "";
+      let userFunctions: string[] = [];
+
+      if (Array.isArray(rawFunctions)) {
+        userFunctions = rawFunctions.map((f) => f.trim());
+      } else if (typeof rawFunctions === "string" && rawFunctions.trim()) {
+        userFunctions = rawFunctions.split(",").map((f) => f.trim());
+      }
+
       setFunctions(userFunctions);
+
+      // Names fallback logic
+      let firstName = userData.first_name || "";
+      let lastName = userData.last_name || "";
+
+      // Extrapolate if names are missing but full_name is present
+      if (!firstName && !lastName && userData.full_name) {
+        const parts = userData.full_name.trim().split(/\s+/);
+        if (parts.length > 1) {
+          firstName = parts[0];
+          lastName = parts.slice(1).join(" ");
+        } else {
+          firstName = parts[0];
+        }
+      }
+
       form.reset({
         email: userData.email || "",
-        first_name: userData.first_name || "",
-        last_name: userData.last_name || "",
+        first_name: firstName,
+        last_name: lastName,
         phone: userData.phone || "",
-        functions: userData.functions || "",
+        functions: Array.isArray(rawFunctions) ? rawFunctions.join(", ") : (rawFunctions as string),
         can_publish_prod: !!userData.can_publish_prod,
         is_auditor: !!userData.is_auditor,
       });
