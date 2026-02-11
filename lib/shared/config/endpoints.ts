@@ -30,6 +30,7 @@ export const API_ENDPOINTS = {
     DETAIL: (id: string) => `/api/users/${id}/info`,
     STATS: "/api/users/stats",
     TOGGLE_STATUS: (id: string) => `/api/users/${id}/toggle`,
+    DELETE: (id: string) => `/api/users/${id}`,
   },
   AUDIT: {
     ACTIONS: "/api/audit/actions",

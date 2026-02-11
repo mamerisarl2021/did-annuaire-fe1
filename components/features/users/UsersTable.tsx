@@ -11,6 +11,7 @@ import {
   RefreshCw,
   Edit,
   Send,
+  Trash2,
 } from "lucide-react";
 import {
   Table,
@@ -31,6 +32,7 @@ interface UsersTableProps {
   onResend: (user: User) => void;
   onUpdate: (user: User) => void;
   onToggleStatus: (user: User) => void;
+  onDelete: (user: User) => void;
 }
 
 export function UsersTable({
@@ -40,6 +42,7 @@ export function UsersTable({
   onResend,
   onUpdate,
   onToggleStatus,
+  onDelete,
 }: UsersTableProps) {
   if (isLoading) {
     return <div className="text-center py-10 text-muted-foreground">Loading users...</div>;
@@ -102,9 +105,7 @@ export function UsersTable({
                 <div className="flex items-center gap-2">
                   <Briefcase className="size-3.5 text-muted-foreground" />
                   <span className="capitalize">
-                    {Array.isArray(user.functions)
-                      ? user.functions.join(", ")
-                      : user.functions}
+                    {Array.isArray(user.functions) ? user.functions.join(", ") : user.functions}
                   </span>
                 </div>
               </TableCell>
@@ -133,9 +134,9 @@ export function UsersTable({
                         size="sm"
                         variant="outline"
                         className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
-                        onClick={() => onToggleStatus(user)}
+                        onClick={() => onDelete(user)}
                       >
-                        <UserX className="size-4" />
+                        <Trash2 className="size-4" />
                         <span className="hidden lg:inline text-[11px] font-bold">Delete</span>
                       </Button>
                     </>
@@ -156,9 +157,9 @@ export function UsersTable({
                         size="sm"
                         variant="outline"
                         className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
-                        onClick={() => onToggleStatus(user)}
+                        onClick={() => onDelete(user)}
                       >
-                        <UserX className="size-4" />
+                        <Trash2 className="size-4" />
                         <span className="hidden lg:inline text-[11px] font-bold">Cancel</span>
                       </Button>
                     </>
@@ -198,6 +199,15 @@ export function UsersTable({
                             <span className="hidden lg:inline text-[11px] font-bold">Activate</span>
                           </>
                         )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
+                        onClick={() => onDelete(user)}
+                      >
+                        <Trash2 className="size-4" />
+                        <span className="hidden lg:inline text-[11px] font-bold">Delete</span>
                       </Button>
                     </>
                   )}

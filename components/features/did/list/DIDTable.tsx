@@ -109,11 +109,11 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   className={cn(
                     "font-bold text-[10px] uppercase tracking-wider",
                     did.status === "ACTIVE" &&
-                    "text-emerald-600 border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20",
+                      "text-emerald-600 border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20",
                     did.status === "DRAFT" &&
-                    "text-blue-600 border-blue-200 bg-blue-50/50 dark:bg-blue-950/20",
+                      "text-blue-600 border-blue-200 bg-blue-50/50 dark:bg-blue-950/20",
                     did.status === "DEACTIVATED" &&
-                    "text-red-600 border-red-200 bg-red-50/50 dark:bg-red-950/20",
+                      "text-red-600 border-red-200 bg-red-50/50 dark:bg-red-950/20",
                     !did.status && "text-slate-500 border-slate-200 bg-slate-50/50"
                   )}
                 >
@@ -152,9 +152,11 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                       did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "action")
                         ? "text-emerald-300 dark:text-emerald-900/40 cursor-not-allowed opacity-50"
                         : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                      }`}
+                    }`}
                     onClick={() => onPublish(did)}
-                    disabled={did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "action")}
+                    disabled={
+                      did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "action")
+                    }
                   >
                     <QrCode className="size-4" />
                     <span className="hidden lg:inline text-[11px] font-bold">Publish</span>
@@ -188,10 +190,11 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   <Button
                     size="sm"
                     variant="outline"
-                    className={`h-8 gap-1.5 border-red-100 dark:border-red-900/40 ${did.status !== "ACTIVE"
-                      ? "text-red-300 dark:text-red-900/40 cursor-not-allowed opacity-50"
-                      : "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      }`}
+                    className={`h-8 gap-1.5 border-red-100 dark:border-red-900/40 ${
+                      did.status !== "ACTIVE"
+                        ? "text-red-300 dark:text-red-900/40 cursor-not-allowed opacity-50"
+                        : "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    }`}
                     onClick={() => onDelete(did)}
                     disabled={did.status !== "ACTIVE"}
                   >

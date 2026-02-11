@@ -125,4 +125,3 @@ export function RejectModal({ isOpen, onClose, onConfirm, request }: RejectModal
     </Dialog>
   );
 }
-

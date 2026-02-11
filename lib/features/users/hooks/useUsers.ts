@@ -112,6 +112,17 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     }
   };
 
+  const deleteUser = async (userId: string, options: { autoRefresh?: boolean } = {}) => {
+    const { autoRefresh = true } = options;
+    try {
+      await usersService.deleteUser(userId);
+      if (autoRefresh) await refetch();
+    } catch (err) {
+      logger.error("[useUsers] Delete error:", err);
+      throw err;
+    }
+  };
+
   const setSearch = (search: string) => {
     setServerSearch(search);
     setPage(1);
@@ -137,5 +148,6 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     inviteUser,
     updateUser,
     toggleUserStatus,
+    deleteUser,
   };
 }

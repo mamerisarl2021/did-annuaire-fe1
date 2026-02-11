@@ -124,4 +124,3 @@ export function ApproveModal({ isOpen, onClose, onConfirm, request }: ApproveMod
     </Dialog>
   );
 }
-

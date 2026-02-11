@@ -8,6 +8,7 @@ import { UsersTable } from "./UsersTable";
 import { UsersSearchBar } from "./UsersSearchBar";
 import { UserCreateModal } from "./modals/UserCreateModal";
 import { UserDeactivateModal } from "./modals/UserDeactivateModal";
+import { UserDeleteModal } from "./modals/UserDeleteModal";
 import {
   Dialog,
   DialogContent,
@@ -45,6 +46,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     inviteUser,
     updateUser,
     toggleUserStatus,
+    deleteUser,
     setClientSearch,
     setStatus,
   } = useUsers({
@@ -69,6 +71,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isResendModalOpen, setIsResendModalOpen] = useState(false);
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [actionFeedback, setActionFeedback] = useState<{
     success: boolean;
@@ -99,6 +102,11 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
   const handleToggleStatus = (user: User) => {
     setSelectedUser(user);
     setIsDeactivateModalOpen(true);
+  };
+
+  const handleDelete = (user: User) => {
+    setSelectedUser(user);
+    setIsDeleteModalOpen(true);
   };
 
   const onConfirmCreate = async (payload: CreateUserPayload) => {
@@ -187,6 +195,24 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     }
   };
 
+  const onConfirmDelete = async (userId: string) => {
+    try {
+      await deleteUser(userId);
+      setActionFeedback({
+        success: true,
+        title: "User Deleted",
+        message: "User deleted successfully.",
+      });
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      setActionFeedback({
+        success: false,
+        title: "Deletion Failed",
+        message: error instanceof Error ? error.message : "Failed to delete user",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -252,6 +278,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
               onResend={handleResend}
               onUpdate={handleUpdate}
               onToggleStatus={handleToggleStatus}
+              onDelete={handleDelete}
             />
           </CardContent>
         </Card>
@@ -291,6 +318,16 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
           setSelectedUser(null);
         }}
         onConfirm={onConfirmToggleStatus}
+        user={selectedUser}
+      />
+
+      <UserDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedUser(null);
+        }}
+        onConfirm={onConfirmDelete}
         user={selectedUser}
       />
 

@@ -10,12 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { truncateDID } from "@/lib/features/did/utils/didFormatter";
 
 interface PublishRequestsTableProps {
@@ -76,7 +71,9 @@ export function PublishRequestsTable({
               <TableHead className="px-4 py-3 text-left text-sm font-medium">Version</TableHead>
               <TableHead className="px-4 py-3 text-left text-sm font-medium">Environment</TableHead>
               <TableHead className="px-4 py-3 text-left text-sm font-medium">Status</TableHead>
-              <TableHead className="px-4 py-3 text-left text-sm font-medium">Requested By</TableHead>
+              <TableHead className="px-4 py-3 text-left text-sm font-medium">
+                Requested By
+              </TableHead>
               <TableHead className="px-4 py-3 text-left text-sm font-medium">Requested</TableHead>
               <TableHead className="px-4 py-3 text-left text-sm font-medium">Note</TableHead>
               <TableHead className="px-4 py-3 text-right text-sm font-medium">Actions</TableHead>
@@ -101,7 +98,9 @@ export function PublishRequestsTable({
                 <TableCell className="px-4 py-3 text-sm">
                   <Badge variant="secondary">{request.environment}</Badge>
                 </TableCell>
-                <TableCell className="px-4 py-3 text-sm">{getStatusBadge(request.status)}</TableCell>
+                <TableCell className="px-4 py-3 text-sm">
+                  {getStatusBadge(request.status)}
+                </TableCell>
                 <TableCell className="px-4 py-3 text-sm">{request.requested_by}</TableCell>
                 <TableCell className="px-4 py-3 text-sm text-muted-foreground">
                   {request.decided_at
@@ -145,4 +144,3 @@ export function PublishRequestsTable({
     </div>
   );
 }
-

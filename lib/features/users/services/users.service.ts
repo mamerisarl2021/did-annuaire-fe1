@@ -97,4 +97,11 @@ export const usersService = {
       { requiresAuth: true }
     );
   },
+
+  /** Delete user for organizations */
+  async deleteUser(userId: string): Promise<{ success: boolean }> {
+    return await httpClient.delete<{ success: boolean }>(API_ENDPOINTS.USERS.DELETE(userId), {
+      requiresAuth: true,
+    });
+  },
 };

@@ -41,9 +41,7 @@ export function useUserCreateForm({ onSuccess, onError }: UseUserCreateFormProps
       first_name: data.first_name.trim(),
       last_name: data.last_name.trim(),
       phone: data.phone.trim(),
-      functions: Array.isArray(data.functions)
-        ? data.functions.join(", ")
-        : (data.functions || ""),
+      functions: Array.isArray(data.functions) ? data.functions.join(", ") : data.functions || "",
       can_publish_prod: data.can_publish_prod,
       is_auditor: data.is_auditor,
     };

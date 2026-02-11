@@ -157,7 +157,6 @@ export interface DIDListItem {
   is_published?: boolean;
   status?: "ACTIVE" | "DRAFT" | "DEACTIVATED";
   state?: "action" | "wait" | "error" | "finished" | "update";
-
 }
 
 export interface DIDListPagination {

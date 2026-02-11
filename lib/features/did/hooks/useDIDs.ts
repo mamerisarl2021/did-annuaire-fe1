@@ -35,7 +35,7 @@ export function useDIDs() {
         owner_id: item.owner_id,
         document_type: item.document_type,
         public_key_version: item.public_key_version,
-        public_key_jwk: item.public_key_jwk as { kty: string;[key: string]: unknown },
+        public_key_jwk: item.public_key_jwk as { kty: string; [key: string]: unknown },
         version: item.latest_version,
         is_published: item.is_published ?? false,
         status: item.status,
