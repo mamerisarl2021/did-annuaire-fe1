@@ -60,7 +60,8 @@ export function DashboardSidebar({ className }: { className?: string }) {
       title: "DIDs",
       href: "/dashboard/dids",
       icon: Fingerprint,
-      roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN, UserRole.ORG_MEMBER],
+      roles: [UserRole.ORG_ADMIN, UserRole.ORG_MEMBER],
+      //roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN, UserRole.ORG_MEMBER],
     },
     {
       title: "Resolve DID",

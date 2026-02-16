@@ -124,7 +124,7 @@ export default function DIDListPage() {
   };
 
   return (
-    <RoleGuard allowedRoles={[UserRole.ORG_ADMIN, UserRole.ORG_MEMBER, UserRole.SUPER_USER]}>
+    <RoleGuard allowedRoles={[UserRole.ORG_ADMIN, UserRole.ORG_MEMBER /*, UserRole.SUPER_USER]*/]}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center px-8 pt-6">
