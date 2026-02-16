@@ -17,12 +17,9 @@ type Props = {
 };
 
 export function DidRequestTab({ value, loading, onChange, onResolve }: Props) {
-  const { data: randomDIDs, isLoading, isError } = useRandomDIDs(10);
+  const { data: randomDIDs, isLoading } = useRandomDIDs(10);
 
-  // Fallback DIDs in case API fails
-  const fallbackDIDs = ["did:web:danubetech.com", "did:web:identity.foundation"];
-  const displayDIDs =
-    randomDIDs?.items && randomDIDs.items.length > 0 ? randomDIDs.items : fallbackDIDs;
+  const displayDIDs = randomDIDs?.items && randomDIDs.items.length > 0 ? randomDIDs.items : [];
 
   return (
     <div className="space-y-8">
@@ -74,7 +71,7 @@ export function DidRequestTab({ value, loading, onChange, onResolve }: Props) {
                         <Skeleton key={i} className="h-12 w-full" />
                       ))}
                     </div>
-                  ) : (
+                  ) : displayDIDs.length > 0 ? (
                     // Display DIDs
                     <div className="space-y-2">
                       {displayDIDs.map((did, index) => (
@@ -87,11 +84,9 @@ export function DidRequestTab({ value, loading, onChange, onResolve }: Props) {
                         </div>
                       ))}
                     </div>
-                  )}
-
-                  {isError && !isLoading && (
-                    <p className="text-xs text-amber-600 mt-2">
-                      Unable to load random DIDs. Showing fallback examples.
+                  ) : (
+                    <p className="text-sm text-slate-500 italic py-4">
+                      No available DIDs for testing at the moment.
                     </p>
                   )}
                 </div>
