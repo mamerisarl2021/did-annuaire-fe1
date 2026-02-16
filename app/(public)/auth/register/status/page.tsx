@@ -19,7 +19,6 @@ function StatusContent() {
   const searchParams = useSearchParams();
   const organizationId = searchParams.get("organizationId");
   const organizationName = searchParams.get("organizationName") || "My Organization";
-  const activationToken = searchParams.get("token");
 
   // Use React Query hook - now takes organizationId as direct parameter
   const { status, isLoading, refetch } = useOrganizationStatus(organizationId || undefined, {
@@ -92,7 +91,6 @@ function StatusContent() {
           <StatusMessage
             status={currentStatus}
             organizationName={organizationName}
-            activationToken={activationToken || undefined}
           />
 
           {currentStatus === OrganizationStatus.PENDING && (
