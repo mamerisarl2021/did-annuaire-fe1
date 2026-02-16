@@ -7,7 +7,6 @@ import { OrganizationStatus, type OrganizationStatusType } from "@/lib/types/org
 interface StatusMessageProps {
   status: OrganizationStatusType;
   organizationName?: string;
-  activationToken?: string;
   className?: string;
 }
 
@@ -18,7 +17,6 @@ interface StatusMessageProps {
 export function StatusMessage({
   status,
   organizationName,
-  activationToken,
   className,
 }: StatusMessageProps) {
   return (
@@ -62,12 +60,6 @@ export function StatusMessage({
               administrator account.
             </p>
           </div>
-
-          <Button className="w-full" size="lg" asChild>
-            <Link href={activationToken ? `/activate?token=${activationToken}` : "/auth/activate"}>
-              Activate my account
-            </Link>
-          </Button>
         </>
       )}
 
