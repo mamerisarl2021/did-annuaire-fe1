@@ -198,7 +198,7 @@ export default function ProfilePage() {
                     Téléphone
                   </div>
                   <p className="text-sm font-mono bg-secondary/30 px-3 py-2 rounded-lg border border-[#dfe1e6]">
-                    {user.phone}
+                    {user.phone || "Non spécifié"}
                   </p>
                 </div>
 
@@ -209,7 +209,7 @@ export default function ProfilePage() {
                     Nom complet
                   </div>
                   <p className="text-xs font-mono bg-secondary/30 px-3 py-2 rounded-lg border border-[#dfe1e6] break-all">
-                    {user.full_name}
+                    {user.full_name || "Non spécifié"}
                   </p>
                 </div>
               </div>
@@ -231,7 +231,7 @@ export default function ProfilePage() {
                     <div className="text-sm font-medium text-muted-foreground mb-1">
                       Nom de l&apos;organisation
                     </div>
-                    <p className="text-lg font-semibold text-[#172b4d]">{user.organization.name}</p>
+                    <p className="text-lg font-semibold text-[#172b4d]">{user.organization.name || "Non spécifiée"}</p>
                   </div>
                 </div>
               </CardContent>
