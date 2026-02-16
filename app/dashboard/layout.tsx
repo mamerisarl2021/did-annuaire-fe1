@@ -37,11 +37,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen bg-muted/20">
       {/* Sidebar hidden on mobile, visible on md+ */}
-      <aside className="hidden md:block w-64 shrink-0">
+      <aside className="hidden md:block w-64 shrink-0 pt-[73px]">
         <DashboardSidebar className="h-full" />
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 pt-[73px]">
         <DashboardHeader />
         <main className="flex-1 overflow-y-auto flex flex-col">
           <div className="flex-1 p-4 md:p-8">{children}</div>

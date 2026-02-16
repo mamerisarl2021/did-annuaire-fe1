@@ -26,7 +26,7 @@ export function PublicHeader() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo / Brand */}
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
