@@ -136,6 +136,10 @@ export const authService = {
             functions?: string[];
             status?: UserStatus;
             phone?: string;
+            totp_enabled?: boolean;
+            can_publish_prod?: boolean;
+            first_name?: string;
+            last_name?: string;
           };
           role?: string | string[];
           is_superuser?: boolean;
@@ -145,6 +149,10 @@ export const authService = {
           status?: UserStatus;
           phone?: string;
           organization?: { id: string; name: string };
+          first_name?: string;
+          last_name?: string;
+          totp_enabled?: boolean;
+          can_publish_prod?: boolean;
         }>(API_ENDPOINTS.USERS.ME);
 
         logger.debug("User profile /me raw response", response);

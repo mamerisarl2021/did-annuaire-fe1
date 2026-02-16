@@ -20,9 +20,14 @@ interface UserApiResponse {
   is_staff?: boolean;
   organization?: { id: string; name: string };
   full_name?: string;
+  first_name?: string;
+  last_name?: string;
   functions?: string[];
   status?: string;
   phone?: string;
+  totp_enabled?: boolean | false;
+  can_publish_prod?: boolean | false;
+  last_login?: string;
 }
 
 export const authMapper = {
@@ -103,6 +108,8 @@ export const authMapper = {
         organization_id: jwtData.organization_id || "",
         is_active: true,
         full_name: "",
+        totp_enabled: false,
+        can_publish_prod: false,
       };
     }
 
@@ -141,6 +148,11 @@ export const authMapper = {
     // Remove duplicates and logs
     normalizedRoles = Array.from(new Set(normalizedRoles));
 
+    const fullName = apiData.full_name || 
+      (apiData.first_name && apiData.last_name 
+        ? `${apiData.first_name} ${apiData.last_name}`.trim() 
+        : apiData.first_name || apiData.last_name || "");
+
     return {
       id: apiData.id || jwtData.id || "",
       email: apiData.email || jwtData.email || "",
@@ -149,10 +161,13 @@ export const authMapper = {
       organization_id: organizationId,
       organization: apiData.organization,
       is_active: true,
-      full_name: apiData.full_name || "",
+      full_name: fullName,
       functions: apiData.functions,
       status: apiData.status as UserStatus,
       phone: apiData.phone,
+      totp_enabled: apiData.totp_enabled,
+      can_publish_prod: apiData.can_publish_prod,
+      last_login: apiData.last_login,
     };
   },
 

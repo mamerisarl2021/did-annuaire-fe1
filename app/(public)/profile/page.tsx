@@ -163,7 +163,6 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex-grow">
                   <div className="flex items-center gap-3 mb-2">
-                    <h2 className="text-2xl font-bold text-[#172b4d]">{user.full_name}</h2>
                     {getStatusBadge(user.status || "ACTIVE")}
                   </div>
                   <Badge className={cn("mb-3", getRoleBadgeColor(user.role))}>
@@ -203,14 +202,14 @@ export default function ProfilePage() {
                   </p>
                 </div>
 
-                {/* User ID */}
+                {/* User full_name */}
                 <div className="space-y-2 md:col-span-2">
                   <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                     <Key size={16} className="text-primary" />
-                    Identifiant Utilisateur
+                    Nom complet
                   </div>
                   <p className="text-xs font-mono bg-secondary/30 px-3 py-2 rounded-lg border border-[#dfe1e6] break-all">
-                    {user.id}
+                    {user.full_name}
                   </p>
                 </div>
               </div>
@@ -233,14 +232,6 @@ export default function ProfilePage() {
                       Nom de l&apos;organisation
                     </div>
                     <p className="text-lg font-semibold text-[#172b4d]">{user.organization.name}</p>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground mb-1">
-                      ID Organisation
-                    </div>
-                    <p className="text-xs font-mono bg-secondary/30 px-3 py-2 rounded-lg border border-[#dfe1e6] break-all">
-                      {user.organization.id}
-                    </p>
                   </div>
                 </div>
               </CardContent>
