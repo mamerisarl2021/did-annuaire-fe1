@@ -176,6 +176,7 @@ export interface DIDListParams {
   org_id?: string;
   page?: number;
   page_size?: number;
+  status?: "draft" | "prod"; 
 }
 
 export interface ResolutionParser {

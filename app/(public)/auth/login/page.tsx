@@ -73,6 +73,16 @@ export default function LoginPage() {
                   Register Organization
                 </Link>
               </div>
+
+              {/* Forgot Password Link */}
+              <div className="mt-2 text-center text-sm">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-muted-foreground hover:text-primary hover:underline"
+                >
+                  Mot de passe oublié ?
+                </Link>
+              </div>
             </CardContent>
           </Card>
         );

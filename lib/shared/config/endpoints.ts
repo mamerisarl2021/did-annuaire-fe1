@@ -31,6 +31,8 @@ export const API_ENDPOINTS = {
     STATS: "/api/users/stats",
     TOGGLE_STATUS: (id: string) => `/api/users/${id}/toggle`,
     DELETE: (id: string) => `/api/users/${id}`,
+    PASSWORD_RESET_REQUEST: "/api/users/password/reset-request",
+    PASSWORD_RESET_CONFIRM: "/api/users/password/reset-confirm",
   },
   AUDIT: {
     ACTIONS: "/api/audit/actions",

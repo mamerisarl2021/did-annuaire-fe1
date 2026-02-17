@@ -165,4 +165,31 @@ export const authService = {
       return null;
     }
   },
+
+  async requestPasswordReset(payload: {
+    email: string;
+  }): Promise<{ message: string }> {
+    const response = await httpClient.post<{ message?: string }>(
+      API_ENDPOINTS.USERS.PASSWORD_RESET_REQUEST,
+      payload,
+      { requiresAuth: false }
+    );
+    return {
+      message: response.message || "Si l'adresse email existe, un lien de réinitialisation a été envoyé."
+    };
+  },
+
+  async confirmPasswordReset(payload: {
+    token: string;
+    new_password: string;
+  }): Promise<{ message: string }> {
+    const response = await httpClient.post<{ message?: string }>(
+      API_ENDPOINTS.USERS.PASSWORD_RESET_CONFIRM,
+      payload,
+      { requiresAuth: false }
+    );
+    return {
+      message: response.message || "Votre mot de passe a été réinitialisé avec succès."
+    };
+  },
 };

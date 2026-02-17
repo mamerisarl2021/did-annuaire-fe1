@@ -47,3 +47,24 @@ export interface AuthState {
   isLoading: boolean;
   error: string | null;
 }
+
+// Password Reset Types
+export interface PasswordResetRequestPayload {
+  email: string;
+}
+
+export interface PasswordResetConfirmPayload {
+  token: string;
+  new_password: string;
+}
+
+export interface PasswordResetResponse {
+  message: string;
+}
+
+export type PasswordResetStep =
+  | "REQUEST"           // Formulaire email
+  | "REQUEST_SUCCESS"   // Email envoyé
+  | "TOKEN_INVALID"     // Token expiré/invalide
+  | "RESET"             // Formulaire nouveau password
+  | "SUCCESS";          // Password changé
