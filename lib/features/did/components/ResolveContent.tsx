@@ -11,7 +11,6 @@ import { DidResponseView } from "../components/DidResponseView";
 
 type TabValue = "request" | "response" | "error";
 
-
 export function ResolveContent() {
   const { state, resolve } = useDidResolution();
   const [input, setInput] = useState("");
@@ -34,7 +33,7 @@ export function ResolveContent() {
   };
 
   const handleResolve = () => {
-    setManualTab(null); 
+    setManualTab(null);
     resolve(input);
   };
 
@@ -45,7 +44,11 @@ export function ResolveContent() {
           {/* Header content if needed */}
         </CardHeader>
         <CardContent className="flex-1">
-          <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full h-full flex flex-col">
+          <Tabs
+            value={selectedTab}
+            onValueChange={handleTabChange}
+            className="w-full h-full flex flex-col"
+          >
             <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="request">Request</TabsTrigger>
               <TabsTrigger value="response" disabled={state.status !== "success"}>

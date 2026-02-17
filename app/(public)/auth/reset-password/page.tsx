@@ -4,13 +4,7 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, XCircle } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { usePasswordResetWorkflow } from "@/lib/features/auth/hooks/usePasswordResetWorkflow";
@@ -67,9 +61,7 @@ export default function ResetPasswordPage() {
                 <CheckCircle className="size-6 text-green-600" />
               </div>
               <CardTitle className="text-xl">Mot de passe réinitialisé !</CardTitle>
-              <CardDescription>
-                Votre mot de passe a été modifié avec succès.
-              </CardDescription>
+              <CardDescription>Votre mot de passe a été modifié avec succès.</CardDescription>
             </CardHeader>
             <CardContent>
               <Link href="/auth/login">
@@ -96,15 +88,12 @@ export default function ResetPasswordPage() {
                 <XCircle className="size-6 text-destructive" />
               </div>
               <CardTitle className="text-xl">Lien invalide ou expiré</CardTitle>
-              <CardDescription>
-                Ce lien de réinitialisation n&apos;est plus valide.
-              </CardDescription>
+              <CardDescription>Ce lien de réinitialisation n&apos;est plus valide.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Alert variant="destructive">
                 <AlertDescription>
-                  Les liens de réinitialisation expirent après 1 heure ou après avoir été
-                  utilisés.
+                  Les liens de réinitialisation expirent après 1 heure ou après avoir été utilisés.
                 </AlertDescription>
               </Alert>
 
@@ -133,9 +122,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md">
         <Card className="shadow-lg">
           <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold">
-              Réinitialiser votre mot de passe
-            </CardTitle>
+            <CardTitle className="text-2xl font-bold">Réinitialiser votre mot de passe</CardTitle>
             <CardDescription>Entrez votre nouveau mot de passe ci-dessous</CardDescription>
           </CardHeader>
           <CardContent>
