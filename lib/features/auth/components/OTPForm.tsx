@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ApiException } from "@/lib/shared/api/api.errors";
 import {
   InputOTP,
   InputOTPGroup,
@@ -19,7 +20,7 @@ interface OTPFormProps {
   /** Whether verification is in progress */
   isVerifying?: boolean;
   /** Error message to display */
-  error?: string | null;
+  error?: ApiException | Error | string | null;
   /** Description text */
   description?: string;
   /** Additional CSS classes */
@@ -76,7 +77,7 @@ export function OTPForm({
           </InputOTPGroup>
         </InputOTP>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {error && <p className="text-sm text-destructive">{ApiException.getMessage(error)}</p>}
       </div>
 
       <Button type="submit" className="w-full" disabled={isVerifying || otpValue.length !== 6}>

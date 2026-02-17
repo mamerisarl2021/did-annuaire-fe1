@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2, Mail, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ApiException } from "@/lib/shared/api/api.errors";
 import {
   InputOTP,
   InputOTPGroup,
@@ -18,7 +19,7 @@ interface EmailOTPFormProps {
   isGenerating?: boolean;
   otpSent?: boolean;
   isVerifying?: boolean;
-  error?: string | null;
+  error?: ApiException | Error | string | null;
   className?: string;
 }
 
@@ -87,7 +88,7 @@ export function EmailOTPForm({
               </>
             )}
           </Button>
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && <p className="text-sm text-destructive">{ApiException.getMessage(error)}</p>}
         </div>
       ) : (
         /* Step 2: OTP Input Form (after code is sent) */
@@ -135,7 +136,7 @@ export function EmailOTPForm({
               </InputOTPGroup>
             </InputOTP>
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && <p className="text-sm text-destructive">{ApiException.getMessage(error)}</p>}
           </div>
 
           <Button type="submit" className="w-full" disabled={isVerifying || otpValue.length !== 6}>

@@ -9,17 +9,26 @@ import { logger } from "@/lib/shared/services/logger.service";
  * Hook for Publish Request mutations (approve/reject)
  * Uses React Query mutations with automatic cache invalidation
  */
+import { useErrorToast } from "@/lib/shared/hooks/useErrorToast";
+
+/**
+ * Hook for Publish Request mutations (approve/reject)
+ * Uses React Query mutations with automatic cache invalidation
+ */
 export function usePublishRequestActions(org_id?: string) {
   const queryClient = useQueryClient();
+  const { showError, showSuccess } = useErrorToast();
 
   const approveMutation = useMutation({
     mutationFn: ({ id, payload }: { id: string; payload?: ApprovePayload }) =>
       publishRequestService.approveRequest(id, payload || {}),
     onSuccess: () => {
+      showSuccess("Demande de publication approuvée.");
       queryClient.invalidateQueries({ queryKey: ["publish-requests", { org_id }] });
       queryClient.invalidateQueries({ queryKey: ["publish-requests", "stats", { org_id }] });
     },
     onError: (err) => {
+      showError(err, "Échec de l'approbation");
       logger.error("[usePublishRequestActions] Approve error:", err);
     },
   });
@@ -28,10 +37,12 @@ export function usePublishRequestActions(org_id?: string) {
     mutationFn: ({ id, payload }: { id: string; payload?: RejectPayload }) =>
       publishRequestService.rejectRequest(id, payload || {}),
     onSuccess: () => {
+      showSuccess("Demande de publication rejetée.");
       queryClient.invalidateQueries({ queryKey: ["publish-requests", { org_id }] });
       queryClient.invalidateQueries({ queryKey: ["publish-requests", "stats", { org_id }] });
     },
     onError: (err) => {
+      showError(err, "Échec du rejet");
       logger.error("[usePublishRequestActions] Reject error:", err);
     },
   });

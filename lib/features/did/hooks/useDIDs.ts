@@ -8,10 +8,15 @@ import { didService } from "../services/did.service";
 import { logger } from "@/lib/shared/services/logger.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
+import { useErrorToast } from "@/lib/shared/hooks/useErrorToast";
+import { useApiError } from "@/lib/shared/hooks/useApiError";
+
 export function useDIDs() {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const { showError, showSuccess } = useErrorToast();
+  const { error: apiError, setError: setApiError, clearError } = useApiError();
 
   // Debounce search for server-side filtering
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -19,38 +24,43 @@ export function useDIDs() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["dids", { page, pageSize, search: debouncedSearch }],
     queryFn: async () => {
-      const response = await didService.getAllDIDs({
-        page,
-        page_size: pageSize,
-      });
+      try {
+        const response = await didService.getAllDIDs({
+          page,
+          page_size: pageSize,
+        });
 
-      const rawItems = response.items || [];
-      const items: DID[] = rawItems.map((item) => ({
-        id: item.did,
-        method: "WEB",
-        didDocument: {} as DIDDocument,
-        created: item.created_at || new Date().toISOString(),
-        organization_id: item.organization_id,
-        organization_name: item.organization_name,
-        owner_id: item.owner_id,
-        document_type: item.document_type,
-        public_key_version: item.public_key_version,
-        public_key_jwk: item.public_key_jwk as { kty: string; [key: string]: unknown },
-        version: item.latest_version,
-        is_published: item.is_published ?? false,
-        status: item.status,
-        state: item.state,
-      }));
+        const rawItems = response.items || [];
+        const items: DID[] = rawItems.map((item) => ({
+          id: item.did,
+          method: "WEB",
+          didDocument: {} as DIDDocument,
+          created: item.created_at || new Date().toISOString(),
+          organization_id: item.organization_id,
+          organization_name: item.organization_name,
+          owner_id: item.owner_id,
+          document_type: item.document_type,
+          public_key_version: item.public_key_version,
+          public_key_jwk: item.public_key_jwk as { kty: string;[key: string]: unknown },
+          version: item.latest_version,
+          is_published: item.is_published ?? false,
+          status: item.status,
+          state: item.state,
+        }));
 
-      return {
-        items,
-        pagination: response.pagination || {
-          page: 1,
-          page_size: 10,
-          total: 0,
-          total_pages: 1,
-        },
-      };
+        return {
+          items,
+          pagination: response.pagination || {
+            page: 1,
+            page_size: 10,
+            total: 0,
+            total_pages: 1,
+          },
+        };
+      } catch (err) {
+        setApiError(err);
+        throw err;
+      }
     },
     staleTime: QUERY_CONFIG.STALE_TIME_FAST,
   });
@@ -78,11 +88,11 @@ export function useDIDs() {
   const deactivateDID = async (did: string) => {
     try {
       const response = await didService.deactivateDID(did);
-      logger.info(`[useDIDs] Deactivated DID ${did}`, { response });
+      showSuccess("Le DID a été désactivé avec succès.");
       await refetch();
       return response;
     } catch (err) {
-      logger.error(`[useDIDs] Failed to deactivate DID ${did}:`, err);
+      showError(err as any, "Échec de la désactivation");
       throw err;
     }
   };
@@ -90,10 +100,11 @@ export function useDIDs() {
   const publishDID = async (id: string) => {
     try {
       const response = await didService.publishDID(id);
-      logger.info(`[useDIDs] Published DID ${id}`, { response });
+      showSuccess("Le DID a été publié avec succès.");
+      await refetch(); // Proactively refetch after publish
       return response;
     } catch (err) {
-      logger.error(`[useDIDs] Failed to publish DID ${id}:`, err);
+      showError(err as any, "Échec de la publication");
       throw err;
     }
   };
@@ -101,12 +112,13 @@ export function useDIDs() {
   return {
     dids: filteredDIDs,
     isLoading,
-    error: error ? (error as Error).message : null,
+    error: apiError,
     searchQuery,
     setSearchQuery,
     refreshDIDs: refetch,
     deactivateDID,
     publishDID,
+    clearError,
     pagination: {
       ...pagination,
       setPage,
