@@ -9,13 +9,13 @@ interface UsePasswordResetApiReturn {
   requestReset: (email: string) => Promise<{ message: string }>;
   confirmReset: (token: string, password: string) => Promise<{ message: string }>;
   isLoading: boolean;
-  error: string | null;
+  error: ApiException | null;
   clearError: () => void;
 }
 
 export function usePasswordResetApi(): UsePasswordResetApiReturn {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiException | null>(null);
 
   const clearError = () => setError(null);
 
@@ -27,15 +27,10 @@ export function usePasswordResetApi(): UsePasswordResetApiReturn {
       const result = await authService.requestPasswordReset({ email });
       return result;
     } catch (err) {
-      let message = "Une erreur est survenue. Veuillez réessayer.";
-
-      if (err instanceof ApiException) {
-        message = err.message;
-      }
-
-      logger.error("Password reset request failed", err);
-      setError(message);
-      throw err;
+      const apiErr = err instanceof ApiException ? err : new ApiException(0, err as any);
+      logger.error("Password reset request failed", apiErr);
+      setError(apiErr);
+      throw apiErr;
     } finally {
       setIsLoading(false);
     }
@@ -52,21 +47,10 @@ export function usePasswordResetApi(): UsePasswordResetApiReturn {
       });
       return result;
     } catch (err) {
-      let message = "La réinitialisation a échoué. Veuillez réessayer.";
-
-      if (err instanceof ApiException) {
-        if (err.code === "RESET_TOKEN_INVALID") {
-          message = "Le lien de réinitialisation est invalide ou a expiré.";
-        } else if (err.code === "PASSWORD_VALIDATION_FAILED") {
-          message = err.message;
-        } else {
-          message = err.message;
-        }
-      }
-
-      logger.error("Password reset confirm failed", err);
-      setError(message);
-      throw err;
+      const apiErr = err instanceof ApiException ? err : new ApiException(0, err as any);
+      logger.error("Password reset confirm failed", apiErr);
+      setError(apiErr);
+      throw apiErr;
     } finally {
       setIsLoading(false);
     }

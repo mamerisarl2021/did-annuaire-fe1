@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { ErrorAlert } from "@/components/ui/error-alert";
 import { usePasswordResetWorkflow } from "@/lib/features/auth/hooks/usePasswordResetWorkflow";
 import { PasswordResetConfirmForm } from "@/lib/features/auth/components/PasswordResetFormComponent";
 import { getPasswordStrengthLabel } from "@/lib/schemas/activation.schema";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -127,11 +128,7 @@ export default function ResetPasswordPage() {
           </CardHeader>
           <CardContent>
             {/* Error Alert */}
-            {error && (
-              <Alert variant="destructive" className="mb-4">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+            <ErrorAlert error={error} className="mb-4" />
 
             {/* Reset Form */}
             <PasswordResetConfirmForm
@@ -144,5 +141,19 @@ export default function ResetPasswordPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gray-50">
+          <Loader2 className="size-8 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

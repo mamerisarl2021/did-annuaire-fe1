@@ -15,7 +15,7 @@ interface UsePasswordResetWorkflowReturn {
   requestForm: UseFormReturn<PasswordResetRequestFormData>;
   confirmForm: UseFormReturn<PasswordResetConfirmFormData>;
   isLoading: boolean;
-  error: string | null;
+  error: ApiException | null;
   passwordStrength: ReturnType<typeof getPasswordStrength>;
   requestPasswordReset: (email: string) => Promise<void>;
   confirmPasswordReset: (password: string, token?: string) => Promise<void>;
