@@ -20,10 +20,6 @@ export class ApiException extends Error {
     this.extra = normalized.extra;
     this.originalError = normalized.originalError;
     this.isNetworkErrorFlag = !!normalized.isNetworkError;
-
-    // Safety check for data if it's an object
-    const dataObj =
-      typeof data === "object" && data !== null ? (data as Record<string, unknown>) : {};
   }
 
   /**

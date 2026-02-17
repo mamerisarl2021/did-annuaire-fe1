@@ -43,7 +43,7 @@ export function ErrorAlert({
       <AlertDescription className="space-y-2">
         <p>{message}</p>
 
-        {showCode && (errorCode) && (
+        {showCode && errorCode && (
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-mono opacity-70">
             {errorCode && <span className="uppercase tracking-wider">Code: {errorCode}</span>}
           </div>
