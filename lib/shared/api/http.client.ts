@@ -13,10 +13,8 @@ export const httpClient = {
     const { requiresAuth = true, headers = {}, ...rest } = options;
     const url = getApiUrl(endpoint);
 
-    const requestId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
     const mergedHeaders: HeadersInit = {
       "Content-Type": "application/json",
-      "X-Request-ID": requestId,
       ...headers,
     };
 
@@ -34,18 +32,17 @@ export const httpClient = {
           if (!retryResponse) {
             // Both tokens expired, clear storage and throw error
             tokenStorage.clear();
-            throw new ApiException(401, "Session expired", requestId);
+            throw new ApiException(401, "Session expired");
           }
 
           // Token refreshed successfully, use the new response
           const response = retryResponse;
-          const responseRequestId = response.headers.get("X-Request-ID") || requestId;
 
           if (!response.ok) {
             const errorData: ApiErrorResponse | string = await response
               .json()
               .catch(() => response.statusText);
-            throw new ApiException(response.status, errorData, responseRequestId);
+            throw new ApiException(response.status, errorData);
           }
 
           if (response.status === 204) {
@@ -65,8 +62,6 @@ export const httpClient = {
         headers: mergedHeaders,
       });
 
-      const responseRequestId = response.headers.get("X-Request-ID") || requestId;
-
       if (response.status === 401 && requiresAuth) {
         const retryResponse = await authInterceptor.retryWithNewToken(url, {
           ...rest,
@@ -74,7 +69,7 @@ export const httpClient = {
         });
 
         if (!retryResponse) {
-          throw new ApiException(401, "Session expired", responseRequestId);
+          throw new ApiException(401, "Session expired");
         }
 
         response = retryResponse;
@@ -84,7 +79,7 @@ export const httpClient = {
         const errorData: ApiErrorResponse | string = await response
           .json()
           .catch(() => response.statusText);
-        throw new ApiException(response.status, errorData, responseRequestId);
+        throw new ApiException(response.status, errorData);
       }
 
       if (response.status === 204) {
@@ -95,7 +90,7 @@ export const httpClient = {
     } catch (error) {
       if (error instanceof ApiException) throw error;
 
-      throw new ApiException(0, "Network error or server unavailable", requestId);
+      throw new ApiException(0, "Network error or server unavailable");
     }
   },
 

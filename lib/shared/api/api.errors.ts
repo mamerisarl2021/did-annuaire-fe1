@@ -5,12 +5,11 @@ export class ApiException extends Error {
   public status: number;
   public code: string;
   public fieldErrors?: Record<string, string[]>;
-  public requestId?: string;
   public extra?: Record<string, unknown>;
   public originalError?: unknown;
   public isNetworkErrorFlag: boolean = false;
 
-  constructor(status: number, data: unknown, requestId?: string) {
+  constructor(status: number, data: unknown) {
     const normalized = ErrorParser.parse(data, status);
 
     super(normalized.message);
@@ -25,7 +24,6 @@ export class ApiException extends Error {
     // Safety check for data if it's an object
     const dataObj =
       typeof data === "object" && data !== null ? (data as Record<string, unknown>) : {};
-    this.requestId = requestId || (dataObj["requestId"] as string);
   }
 
   /**
@@ -98,7 +96,6 @@ export class ApiException extends Error {
     return {
       code: this.code,
       status: this.status,
-      requestId: this.requestId,
       fieldErrors: this.fieldErrors,
       extra: this.extra,
     };

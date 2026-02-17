@@ -4,7 +4,6 @@ export interface BackendAPIError {
   status: number;
   errors?: Record<string, string[]>;
   extra?: Record<string, unknown>;
-  requestId?: string;
 }
 
 export interface LegacyErrorResponse {

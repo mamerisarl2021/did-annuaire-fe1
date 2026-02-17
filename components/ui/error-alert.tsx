@@ -31,11 +31,9 @@ export function ErrorAlert({
 
   // Extract details from ApiException if present
   let errorCode: string | undefined;
-  let requestId: string | undefined;
 
   if (error instanceof ApiException) {
     errorCode = error.code;
-    requestId = error.requestId;
   }
 
   return (
@@ -45,10 +43,9 @@ export function ErrorAlert({
       <AlertDescription className="space-y-2">
         <p>{message}</p>
 
-        {showCode && (errorCode || requestId) && (
+        {showCode && (errorCode) && (
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-mono opacity-70">
             {errorCode && <span className="uppercase tracking-wider">Code: {errorCode}</span>}
-            {requestId && <span>Request ID: {requestId}</span>}
           </div>
         )}
       </AlertDescription>
