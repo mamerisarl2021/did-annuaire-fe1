@@ -63,8 +63,8 @@ export interface PasswordResetResponse {
 }
 
 export type PasswordResetStep =
-  | "REQUEST"           // Formulaire email
-  | "REQUEST_SUCCESS"   // Email envoyé
-  | "TOKEN_INVALID"     // Token expiré/invalide
-  | "RESET"             // Formulaire nouveau password
-  | "SUCCESS";          // Password changé
+  | "REQUEST" // Formulaire email
+  | "REQUEST_SUCCESS" // Email envoyé
+  | "TOKEN_INVALID" // Token expiré/invalide
+  | "RESET" // Formulaire nouveau password
+  | "SUCCESS"; // Password changé

@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import { Mail, ArrowLeft } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { usePasswordResetWorkflow } from "@/lib/features/auth/hooks/usePasswordResetWorkflow";
@@ -88,10 +82,7 @@ export default function ForgotPasswordPage() {
 
             {/* Back to Login Link */}
             <div className="mt-6 text-center">
-              <Link
-                href="/auth/login"
-                className="text-sm text-muted-foreground hover:text-primary"
-              >
+              <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-primary">
                 <ArrowLeft size={14} className="mr-1 inline" />
                 Retour à la connexion
               </Link>

@@ -80,7 +80,7 @@ export const didService = {
     if (params.org_id) query.append("org_id", params.org_id);
     if (params.page) query.append("page", params.page.toString());
     if (params.page_size) query.append("page_size", params.page_size.toString());
-    // add filters status (draft/prod) 
+    // add filters status (draft/prod)
     if (params.status) query.append("status", params.status);
 
     const endpoint = `${API_ENDPOINTS.DID.LIST}?${query.toString()}`;

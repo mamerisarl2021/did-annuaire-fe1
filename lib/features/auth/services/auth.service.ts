@@ -166,16 +166,15 @@ export const authService = {
     }
   },
 
-  async requestPasswordReset(payload: {
-    email: string;
-  }): Promise<{ message: string }> {
+  async requestPasswordReset(payload: { email: string }): Promise<{ message: string }> {
     const response = await httpClient.post<{ message?: string }>(
       API_ENDPOINTS.USERS.PASSWORD_RESET_REQUEST,
       payload,
       { requiresAuth: false }
     );
     return {
-      message: response.message || "Si l'adresse email existe, un lien de réinitialisation a été envoyé."
+      message:
+        response.message || "Si l'adresse email existe, un lien de réinitialisation a été envoyé.",
     };
   },
 
@@ -189,7 +188,7 @@ export const authService = {
       { requiresAuth: false }
     );
     return {
-      message: response.message || "Votre mot de passe a été réinitialisé avec succès."
+      message: response.message || "Votre mot de passe a été réinitialisé avec succès.",
     };
   },
 };

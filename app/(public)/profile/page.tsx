@@ -231,7 +231,9 @@ export default function ProfilePage() {
                     <div className="text-sm font-medium text-muted-foreground mb-1">
                       Nom de l&apos;organisation
                     </div>
-                    <p className="text-lg font-semibold text-[#172b4d]">{user.organization.name || "Non spécifiée"}</p>
+                    <p className="text-lg font-semibold text-[#172b4d]">
+                      {user.organization.name || "Non spécifiée"}
+                    </p>
                   </div>
                 </div>
               </CardContent>

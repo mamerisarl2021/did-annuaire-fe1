@@ -148,9 +148,10 @@ export const authMapper = {
     // Remove duplicates and logs
     normalizedRoles = Array.from(new Set(normalizedRoles));
 
-    const fullName = apiData.full_name || 
-      (apiData.first_name && apiData.last_name 
-        ? `${apiData.first_name} ${apiData.last_name}`.trim() 
+    const fullName =
+      apiData.full_name ||
+      (apiData.first_name && apiData.last_name
+        ? `${apiData.first_name} ${apiData.last_name}`.trim()
         : apiData.first_name || apiData.last_name || "");
 
     return {

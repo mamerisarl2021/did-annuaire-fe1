@@ -47,9 +47,7 @@ export function PasswordResetRequestForm({
           disabled={isSubmitting}
           {...register("email")}
         />
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
@@ -96,17 +94,13 @@ export function PasswordResetConfirmForm({
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
-        {errors.password && (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
 
         {/* Password Strength Indicator */}
         {passwordStrength && passwordStrength.label && (
           <div className="text-sm">
             Force du mot de passe :{" "}
-            <span className={passwordStrength.color}>
-              {passwordStrength.label}
-            </span>
+            <span className={passwordStrength.color}>{passwordStrength.label}</span>
           </div>
         )}
       </div>
@@ -132,9 +126,7 @@ export function PasswordResetConfirmForm({
           </button>
         </div>
         {errors.confirmPassword && (
-          <p className="text-sm text-destructive">
-            {errors.confirmPassword.message}
-          </p>
+          <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
         )}
       </div>
 
