@@ -1,58 +1,12 @@
-<<<<<<< HEAD
-import { UseFormReturn, Path } from "react-hook-form";
+import { UseFormReturn, FieldValues, Path } from "react-hook-form";
 import { ApiException } from "../api/api.errors";
 import { FieldErrorMapper } from "./field-error-mapper";
 
-export class FormErrorHandler {
-    /**
-     * Centralizes error handling for form submissions.
-     */
-    static handleFormError<T extends Record<string, any>>(
-        error: unknown,
-        form: UseFormReturn<T>,
-        fieldMapping?: Record<string, Path<T>>,
-        options: {
-            setError?: (error: ApiException) => void;
-            showToast?: (error: ApiException) => void;
-        } = {}
-    ) {
-        if (!(error instanceof ApiException)) {
-            return;
-        }
-
-        const apiError = error as ApiException;
-
-        // Handle field errors
-        if (apiError.fieldErrors) {
-            const mappedErrors = fieldMapping
-                ? FieldErrorMapper.mapBackendErrorsToFields(apiError.fieldErrors, fieldMapping)
-                : apiError.fieldErrors;
-
-            for (const [field, messages] of Object.entries(mappedErrors)) {
-                form.setError(field as Path<T>, {
-                    type: "manual",
-                    message: messages[0],
-                });
-            }
-        }
-
-        // Handle global error
-        if (options.setError) {
-            options.setError(apiError);
-        }
-
-        // Specific toast if requested
-        if (options.showToast) {
-            options.showToast(apiError);
-=======
-import { UseFormReturn, FieldValues } from "react-hook-form";
-import { ApiException } from "../api/api.errors";
-import { FieldErrorMapper } from "./field-error-mapper";
-
-interface HandleOptions {
+interface HandleOptions<T extends FieldValues> {
     showToast?: boolean;
     showInline?: boolean;
     toastTitle?: string;
+    fieldMapping?: Record<string, Path<T>>;
     onFieldError?: (error: ApiException) => void;
     onGeneralError?: (error: ApiException) => void;
 }
@@ -68,14 +22,15 @@ export class FormErrorHandler {
         error: unknown,
         form: UseFormReturn<T>,
         showErrorToast: (err: unknown, title?: string) => void,
-        options: HandleOptions = {}
+        options: HandleOptions<T> = {}
     ): void {
         const {
             showToast = true,
             showInline = true,
             toastTitle,
+            fieldMapping,
             onFieldError,
-            onGeneralError
+            onGeneralError,
         } = options;
 
         if (!(error instanceof ApiException)) {
@@ -83,29 +38,77 @@ export class FormErrorHandler {
             return;
         }
 
+        const apiError = error as ApiException;
+
         // 1. Handle validation errors (field errors)
-        if (error.isValidationError() && error.hasFieldErrors()) {
-            FieldErrorMapper.mapToForm(error, form.setError);
+        if (apiError.isValidationError() && apiError.hasFieldErrors()) {
+            if (fieldMapping && apiError.fieldErrors) {
+                const mappedErrors = FieldErrorMapper.mapBackendErrorsToFields(
+                    apiError.fieldErrors,
+                    fieldMapping as any
+                );
+
+                for (const [field, messages] of Object.entries(mappedErrors)) {
+                    form.setError(field as Path<T>, {
+                        type: "server",
+                        message: Array.isArray(messages) ? messages[0] : String(messages),
+                    });
+                }
+            } else {
+                FieldErrorMapper.mapToForm(apiError, form.setError);
+            }
 
             if (onFieldError) {
-                onFieldError(error);
+                onFieldError(apiError);
             }
 
             // If we don't show inline errors (Alert), we might want at least a toast
             if (!showInline && showToast) {
-                showErrorToast(error, toastTitle);
+                showErrorToast(apiError, toastTitle);
             }
         }
         // 2. Handle general errors
         else {
             if (showToast) {
-                showErrorToast(error, toastTitle);
+                showErrorToast(apiError, toastTitle);
             }
 
             if (onGeneralError) {
-                onGeneralError(error);
+                onGeneralError(apiError);
             }
->>>>>>> feature/exception
         }
+    }
+
+    /**
+     * Legacy method for backward compatibility.
+     */
+    static handleFormError<T extends FieldValues>(
+        error: unknown,
+        form: UseFormReturn<T>,
+        fieldMapping?: Record<string, Path<T>>,
+        options: {
+            setError?: (error: ApiException) => void;
+            showToast?: (error: ApiException) => void;
+        } = {}
+    ) {
+        if (!(error instanceof ApiException)) return;
+
+        const apiError = error as ApiException;
+
+        if (apiError.fieldErrors) {
+            const mappedErrors = fieldMapping
+                ? FieldErrorMapper.mapBackendErrorsToFields(apiError.fieldErrors, fieldMapping as any)
+                : apiError.fieldErrors;
+
+            for (const [field, messages] of Object.entries(mappedErrors)) {
+                form.setError(field as Path<T>, {
+                    type: "manual",
+                    message: messages[0],
+                });
+            }
+        }
+
+        if (options.setError) options.setError(apiError);
+        if (options.showToast) options.showToast(apiError);
     }
 }

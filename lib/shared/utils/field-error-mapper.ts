@@ -1,24 +1,3 @@
-<<<<<<< HEAD
-/**
- * Mappe les erreurs de validation backend aux noms de champs react-hook-form.
- */
-export class FieldErrorMapper {
-    /**
-     * Mappe les erreurs backend vers les noms de champs du formulaire.
-     */
-    static mapBackendErrorsToFields(
-        backendErrors: Record<string, string[]>,
-        mapping: Record<string, string>
-    ): Record<string, string[]> {
-        const mappedErrors: Record<string, string[]> = {};
-
-        for (const [backendField, errors] of Object.entries(backendErrors)) {
-            const formField = mapping[backendField] || backendField;
-            mappedErrors[formField] = errors;
-        }
-
-        return mappedErrors;
-=======
 import { UseFormSetError, FieldValues, Path } from "react-hook-form";
 import { ApiException } from "../api/api.errors";
 
@@ -28,16 +7,13 @@ export class FieldErrorMapper {
      * @param error The ApiException containing field errors
      * @param setError The react-hook-form setError function
      */
-    static mapToForm<T extends FieldValues>(
-        error: unknown,
-        setError: UseFormSetError<T>
-    ): void {
+    static mapToForm<T extends FieldValues>(error: unknown, setError: UseFormSetError<T>): void {
         if (!(error instanceof ApiException) || !error.fieldErrors) {
             return;
         }
 
         Object.entries(error.fieldErrors).forEach(([field, messages]) => {
-            // Handle the case where the backend field name might be slightly different 
+            // Handle the case where the backend field name might be slightly different
             // (e.g., snake_case vs camelCase)
             const formField = this.mapFieldName(field) as Path<T>;
 
@@ -73,6 +49,22 @@ export class FieldErrorMapper {
         };
 
         return mappings[field] || field;
->>>>>>> feature/exception
+    }
+
+    /**
+     * Mappe les erreurs backend vers les noms de champs du formulaire (Legacy support if needed).
+     */
+    static mapBackendErrorsToFields(
+        backendErrors: Record<string, string[]>,
+        mapping: Record<string, string>
+    ): Record<string, string[]> {
+        const mappedErrors: Record<string, string[]> = {};
+
+        for (const [backendField, errors] of Object.entries(backendErrors)) {
+            const formField = mapping[backendField] || backendField;
+            mappedErrors[formField] = errors;
+        }
+
+        return mappedErrors;
     }
 }
