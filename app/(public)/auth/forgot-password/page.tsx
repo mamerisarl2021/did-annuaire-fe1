@@ -5,6 +5,7 @@ import { Mail, ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { ErrorAlert } from "@/components/ui/error-alert";
 import { usePasswordResetWorkflow } from "@/lib/features/auth/hooks/usePasswordResetWorkflow";
 import { PasswordResetRequestForm } from "@/lib/features/auth/components/PasswordResetFormComponent";
 
@@ -67,11 +68,7 @@ export default function ForgotPasswordPage() {
           </CardHeader>
           <CardContent>
             {/* Error Alert */}
-            {error && (
-              <Alert variant="destructive" className="mb-4">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+            <ErrorAlert error={error} className="mb-4" />
 
             {/* Request Form */}
             <PasswordResetRequestForm

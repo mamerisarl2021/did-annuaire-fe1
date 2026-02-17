@@ -1,4 +1,3 @@
-import { type ApiErrorResponse, NormalizedApiError } from "@/lib/shared/types/api.types";
 import { ErrorParser } from "./error-parser";
 import { ErrorMessageTranslator } from "../utils/error-messages";
 
@@ -7,11 +6,11 @@ export class ApiException extends Error {
   public code: string;
   public fieldErrors?: Record<string, string[]>;
   public requestId?: string;
-  public extra?: Record<string, any>;
-  public originalError?: any;
+  public extra?: Record<string, unknown>;
+  public originalError?: unknown;
   public isNetworkErrorFlag: boolean = false;
 
-  constructor(status: number, data: any, requestId?: string) {
+  constructor(status: number, data: unknown, requestId?: string) {
     const normalized = ErrorParser.parse(data, status);
 
     super(normalized.message);
@@ -22,7 +21,11 @@ export class ApiException extends Error {
     this.extra = normalized.extra;
     this.originalError = normalized.originalError;
     this.isNetworkErrorFlag = !!normalized.isNetworkError;
-    this.requestId = requestId || (data as any)?.requestId;
+
+    // Safety check for data if it's an object
+    const dataObj =
+      typeof data === "object" && data !== null ? (data as Record<string, unknown>) : {};
+    this.requestId = requestId || (dataObj["requestId"] as string);
   }
 
   /**

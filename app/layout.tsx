@@ -35,9 +35,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <ErrorBoundary>
-              {children}
-            </ErrorBoundary>
+            <ErrorBoundary>{children}</ErrorBoundary>
             <Toaster />
           </ThemeProvider>
         </ReactQueryProvider>

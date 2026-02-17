@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
 import { PublishRequest } from "@/lib/features/publish-requests/types/publish-request.types";
 import { cn } from "@/lib/utils";
+import { ErrorAlert } from "@/components/ui/error-alert";
 
 export default function PublishRequestsPage() {
   const { user } = useAuth();
@@ -135,9 +136,7 @@ export default function PublishRequestsPage() {
           {!isStatsLoading && stats && <PublishRequestStatsCards stats={stats} />}
 
           {statsError && (
-            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg text-sm">
-              Unable to load statistics: {statsError}
-            </div>
+            <ErrorAlert error={statsError} title="Unable to load statistics" className="mb-6" />
           )}
 
           {/* Table */}
@@ -150,11 +149,7 @@ export default function PublishRequestsPage() {
                 onStatusChange={setStatusFilter}
               />
 
-              {error && (
-                <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6 border border-destructive/20 text-sm">
-                  Error: {error}
-                </div>
-              )}
+              <ErrorAlert error={error} className="mb-6" />
 
               <PublishRequestsTable
                 requests={requests}

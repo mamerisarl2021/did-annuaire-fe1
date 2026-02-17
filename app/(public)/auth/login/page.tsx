@@ -11,7 +11,6 @@ import { OTPForm } from "@/lib/features/auth/components/OTPForm";
 import { EmailOTPForm } from "@/lib/features/auth/components/EmailOTPForm";
 import { getDashboardRoute } from "@/lib/types/roles";
 import { type AuthUser } from "@/lib/features/auth/types/auth.types";
-import { ApiException } from "@/lib/shared/api/api.errors";
 
 export default function LoginPage() {
   const router = useRouter();

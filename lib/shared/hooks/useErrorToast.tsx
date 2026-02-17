@@ -9,47 +9,47 @@ import { ERROR_CONFIG } from "../config/error.config";
  * Hook to display standardized error and success toasts.
  */
 export function useErrorToast() {
-    const { toast } = useToast();
+  const { toast } = useToast();
 
-    const showError = (error: ApiException | Error | string | null | undefined, title?: string) => {
-        if (!error) return;
+  const showError = (error: unknown, title?: string) => {
+    if (!error) return;
 
-        const message = ApiException.getMessage(error);
+    const message = ApiException.getMessage(error);
 
-        let errorCode: string | undefined;
+    let errorCode: string | undefined;
 
-        if (error instanceof ApiException) {
-            errorCode = error.code;
-        }
+    if (error instanceof ApiException) {
+      errorCode = error.code;
+    }
 
-        toast({
-            variant: "destructive",
-            title: title || ERROR_CONFIG.DEFAULT_ERROR_TITLE,
-            description: (
-                <div className="flex flex-col gap-1">
-                    <span>{message}</span>
-                    {errorCode && ERROR_CONFIG.SHOW_ERROR_CODES && (
-                        <span className="text-[10px] font-mono opacity-70 uppercase tracking-wider">
-                            Code: {errorCode}
-                        </span>
-                    )}
-                </div>
-            ) as any,
-            duration: ERROR_CONFIG.TOAST_DURATION,
-        });
-    };
+    toast({
+      variant: "destructive",
+      title: title || ERROR_CONFIG.DEFAULT_ERROR_TITLE,
+      description: (
+        <div className="flex flex-col gap-1">
+          <span>{message}</span>
+          {errorCode && ERROR_CONFIG.SHOW_ERROR_CODES && (
+            <span className="text-[10px] font-mono opacity-70 uppercase tracking-wider">
+              Code: {errorCode}
+            </span>
+          )}
+        </div>
+      ) as React.ReactNode,
+      duration: ERROR_CONFIG.TOAST_DURATION,
+    });
+  };
 
-    const showSuccess = (message: string, title?: string) => {
-        toast({
-            variant: "default",
-            title: title || ERROR_CONFIG.DEFAULT_SUCCESS_TITLE,
-            description: message,
-            duration: ERROR_CONFIG.TOAST_DURATION,
-        });
-    };
+  const showSuccess = (message: string, title?: string) => {
+    toast({
+      variant: "default",
+      title: title || ERROR_CONFIG.DEFAULT_SUCCESS_TITLE,
+      description: message,
+      duration: ERROR_CONFIG.TOAST_DURATION,
+    });
+  };
 
-    return {
-        showError,
-        showSuccess,
-    };
+  return {
+    showError,
+    showSuccess,
+  };
 }

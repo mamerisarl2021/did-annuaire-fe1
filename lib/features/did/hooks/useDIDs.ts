@@ -5,7 +5,6 @@ import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { useState, useMemo } from "react";
 import { DID, DIDDocument } from "../types";
 import { didService } from "../services/did.service";
-import { logger } from "@/lib/shared/services/logger.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
 import { useErrorToast } from "@/lib/shared/hooks/useErrorToast";
@@ -21,7 +20,7 @@ export function useDIDs() {
   // Debounce search for server-side filtering
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["dids", { page, pageSize, search: debouncedSearch }],
     queryFn: async () => {
       try {
@@ -41,7 +40,7 @@ export function useDIDs() {
           owner_id: item.owner_id,
           document_type: item.document_type,
           public_key_version: item.public_key_version,
-          public_key_jwk: item.public_key_jwk as { kty: string;[key: string]: unknown },
+          public_key_jwk: item.public_key_jwk as { kty: string; [key: string]: unknown },
           version: item.latest_version,
           is_published: item.is_published ?? false,
           status: item.status,
@@ -92,7 +91,7 @@ export function useDIDs() {
       await refetch();
       return response;
     } catch (err) {
-      showError(err as any, "Échec de la désactivation");
+      showError(err, "Échec de la désactivation");
       throw err;
     }
   };
@@ -104,7 +103,7 @@ export function useDIDs() {
       await refetch(); // Proactively refetch after publish
       return response;
     } catch (err) {
-      showError(err as any, "Échec de la publication");
+      showError(err, "Échec de la publication");
       throw err;
     }
   };

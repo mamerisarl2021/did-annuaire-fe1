@@ -16,7 +16,7 @@ export function usePublishRequests(org_id?: string) {
   // Debounce search
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["publish-requests", { org_id, status: statusFilter, search: debouncedSearch }],
     queryFn: async () => {
       if (!org_id) return [];

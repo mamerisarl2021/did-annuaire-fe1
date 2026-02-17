@@ -43,7 +43,7 @@ export function useLoginApi() {
         if (err instanceof ApiException) {
           setError(err);
         } else {
-          setError(new ApiException(0, err as any));
+          setError(new ApiException(0, err));
         }
         throw err;
       } finally {
@@ -62,7 +62,7 @@ export function useLoginApi() {
       if (err instanceof ApiException) {
         setError(err);
       } else {
-        setError(new ApiException(0, err as any));
+        setError(new ApiException(0, err));
       }
       throw err;
     } finally {
@@ -89,7 +89,7 @@ export function useLoginApi() {
         if (err instanceof ApiException) {
           setError(err);
         } else {
-          setError(new ApiException(0, err as any));
+          setError(new ApiException(0, err));
         }
         throw err;
       } finally {

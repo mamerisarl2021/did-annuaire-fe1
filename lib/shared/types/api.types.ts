@@ -3,7 +3,7 @@ export interface BackendAPIError {
   code: string;
   status: number;
   errors?: Record<string, string[]>;
-  extra?: Record<string, any>;
+  extra?: Record<string, unknown>;
   requestId?: string;
 }
 
@@ -24,8 +24,8 @@ export interface NormalizedApiError {
   code: string;
   status: number;
   fieldErrors?: Record<string, string[]>;
-  extra?: Record<string, any>;
-  originalError?: any;
+  extra?: Record<string, unknown>;
+  originalError?: unknown;
   isNetworkError?: boolean;
 }
 

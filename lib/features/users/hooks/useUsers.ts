@@ -5,7 +5,6 @@ import { useState, useMemo } from "react";
 import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { usersService } from "../services/users.service";
 import { GetUsersParams, CreateUserPayload, UpdateUserPayload } from "../types/users.types";
-import { logger } from "@/lib/shared/services/logger.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
 import { useErrorToast } from "@/lib/shared/hooks/useErrorToast";
@@ -36,7 +35,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     org_id: initialParams.org_id,
   };
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["users", params],
     queryFn: async () => {
       try {
@@ -83,7 +82,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
       if (autoRefresh) await refetch();
       return newUser;
     } catch (err) {
-      showError(err as any, "Échec de la création");
+      showError(err, "Échec de la création");
       throw err;
     }
   };
@@ -95,7 +94,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
       showSuccess("L'invitation a été envoyée avec succès.");
       if (autoRefresh) await refetch();
     } catch (err) {
-      showError(err as any, "Échec de l'invitation");
+      showError(err, "Échec de l'invitation");
       throw err;
     }
   };
@@ -112,7 +111,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
       if (autoRefresh) await refetch();
       return updatedUser;
     } catch (err) {
-      showError(err as any, "Échec de la mise à jour");
+      showError(err, "Échec de la mise à jour");
       throw err;
     }
   };
@@ -124,7 +123,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
       showSuccess("Le statut de l'utilisateur a été modifié.");
       if (autoRefresh) await refetch();
     } catch (err) {
-      showError(err as any, "Échec de la modification du statut");
+      showError(err, "Échec de la modification du statut");
       throw err;
     }
   };
@@ -136,7 +135,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
       showSuccess("L'utilisateur a été supprimé.");
       if (autoRefresh) await refetch();
     } catch (err) {
-      showError(err as any, "Échec de la suppression");
+      showError(err, "Échec de la suppression");
       throw err;
     }
   };

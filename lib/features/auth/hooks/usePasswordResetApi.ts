@@ -27,10 +27,10 @@ export function usePasswordResetApi(): UsePasswordResetApiReturn {
       const result = await authService.requestPasswordReset({ email });
       return result;
     } catch (err) {
-      const apiErr = err instanceof ApiException ? err : new ApiException(0, err as any);
-      logger.error("Password reset request failed", apiErr);
-      setError(apiErr);
-      throw apiErr;
+      const apiError = err instanceof ApiException ? err : new ApiException(0, err);
+      logger.error("Password reset request failed", apiError);
+      setError(apiError);
+      throw apiError;
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +47,7 @@ export function usePasswordResetApi(): UsePasswordResetApiReturn {
       });
       return result;
     } catch (err) {
-      const apiErr = err instanceof ApiException ? err : new ApiException(0, err as any);
+      const apiErr = err instanceof ApiException ? err : new ApiException(0, err);
       logger.error("Password reset confirm failed", apiErr);
       setError(apiErr);
       throw apiErr;
@@ -60,7 +60,7 @@ export function usePasswordResetApi(): UsePasswordResetApiReturn {
     requestReset,
     confirmReset,
     isLoading,
-    error: error as any, // Cast to any to match string | null if needed, but we should update interface
+    error,
     clearError,
   };
 }
