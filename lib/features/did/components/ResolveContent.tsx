@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -9,16 +9,34 @@ import { DidRequestTab } from "../components/DidRequestTab";
 import { DidErrorCard } from "../components/DidErrorCard";
 import { DidResponseView } from "../components/DidResponseView";
 
-/**
- * Resolve DID Content Component (without layout)
- * Can be used in both public pages and dashboard
- */
+type TabValue = "request" | "response" | "error";
+
+
 export function ResolveContent() {
   const { state, resolve } = useDidResolution();
   const [input, setInput] = useState("");
-  // Derive active tab from state instead of using useState + useEffect
-  const activeTab =
-    state.status === "success" ? "response" : state.status === "error" ? "error" : "request";
+  const [manualTab, setManualTab] = useState<TabValue | null>(null);
+
+  const selectedTab = useMemo(() => {
+    if (state.status === "loading") {
+      return manualTab || "request";
+    }
+    if (manualTab === "request" && (state.status === "success" || state.status === "error")) {
+      return "request";
+    }
+    if (state.status === "success") return "response";
+    if (state.status === "error") return "error";
+    return "request";
+  }, [manualTab, state.status]);
+
+  const handleTabChange = (value: string) => {
+    setManualTab(value as TabValue);
+  };
+
+  const handleResolve = () => {
+    setManualTab(null); 
+    resolve(input);
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
@@ -27,7 +45,7 @@ export function ResolveContent() {
           {/* Header content if needed */}
         </CardHeader>
         <CardContent className="flex-1">
-          <Tabs value={activeTab} className="w-full h-full flex flex-col">
+          <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full h-full flex flex-col">
             <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="request">Request</TabsTrigger>
               <TabsTrigger value="response" disabled={state.status !== "success"}>
@@ -43,7 +61,7 @@ export function ResolveContent() {
                 value={input}
                 loading={state.status === "loading"}
                 onChange={setInput}
-                onResolve={() => resolve(input)}
+                onResolve={handleResolve}
               />
             </TabsContent>
 
