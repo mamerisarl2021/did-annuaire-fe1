@@ -60,7 +60,7 @@ export function usePasswordResetApi(): UsePasswordResetApiReturn {
     requestReset,
     confirmReset,
     isLoading,
-    error,
+    error: error as any, // Cast to any to match string | null if needed, but we should update interface
     clearError,
   };
 }

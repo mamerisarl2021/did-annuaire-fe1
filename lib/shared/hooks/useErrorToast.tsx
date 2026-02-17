@@ -1,7 +1,9 @@
+"use client";
+
+import * as React from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ApiException } from "../api/api.errors";
 import { ERROR_CONFIG } from "../config/error.config";
-import React from "react";
 
 /**
  * Hook to display standardized error and success toasts.
@@ -26,8 +28,10 @@ export function useErrorToast() {
             description: (
                 <div className="flex flex-col gap-1">
                     <span>{message}</span>
-                    {errorCode && process.env.NODE_ENV === "development" && (
-                        <span className="text-[10px] font-mono opacity-70">Code: {errorCode}</span>
+                    {errorCode && ERROR_CONFIG.SHOW_ERROR_CODES && (
+                        <span className="text-[10px] font-mono opacity-70 uppercase tracking-wider">
+                            Code: {errorCode}
+                        </span>
                     )}
                 </div>
             ) as any,

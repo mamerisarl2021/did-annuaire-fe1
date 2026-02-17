@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Shield, Mail } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ErrorAlert } from "@/components/ui/error-alert";
 import { useLoginWorkflow } from "@/lib/features/auth/hooks/useLoginWorkflow";
 import { LoginFormComponent } from "@/lib/features/auth/components/LoginFormComponent";
 import { OTPForm } from "@/lib/features/auth/components/OTPForm";
 import { EmailOTPForm } from "@/lib/features/auth/components/EmailOTPForm";
 import { getDashboardRoute } from "@/lib/types/roles";
 import { type AuthUser } from "@/lib/features/auth/types/auth.types";
+import { ApiException } from "@/lib/shared/api/api.errors";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -53,11 +54,7 @@ export default function LoginPage() {
             </CardHeader>
             <CardContent>
               {/* Error Alert */}
-              {error && (
-                <Alert variant="destructive" className="mb-4">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+              <ErrorAlert error={error} className="mb-4" />
 
               {/* Login Form */}
               <LoginFormComponent
@@ -99,17 +96,14 @@ export default function LoginPage() {
             </CardHeader>
             <CardContent>
               {/* Error Alert */}
-              {error && (
-                <Alert variant="destructive" className="mb-4">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+              <ErrorAlert error={error} className="mb-4" />
 
               {/* OTP Form (for TOTP/authenticator app) */}
               <OTPForm
                 onSubmit={verifyOTP}
                 onBack={goBackToCredentials}
                 isVerifying={isVerifyingOTP}
+                error={error}
               />
             </CardContent>
           </Card>

@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { type LoginFormData } from "@/lib/schemas/login.schema";
 import { type AuthUser } from "../types/auth.types";
+import { ApiException } from "@/lib/shared/api/api.errors";
 import { useLoginForm } from "./useLoginForm";
 import { useLoginApi } from "./useLoginApi";
 import { useLoginState, type LoginFlowStep, type OTPMethod } from "./useLoginState";
@@ -20,7 +21,7 @@ interface UseLoginWorkflowReturn {
   isGeneratingOTP: boolean;
   otpSent: boolean;
   isVerifyingOTP: boolean;
-  error: string | null;
+  error: ApiException | null;
   otpMethod: OTPMethod;
   submitCredentials: (data: LoginFormData) => Promise<void>;
   generateEmailOTP: () => Promise<void>;

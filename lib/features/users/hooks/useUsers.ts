@@ -8,6 +8,9 @@ import { GetUsersParams, CreateUserPayload, UpdateUserPayload } from "../types/u
 import { logger } from "@/lib/shared/services/logger.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
+import { useErrorToast } from "@/lib/shared/hooks/useErrorToast";
+import { useApiError } from "@/lib/shared/hooks/useApiError";
+
 /**
  * Hook for User Management logic
  * Migrated to React Query for better performance and caching
@@ -18,6 +21,9 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   const [pageSize, setPageSize] = useState(initialParams.page_size || 10);
   const [serverSearch, setServerSearch] = useState(initialParams.search || "");
   const [status, setStatus] = useState<string | undefined>(initialParams.status);
+
+  const { showError, showSuccess } = useErrorToast();
+  const { error: apiError, setError: setApiError, clearError } = useApiError();
 
   // Debounce server search
   const debouncedServerSearch = useDebounce(serverSearch, 300);
@@ -32,7 +38,14 @@ export function useUsers(initialParams: GetUsersParams = {}) {
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["users", params],
-    queryFn: async () => usersService.getUsers(params),
+    queryFn: async () => {
+      try {
+        return await usersService.getUsers(params);
+      } catch (err) {
+        setApiError(err);
+        throw err;
+      }
+    },
     staleTime: QUERY_CONFIG.STALE_TIME_FAST,
   });
 
@@ -66,10 +79,11 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     const { autoRefresh = true } = options;
     try {
       const newUser = await usersService.createUser(payload);
+      showSuccess("L'utilisateur a été créé avec succès.");
       if (autoRefresh) await refetch();
       return newUser;
     } catch (err) {
-      logger.error("[useUsers] Create error:", err);
+      showError(err as any, "Échec de la création");
       throw err;
     }
   };
@@ -78,9 +92,10 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     const { autoRefresh = true } = options;
     try {
       await usersService.inviteUser(userId);
+      showSuccess("L'invitation a été envoyée avec succès.");
       if (autoRefresh) await refetch();
     } catch (err) {
-      logger.error("[useUsers] Invite error:", err);
+      showError(err as any, "Échec de l'invitation");
       throw err;
     }
   };
@@ -93,10 +108,11 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     const { autoRefresh = true } = options;
     try {
       const updatedUser = await usersService.updateUser(userId, payload);
+      showSuccess("L'utilisateur a été mis à jour avec succès.");
       if (autoRefresh) await refetch();
       return updatedUser;
     } catch (err) {
-      logger.error("[useUsers] Update error:", err);
+      showError(err as any, "Échec de la mise à jour");
       throw err;
     }
   };
@@ -105,9 +121,10 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     const { autoRefresh = true } = options;
     try {
       await usersService.toggleUserStatus(userId);
+      showSuccess("Le statut de l'utilisateur a été modifié.");
       if (autoRefresh) await refetch();
     } catch (err) {
-      logger.error("[useUsers] Toggle status error:", err);
+      showError(err as any, "Échec de la modification du statut");
       throw err;
     }
   };
@@ -116,9 +133,10 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     const { autoRefresh = true } = options;
     try {
       await usersService.deleteUser(userId);
+      showSuccess("L'utilisateur a été supprimé.");
       if (autoRefresh) await refetch();
     } catch (err) {
-      logger.error("[useUsers] Delete error:", err);
+      showError(err as any, "Échec de la suppression");
       throw err;
     }
   };
@@ -132,7 +150,8 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     users: data?.data?.items || [],
     filteredUsers,
     isLoading,
-    error: error ? (error as Error).message : null,
+    error: apiError,
+    clearError,
     pagination,
     params,
     setPage,

@@ -9,9 +9,9 @@ export class ApiException extends Error {
   public requestId?: string;
   public extra?: Record<string, any>;
   public originalError?: any;
-  public isNetworkError: boolean = false;
+  public isNetworkErrorFlag: boolean = false;
 
-  constructor(status: number, data: any) {
+  constructor(status: number, data: any, requestId?: string) {
     const normalized = ErrorParser.parse(data, status);
 
     super(normalized.message);
@@ -21,27 +21,59 @@ export class ApiException extends Error {
     this.fieldErrors = normalized.fieldErrors;
     this.extra = normalized.extra;
     this.originalError = normalized.originalError;
-    this.isNetworkError = !!normalized.isNetworkError;
-    this.requestId = (data as any)?.requestId;
+    this.isNetworkErrorFlag = !!normalized.isNetworkError;
+    this.requestId = requestId || (data as any)?.requestId;
   }
 
   /**
    * Returns a user-friendly message in French if possible.
    */
-  getUserMessage(): string {
+  public getUserMessage(): string {
     return ErrorMessageTranslator.translate(this.code, this.message);
   }
 
-  // --- Static Helpers ---
-
-  static isNetworkError(error: unknown): boolean {
-    if (error instanceof ApiException) return error.isNetworkError;
-    return error instanceof TypeError && error.message === "Failed to fetch";
+  public hasFieldErrors(): boolean {
+    return !!this.fieldErrors && Object.keys(this.fieldErrors).length > 0;
   }
 
+  public getFieldError(name: string): string | undefined {
+    return this.fieldErrors?.[name]?.[0];
+  }
+
+  public isValidationError(): boolean {
+    return this.status === 400 || this.code === "VALIDATION_ERROR";
+  }
+
+  public isAuthError(): boolean {
+    return this.status === 401 || this.code === "UNAUTHORIZED";
+  }
+
+  public isForbiddenError(): boolean {
+    return this.status === 403 || this.code === "FORBIDDEN";
+  }
+
+  public isNotFoundError(): boolean {
+    return this.status === 404 || this.code === "NOT_FOUND";
+  }
+
+  public isServerError(): boolean {
+    return this.status >= 500;
+  }
+
+  public isNetworkError(): boolean {
+    return this.code === "NETWORK_ERROR" || this.isNetworkErrorFlag;
+  }
+
+  /**
+   * Standard way to extract message from any error object
+   */
   static getMessage(error: unknown): string {
     if (error instanceof ApiException) {
       return error.getUserMessage();
+    }
+
+    if (error instanceof Error) {
+      return error.message;
     }
 
     const normalized = ErrorParser.parse(error);
@@ -54,6 +86,19 @@ export class ApiException extends Error {
 
   static isValidationError(error: unknown): boolean {
     return error instanceof ApiException && (error.status === 400 || !!error.fieldErrors);
+  }
+
+  /**
+   * Returns debug info for developers
+   */
+  public getDebugInfo() {
+    return {
+      code: this.code,
+      status: this.status,
+      requestId: this.requestId,
+      fieldErrors: this.fieldErrors,
+      extra: this.extra,
+    };
   }
 }
 

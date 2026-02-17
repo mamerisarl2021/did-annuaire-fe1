@@ -12,7 +12,7 @@ interface LoginResponse {
 
 export function useLoginApi() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiException | null>(null);
   const queryClient = useQueryClient();
 
   const login = useCallback(
@@ -24,7 +24,7 @@ export function useLoginApi() {
         const currentUser = await authService.getCurrentUser();
 
         if (!currentUser) {
-          throw new Error("Unable to recover user profile.");
+          throw new ApiException(0, "Unable to recover user profile.");
         }
 
         const otpRequired = "otp_required" in response && response.otp_required === true;
@@ -40,8 +40,11 @@ export function useLoginApi() {
           otpMethod: otpRequired ? method : null,
         };
       } catch (err) {
-        const message = ApiException.getMessage(err);
-        setError(message);
+        if (err instanceof ApiException) {
+          setError(err);
+        } else {
+          setError(new ApiException(0, err as any));
+        }
         throw err;
       } finally {
         setIsLoading(false);
@@ -56,8 +59,11 @@ export function useLoginApi() {
     try {
       await authService.generateEmailOTP();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to send OTP code.";
-      setError(message);
+      if (err instanceof ApiException) {
+        setError(err);
+      } else {
+        setError(new ApiException(0, err as any));
+      }
       throw err;
     } finally {
       setIsLoading(false);
@@ -73,15 +79,18 @@ export function useLoginApi() {
         const currentUser = await authService.getCurrentUser();
 
         if (!currentUser) {
-          throw new Error("Unable to retrieve user profile.");
+          throw new ApiException(0, "Unable to retrieve user profile.");
         }
 
         await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
 
         return currentUser;
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Invalid or expired OTP code.";
-        setError(message);
+        if (err instanceof ApiException) {
+          setError(err);
+        } else {
+          setError(new ApiException(0, err as any));
+        }
         throw err;
       } finally {
         setIsLoading(false);

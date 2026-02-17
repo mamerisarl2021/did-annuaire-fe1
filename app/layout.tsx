@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReactQueryProvider } from "@/lib/providers/ReactQueryProvider";
 import { TokenExpirationMonitor } from "@/components/auth/TokenExpirationMonitor";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,7 +35,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
             <Toaster />
           </ThemeProvider>
         </ReactQueryProvider>
