@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { DID, DIDDocument } from "../types";
 import { didService } from "../services/did.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
@@ -63,6 +63,13 @@ export function useDIDs() {
     },
     staleTime: QUERY_CONFIG.STALE_TIME_FAST,
   });
+
+  // Clear error on successful data fetch
+  useEffect(() => {
+    if (data && apiError) {
+      clearError();
+    }
+  }, [data, apiError, clearError]);
 
   const pagination = data?.pagination || {
     page: 1,

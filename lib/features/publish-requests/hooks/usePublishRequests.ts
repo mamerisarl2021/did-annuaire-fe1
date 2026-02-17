@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { publishRequestService } from "../services/publish-request.service";
 import { useDebounce } from "@/lib/hooks/useDebounce";
@@ -36,6 +36,13 @@ export function usePublishRequests(org_id?: string) {
     enabled: !!org_id,
     staleTime: QUERY_CONFIG.STALE_TIME_FAST,
   });
+
+  // Clear error on successful data fetch
+  useEffect(() => {
+    if (data && apiError) {
+      clearError();
+    }
+  }, [data, apiError, clearError]);
 
   // Client-side filtering for instant feedback
   const filteredRequests = useMemo(() => {

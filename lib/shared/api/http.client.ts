@@ -13,7 +13,7 @@ export const httpClient = {
     const { requiresAuth = true, headers = {}, ...rest } = options;
     const url = getApiUrl(endpoint);
 
-    const requestId = crypto.randomUUID();
+    const requestId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
     const mergedHeaders: HeadersInit = {
       "Content-Type": "application/json",
       "X-Request-ID": requestId,

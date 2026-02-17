@@ -40,12 +40,9 @@ export function useLoginApi() {
           otpMethod: otpRequired ? method : null,
         };
       } catch (err) {
-        if (err instanceof ApiException) {
-          setError(err);
-        } else {
-          setError(new ApiException(0, err));
-        }
-        throw err;
+        const apiErr = err instanceof ApiException ? err : new ApiException(0, err);
+        setError(apiErr);
+        throw apiErr;
       } finally {
         setIsLoading(false);
       }
@@ -59,12 +56,9 @@ export function useLoginApi() {
     try {
       await authService.generateEmailOTP();
     } catch (err) {
-      if (err instanceof ApiException) {
-        setError(err);
-      } else {
-        setError(new ApiException(0, err));
-      }
-      throw err;
+      const apiErr = err instanceof ApiException ? err : new ApiException(0, err);
+      setError(apiErr);
+      throw apiErr;
     } finally {
       setIsLoading(false);
     }
@@ -86,12 +80,9 @@ export function useLoginApi() {
 
         return currentUser;
       } catch (err) {
-        if (err instanceof ApiException) {
-          setError(err);
-        } else {
-          setError(new ApiException(0, err));
-        }
-        throw err;
+        const apiErr = err instanceof ApiException ? err : new ApiException(0, err);
+        setError(apiErr);
+        throw apiErr;
       } finally {
         setIsLoading(false);
       }

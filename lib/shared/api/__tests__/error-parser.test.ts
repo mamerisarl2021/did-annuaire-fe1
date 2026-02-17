@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { ErrorParser } from "../error-parser";
 
 describe("ErrorParser", () => {
-  it("should parse a standard backend error", async () => {
+  it("should parse a standard backend error", () => {
     const mockResponse = {
       message: "Invalid credentials",
       code: "AUTH_FAILED",
