@@ -35,7 +35,12 @@ export function usePublishRequests(org_id?: string) {
 
       try {
         if (isSuperAdmin) {
-          const response = await superAdminService.getPublishRequests({ page: 1, page_size: 50 });
+          const response = await superAdminService.getPublishRequests({
+            page: 1,
+            page_size: 50,
+            search: debouncedSearch,
+            status: statusFilter === "all" ? undefined : statusFilter,
+          });
           return response.items;
         }
 
@@ -61,18 +66,10 @@ export function usePublishRequests(org_id?: string) {
     }
   }, [data, apiError, clearError]);
 
-  // Client-side filtering for instant feedback
+  // No client-side filtering here anymore, we rely on server-side search
   const filteredRequests = useMemo(() => {
-    const requests = data || [];
-    if (!searchQuery.trim()) return requests;
-
-    const searchLower = searchQuery.toLowerCase();
-    return requests.filter(
-      (req) =>
-        req.did.toLowerCase().includes(searchLower) ||
-        req.requested_by.toLowerCase().includes(searchLower)
-    );
-  }, [data, searchQuery]);
+    return data || [];
+  }, [data]);
 
   return {
     requests: filteredRequests,

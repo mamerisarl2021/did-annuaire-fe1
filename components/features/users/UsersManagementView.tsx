@@ -47,7 +47,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     updateUser,
     toggleUserStatus,
     deleteUser,
-    setClientSearch,
+    setSearch,
     setStatus,
   } = useUsers({
     org_id: orgId,
@@ -58,7 +58,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    setClientSearch(value);
+    setSearch(value);
   };
 
   const handleStatusChange = (value: string) => {

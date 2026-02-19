@@ -54,7 +54,12 @@ export function useUsers(initialParams: GetUsersParams = {}) {
     queryFn: async () => {
       try {
         if (isSuperAdmin) {
-          return await superAdminService.getUsers({ page, page_size: pageSize });
+          return await superAdminService.getUsers({
+            page,
+            page_size: pageSize,
+            search: params.search,
+            status: params.status,
+          });
         }
         return await usersService.getUsers(params);
       } catch (err) {
