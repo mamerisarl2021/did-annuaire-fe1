@@ -48,7 +48,8 @@ export function DashboardSidebar({ className }: { className?: string }) {
       title: "Audit",
       href: "/dashboard/audit",
       icon: BrickWallShield,
-      roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN, UserRole.AUDITOR],
+      roles: [UserRole.ORG_ADMIN, UserRole.AUDITOR],
+      //roles: [UserRole.SUPER_USER, UserRole.ORG_ADMIN, UserRole.AUDITOR],
     },
     {
       title: "Dashboard",

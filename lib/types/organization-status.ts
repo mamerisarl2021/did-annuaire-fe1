@@ -46,18 +46,13 @@ export function getRegistrationSteps(status: OrganizationStatusType): Registrati
       id: 3,
       title: "Account Activation",
       description: "Password setup",
-      status:
-        status === OrganizationStatus.ACTIVE
-          ? "current"
-          : status === OrganizationStatus.PENDING
-            ? "upcoming"
-            : "upcoming",
+      status: status === OrganizationStatus.ACTIVE ? "completed" : "upcoming",
     },
     {
       id: 4,
       title: "Dashboard Access",
       description: "Manage your organization",
-      status: "upcoming",
+      status: status === OrganizationStatus.ACTIVE ? "current" : "upcoming",
     },
   ];
 

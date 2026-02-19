@@ -8,7 +8,7 @@ import {
   Users as UsersIcon,
   FileText,
   ClipboardList,
-  ShieldCheck,
+  //ShieldCheck,
   Building2,
 } from "lucide-react";
 import { RoleGuard } from "@/lib/guards";
@@ -75,7 +75,7 @@ export default function SuperUserDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card
+              {/* <Card
                 className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-blue-600"
                 onClick={() => router.push("/dashboard/dids")}
               >
@@ -91,7 +91,7 @@ export default function SuperUserDashboardPage() {
                   </p>
                   <Button className="w-full bg-blue-600 hover:bg-blue-700">View All DIDs</Button>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               <Card
                 className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-[#0052CC]"

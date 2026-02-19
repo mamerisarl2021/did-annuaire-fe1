@@ -46,14 +46,10 @@ export const API_ENDPOINTS = {
     REFUSE: (id: string) => `/api/superadmin/organizations/${id}/refuse`,
     TOGGLE_ACTIVATION: (id: string) => `/api/superadmin/organizations/${id}/toggle-activation`,
     DELETE: (id: string) => `/api/superadmin/organizations/${id}`,
-    DIDS: {
-      LIST: "/api/superadmin/dids",
-      STATS: "/api/superadmin/dids/stats",
-    },
-    USERS: {
-      LIST: "/api/superadmin/users",
-      STATS: "/api/superadmin/users/stats",
-    },
+    DIDS_LIST: "/api/superadmin/dids",
+    DIDS_STATS: "/api/superadmin/dids/stats",
+    USERS_LIST: "/api/superadmin/users",
+    PUBLISH_REQUESTS_LIST: "/api/superadmin/publish-requests",
   },
   DID: {
     LIST: "/api/registry/dids",
