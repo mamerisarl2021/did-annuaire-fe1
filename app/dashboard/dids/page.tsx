@@ -35,8 +35,16 @@ import {
 export default function DIDListPage() {
   const router = useRouter();
   const { stats, isLoading: isStatsLoading, error: statsError } = useDIDsStats();
-  const { dids, isLoading, searchQuery, setSearchQuery, deactivateDID, publishDID, pagination } =
-    useDIDs();
+  const {
+    dids,
+    isLoading,
+    searchQuery,
+    setSearchQuery,
+    deactivateDID,
+    publishDID,
+    pagination,
+    isSuperAdmin,
+  } = useDIDs();
 
   const [actionResult, setActionResult] = useState<{
     success: boolean;
@@ -124,7 +132,7 @@ export default function DIDListPage() {
   };
 
   return (
-    <RoleGuard allowedRoles={[UserRole.ORG_ADMIN, UserRole.ORG_MEMBER /*, UserRole.SUPER_USER]*/]}>
+    <RoleGuard allowedRoles={[UserRole.ORG_ADMIN, UserRole.ORG_MEMBER , UserRole.SUPER_USER]}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center px-8 pt-6">
@@ -178,6 +186,7 @@ export default function DIDListPage() {
               <DIDTable
                 dids={displayedDids}
                 isLoading={isLoading}
+                isSuperAdmin={isSuperAdmin}
                 onDelete={handleDelete}
                 onFetchKeys={handleFetchKeys}
                 onPublish={handlePublish}

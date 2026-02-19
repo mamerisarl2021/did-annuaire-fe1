@@ -6,10 +6,83 @@ import {
   type OrganizationStats,
 } from "../../organizations/types/organization.types";
 import { organizationMapper } from "../mappers/organization.mapper";
+import { superAdminPublishRequestMapper } from "../mappers/superadmin-publish-request.mapper";
+import { superAdminDidMapper } from "../mappers/superadmin-did.mapper";
+import { superAdminUserMapper } from "../mappers/superadmin-user.mapper";
 import { logger } from "@/lib/shared/services/logger.service";
 import { API_ENDPOINTS } from "@/lib/shared/config/endpoints";
+import { PublishRequest } from "../../publish-requests/types/publish-request.types";
+import { DID } from "../../did/types";
+import { User } from "../../users/types/users.types";
 
 export const superAdminService = {
+  async getPublishRequests(params: { page: number; page_size: number; status?: string; search?: string }): Promise<{ items: PublishRequest[] }> {
+    const searchParams = new URLSearchParams();
+    searchParams.append("page", params.page.toString());
+    searchParams.append("page_size", params.page_size.toString());
+    if (params.status && params.status !== "all") searchParams.append("status", params.status);
+    if (params.search) searchParams.append("search", params.search);
+
+    const endpoint = `${API_ENDPOINTS.SUPERADMIN.PUBLISH_REQUESTS_LIST}?${searchParams.toString()}`;
+    const response = await httpClient.get<any>(endpoint);
+    const rawData = response.data || response;
+    const items = superAdminPublishRequestMapper.toDomainList(rawData.items || rawData.results || []);
+
+    return { items };
+  },
+
+  async getDIDs(params: { page: number; page_size: number; status?: string; search?: string }): Promise<{ items: DID[]; pagination: any }> {
+    const searchParams = new URLSearchParams();
+    searchParams.append("page", params.page.toString());
+    searchParams.append("page_size", params.page_size.toString());
+    if (params.status && params.status !== "all") searchParams.append("status", params.status);
+    if (params.search) searchParams.append("search", params.search);
+
+    const endpoint = `${API_ENDPOINTS.SUPERADMIN.DIDS_LIST}?${searchParams.toString()}`;
+    const response = await httpClient.get<any>(endpoint);
+    const rawData = response.data || response;
+    const items = superAdminDidMapper.toDomainList(rawData.items || rawData.results || []);
+    const pagination = rawData.pagination || {
+      page: params.page,
+      page_size: params.page_size,
+      count: items.length,
+      total_pages: 1,
+    };
+
+    return { items, pagination };
+  },
+
+  async getUsers(params: { page: number; page_size: number; status?: string; search?: string }): Promise<{ data: { items: User[]; pagination: any } }> {
+    const searchParams = new URLSearchParams();
+    searchParams.append("page", params.page.toString());
+    searchParams.append("page_size", params.page_size.toString());
+    if (params.status && params.status !== "all") searchParams.append("status", params.status);
+    if (params.search) searchParams.append("search", params.search);
+
+    const endpoint = `${API_ENDPOINTS.SUPERADMIN.USERS_LIST}?${searchParams.toString()}`;
+    const response = await httpClient.get<any>(endpoint);
+    const rawData = response.data || response;
+    const items = superAdminUserMapper.toDomainList(rawData.items || rawData.results || []);
+    const pagination = rawData.pagination || {
+      page: params.page,
+      page_size: params.page_size,
+      count: items.length,
+      total_pages: 1,
+      has_next: false,
+      has_previous: false,
+    };
+
+    return { data: { items, pagination } };
+  },
+
+  async getDIDsStats(): Promise<any> {
+    const response = await httpClient.get<any>(API_ENDPOINTS.SUPERADMIN.DIDS_STATS);
+    const rawData = response.data || response;
+    // According to readme, stats are nested in "data"
+    const statsData = rawData.data || rawData;
+    return superAdminDidMapper.toStats(statsData);
+  },
+
   async getOrganizations(
     params: OrganizationListParams = {}
   ): Promise<{ data: OrganizationListResponse }> {

@@ -21,6 +21,8 @@ import { ErrorAlert } from "@/components/ui/error-alert";
 
 export default function PublishRequestsPage() {
   const { user } = useAuth();
+  const isSuperAdmin =
+    user?.roles?.includes(UserRole.SUPER_USER) || user?.role === UserRole.SUPER_USER;
   const org_id = user?.organization_id;
 
   const {
@@ -154,6 +156,7 @@ export default function PublishRequestsPage() {
               <PublishRequestsTable
                 requests={requests}
                 isLoading={isLoading}
+                isSuperAdmin={isSuperAdmin}
                 onApprove={handleApprove}
                 onReject={handleReject}
               />

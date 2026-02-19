@@ -58,6 +58,7 @@ export interface DID {
     [key: string]: unknown;
   };
   is_published?: boolean;
+  version?: number;
   status?: "ACTIVE" | "DRAFT" | "DEACTIVATED";
   state?: "action" | "wait" | "error" | "finished" | "update";
 }

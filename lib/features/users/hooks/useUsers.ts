@@ -4,8 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo, useEffect } from "react";
 import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { usersService } from "../services/users.service";
-import { GetUsersParams, CreateUserPayload, UpdateUserPayload } from "../types/users.types";
+import { superAdminService } from "../../super-admin/services/superadmin.service";
+import { useAuth } from "@/lib/features/auth/hooks/useAuth";
+import {
+  User,
+  GetUsersParams,
+  CreateUserPayload,
+  UpdateUserPayload,
+} from "../types/users.types";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { UserRole } from "@/lib/types/roles";
 
 import { useErrorToast } from "@/lib/shared/hooks/useErrorToast";
 import { useApiError } from "@/lib/shared/hooks/useApiError";
@@ -15,6 +23,12 @@ import { useApiError } from "@/lib/shared/hooks/useApiError";
  * Migrated to React Query for better performance and caching
  */
 export function useUsers(initialParams: GetUsersParams = {}) {
+  const { user } = useAuth();
+  const isSuperAdmin = useMemo(
+    () => user?.roles?.includes(UserRole.SUPER_USER) || user?.role === UserRole.SUPER_USER,
+    [user]
+  );
+
   const [clientSearch, setClientSearch] = useState("");
   const [page, setPage] = useState(initialParams.page || 1);
   const [pageSize, setPageSize] = useState(initialParams.page_size || 10);
@@ -36,9 +50,12 @@ export function useUsers(initialParams: GetUsersParams = {}) {
   };
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["users", params],
+    queryKey: ["users", params, { isSuperAdmin }],
     queryFn: async () => {
       try {
+        if (isSuperAdmin) {
+          return await superAdminService.getUsers({ page, page_size: pageSize });
+        }
         return await usersService.getUsers(params);
       } catch (err) {
         setApiError(err);
@@ -71,7 +88,7 @@ export function useUsers(initialParams: GetUsersParams = {}) {
 
     const searchLower = clientSearch.toLowerCase();
     return users.filter(
-      (user) =>
+      (user: User) =>
         user.full_name?.toLowerCase().includes(searchLower) ||
         user.email?.toLowerCase().includes(searchLower) ||
         user.organization?.toLowerCase().includes(searchLower)

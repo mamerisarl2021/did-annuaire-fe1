@@ -18,6 +18,7 @@ interface PublishRequestsTableProps {
   isLoading: boolean;
   onApprove: (request: PublishRequest) => void;
   onReject: (request: PublishRequest) => void;
+  isSuperAdmin?: boolean;
 }
 
 export function PublishRequestsTable({
@@ -25,6 +26,7 @@ export function PublishRequestsTable({
   isLoading,
   onApprove,
   onReject,
+  isSuperAdmin,
 }: PublishRequestsTableProps) {
   if (isLoading) {
     return <div className="text-center py-10 text-muted-foreground">Loading...</div>;
@@ -68,6 +70,11 @@ export function PublishRequestsTable({
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="px-4 py-3 text-left text-sm font-medium">DID</TableHead>
+              {isSuperAdmin && (
+                <TableHead className="px-4 py-3 text-left text-sm font-medium">
+                  Organization
+                </TableHead>
+              )}
               <TableHead className="px-4 py-3 text-left text-sm font-medium">Version</TableHead>
               <TableHead className="px-4 py-3 text-left text-sm font-medium">Environment</TableHead>
               <TableHead className="px-4 py-3 text-left text-sm font-medium">Status</TableHead>
@@ -94,6 +101,11 @@ export function PublishRequestsTable({
                     </Tooltip>
                   </TooltipProvider>
                 </TableCell>
+                {isSuperAdmin && (
+                  <TableCell className="px-4 py-3 text-sm text-slate-600 font-medium">
+                    {request.organization_name || "N/A"}
+                  </TableCell>
+                )}
                 <TableCell className="px-4 py-3 text-sm">v{request.version}</TableCell>
                 <TableCell className="px-4 py-3 text-sm">
                   <Badge variant="secondary">{request.environment}</Badge>

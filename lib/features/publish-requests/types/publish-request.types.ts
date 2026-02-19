@@ -10,6 +10,7 @@ export interface PublishRequest {
   decided_by: string | null;
   decided_at: string | null;
   note: string | null;
+  organization_name?: string;
 }
 
 export interface PublishRequestListParams {

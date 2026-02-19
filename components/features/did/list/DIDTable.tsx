@@ -30,9 +30,17 @@ interface DIDTableProps {
   onFetchKeys: (did: DID) => void;
   onPublish: (did: DID) => void;
   isLoading?: boolean;
+  isSuperAdmin?: boolean;
 }
 
-export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: DIDTableProps) {
+export function DIDTable({
+  dids,
+  onDelete,
+  onFetchKeys,
+  onPublish,
+  isLoading,
+  isSuperAdmin,
+}: DIDTableProps) {
   if (isLoading) {
     return <div className="text-center py-10 text-muted-foreground">Loading DIDs...</div>;
   }
@@ -52,9 +60,10 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[30%]">DID Identifier</TableHead>
-            <TableHead>Method</TableHead>
+            <TableHead className={isSuperAdmin ? "w-[25%]" : "w-[30%]"}>DID Identifier</TableHead>
+            {isSuperAdmin && <TableHead>Method</TableHead>}
             <TableHead>Document Type</TableHead>
+            <TableHead>Organization</TableHead>
             <TableHead>Algorithm Type</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Created</TableHead>
@@ -94,6 +103,11 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   </span>
                 </div>
               </TableCell>
+              {isSuperAdmin && (
+                <TableCell className="text-sm text-slate-600 font-medium">
+                  {did.organization_name || "N/A"}
+                </TableCell>
+              )}
               <TableCell>
                 <div className="flex items-center gap-1.5 cursor-help">
                   <Key className="size-3.5 text-muted-foreground" />
@@ -109,11 +123,11 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   className={cn(
                     "font-bold text-[10px] uppercase tracking-wider",
                     did.status === "ACTIVE" &&
-                      "text-emerald-600 border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20",
+                    "text-emerald-600 border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20",
                     did.status === "DRAFT" &&
-                      "text-blue-600 border-blue-200 bg-blue-50/50 dark:bg-blue-950/20",
+                    "text-blue-600 border-blue-200 bg-blue-50/50 dark:bg-blue-950/20",
                     did.status === "DEACTIVATED" &&
-                      "text-red-600 border-red-200 bg-red-50/50 dark:bg-red-950/20",
+                    "text-red-600 border-red-200 bg-red-50/50 dark:bg-red-950/20",
                     !did.status && "text-slate-500 border-slate-200 bg-slate-50/50"
                   )}
                 >
@@ -148,11 +162,10 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   <Button
                     size="sm"
                     variant="outline"
-                    className={`h-8 gap-1.5 border-emerald-100 dark:border-emerald-900/40 ${
-                      did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "action")
-                        ? "text-emerald-300 dark:text-emerald-900/40 cursor-not-allowed opacity-50"
-                        : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                    }`}
+                    className={`h-8 gap-1.5 border-emerald-100 dark:border-emerald-900/40 ${did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "action")
+                      ? "text-emerald-300 dark:text-emerald-900/40 cursor-not-allowed opacity-50"
+                      : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                      }`}
                     onClick={() => onPublish(did)}
                     disabled={
                       did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "action")
@@ -190,11 +203,10 @@ export function DIDTable({ dids, onDelete, onFetchKeys, onPublish, isLoading }: 
                   <Button
                     size="sm"
                     variant="outline"
-                    className={`h-8 gap-1.5 border-red-100 dark:border-red-900/40 ${
-                      did.status !== "ACTIVE"
-                        ? "text-red-300 dark:text-red-900/40 cursor-not-allowed opacity-50"
-                        : "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                    }`}
+                    className={`h-8 gap-1.5 border-red-100 dark:border-red-900/40 ${did.status !== "ACTIVE"
+                      ? "text-red-300 dark:text-red-900/40 cursor-not-allowed opacity-50"
+                      : "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      }`}
                     onClick={() => onDelete(did)}
                     disabled={did.status !== "ACTIVE"}
                   >
