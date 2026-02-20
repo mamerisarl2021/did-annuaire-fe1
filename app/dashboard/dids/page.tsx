@@ -71,14 +71,13 @@ export default function DIDListPage() {
 
   const [isKeysModalOpen, setIsKeysModalOpen] = useState(false);
   const [selectedDidId, setSelectedDidId] = useState<string | null>(null);
-  const [environmentFilter, setEnvironmentFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // Filter DIDs by environment
+  // Filter DIDs by status
   const displayedDids = useMemo(() => {
-    if (environmentFilter === "all") return dids;
-    const isProd = environmentFilter === "prod";
-    return dids.filter((did) => (isProd ? did.is_published : !did.is_published));
-  }, [dids, environmentFilter]);
+    if (statusFilter === "all") return dids;
+    return dids.filter((did) => did.status === statusFilter);
+  }, [dids, statusFilter]);
 
   const handleCreate = () => {
     router.push("/dashboard/dids/create");
@@ -185,14 +184,15 @@ export default function DIDListPage() {
             <CardContent className="pt-6">
               <div className="flex items-center gap-4 mb-6">
                 <DIDSearchBar value={searchQuery} onChange={setSearchQuery} />
-                <Select value={environmentFilter} onValueChange={setEnvironmentFilter}>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Filter by env" />
+                    <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Environments</SelectItem>
-                    <SelectItem value="prod">Production</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="ACTIVE">Active</SelectItem>
+                    <SelectItem value="DRAFT">Draft</SelectItem>
+                    <SelectItem value="DEACTIVATED">Deactivated</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

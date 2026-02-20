@@ -84,7 +84,8 @@ export default function EditDIDPage() {
           />
         ) : (
           <div className="p-8 text-center text-red-500">
-            Missing organization ID. Please reload.
+            Missing organization ID. Please reload or if user is superadmin, your don&lsquo;t have
+            an organization assigned.
           </div>
         )}
       </div>

@@ -97,10 +97,8 @@ export default function PublishRequestsPage() {
 
   /* ---------- Effects ---------- */
 
-  // Clear selected request when all modals are closed to prevent visual glitches
   useEffect(() => {
     if (!isApproveModalOpen && !isRejectModalOpen) {
-      // Small timeout to allow closing animation to complete
       const timer = setTimeout(() => {
         setSelectedRequest(null);
       }, 300);

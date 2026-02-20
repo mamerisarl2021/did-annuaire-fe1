@@ -25,7 +25,7 @@ export function AuditDetailsModal({ audit, isOpen, onClose, isLoading }: AuditDe
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-sm">
+      <DialogContent className="w-full max-w-2xl">
         <DialogHeader>
           <div className="flex items-center justify-between mr-4">
             <DialogTitle>Audit Action Details</DialogTitle>
@@ -42,7 +42,7 @@ export function AuditDetailsModal({ audit, isOpen, onClose, isLoading }: AuditDe
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="text-xs text-muted-foreground">Timestamp</Label>
                 <div className="font-medium text-sm">
@@ -80,8 +80,8 @@ export function AuditDetailsModal({ audit, isOpen, onClose, isLoading }: AuditDe
 
             <div>
               <Label className="text-xs text-muted-foreground">Technical Details</Label>
-              <div className="mt-1 bg-muted p-2 rounded-md overflow-hidden">
-                <pre className="text-xs font-mono overflow-x-auto max-h-[150px]">
+              <div className="mt-1 bg-muted p-2 rounded-md">
+                <pre className="text-xs font-mono whitespace-pre-wrap break-all max-h-[150px] overflow-y-auto">
                   {JSON.stringify(audit!.details || {}, null, 2)}
                 </pre>
               </div>
