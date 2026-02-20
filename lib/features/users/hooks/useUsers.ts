@@ -6,12 +6,7 @@ import { QUERY_CONFIG } from "@/lib/shared/config/query.config";
 import { usersService } from "../services/users.service";
 import { superAdminService } from "../../super-admin/services/superadmin.service";
 import { useAuth } from "@/lib/features/auth/hooks/useAuth";
-import {
-  User,
-  GetUsersParams,
-  CreateUserPayload,
-  UpdateUserPayload,
-} from "../types/users.types";
+import { User, GetUsersParams, CreateUserPayload, UpdateUserPayload } from "../types/users.types";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { UserRole } from "@/lib/types/roles";
 

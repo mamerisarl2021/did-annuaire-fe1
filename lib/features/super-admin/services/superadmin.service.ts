@@ -16,7 +16,12 @@ import { DID } from "../../did/types";
 import { User } from "../../users/types/users.types";
 
 export const superAdminService = {
-  async getPublishRequests(params: { page: number; page_size: number; status?: string; search?: string }): Promise<{ items: PublishRequest[] }> {
+  async getPublishRequests(params: {
+    page: number;
+    page_size: number;
+    status?: string;
+    search?: string;
+  }): Promise<{ items: PublishRequest[] }> {
     const searchParams = new URLSearchParams();
     searchParams.append("page", params.page.toString());
     searchParams.append("page_size", params.page_size.toString());
@@ -26,12 +31,19 @@ export const superAdminService = {
     const endpoint = `${API_ENDPOINTS.SUPERADMIN.PUBLISH_REQUESTS_LIST}?${searchParams.toString()}`;
     const response = await httpClient.get<any>(endpoint);
     const rawData = response.data || response;
-    const items = superAdminPublishRequestMapper.toDomainList(rawData.items || rawData.results || []);
+    const items = superAdminPublishRequestMapper.toDomainList(
+      rawData.items || rawData.results || []
+    );
 
     return { items };
   },
 
-  async getDIDs(params: { page: number; page_size: number; status?: string; search?: string }): Promise<{ items: DID[]; pagination: any }> {
+  async getDIDs(params: {
+    page: number;
+    page_size: number;
+    status?: string;
+    search?: string;
+  }): Promise<{ items: DID[]; pagination: any }> {
     const searchParams = new URLSearchParams();
     searchParams.append("page", params.page.toString());
     searchParams.append("page_size", params.page_size.toString());
@@ -52,7 +64,12 @@ export const superAdminService = {
     return { items, pagination };
   },
 
-  async getUsers(params: { page: number; page_size: number; status?: string; search?: string }): Promise<{ data: { items: User[]; pagination: any } }> {
+  async getUsers(params: {
+    page: number;
+    page_size: number;
+    status?: string;
+    search?: string;
+  }): Promise<{ data: { items: User[]; pagination: any } }> {
     const searchParams = new URLSearchParams();
     searchParams.append("page", params.page.toString());
     searchParams.append("page_size", params.page_size.toString());

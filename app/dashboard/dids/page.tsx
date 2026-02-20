@@ -5,6 +5,7 @@ import { Plus, CheckCircle2, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { RoleGuard } from "@/lib/guards";
 import { UserRole } from "@/lib/types/roles";
+import { useAuth } from "@/lib/features/auth/hooks/useAuth";
 import { useDIDs } from "@/lib/features/did/hooks/useDIDs";
 import { useDIDsStats } from "@/lib/features/did/hooks/useDIDsStats";
 import { DIDTable } from "@/components/features/did/list/DIDTable";
@@ -34,6 +35,7 @@ import {
 
 export default function DIDListPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const { stats, isLoading: isStatsLoading, error: statsError } = useDIDsStats();
   const {
     dids,
@@ -45,6 +47,18 @@ export default function DIDListPage() {
     pagination,
     isSuperAdmin,
   } = useDIDs();
+
+  const handleUpdate = (did: DID) => {
+    if (did.owner_id !== user?.id && !isSuperAdmin) {
+      setActionResult({
+        success: false,
+        title: "Pas d'autorisation",
+        message: "Vous n'êtes pas le propriétaire de ce DID. Seul le créateur peut le modifier.",
+      });
+      return;
+    }
+    router.push(`/dashboard/dids/${encodeURIComponent(did.id)}/edit`);
+  };
 
   const [actionResult, setActionResult] = useState<{
     success: boolean;
@@ -132,7 +146,7 @@ export default function DIDListPage() {
   };
 
   return (
-    <RoleGuard allowedRoles={[UserRole.ORG_ADMIN, UserRole.ORG_MEMBER , UserRole.SUPER_USER]}>
+    <RoleGuard allowedRoles={[UserRole.ORG_ADMIN, UserRole.ORG_MEMBER, UserRole.SUPER_USER]}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center px-8 pt-6">
@@ -187,9 +201,11 @@ export default function DIDListPage() {
                 dids={displayedDids}
                 isLoading={isLoading}
                 isSuperAdmin={isSuperAdmin}
+                currentUserId={user?.id}
                 onDelete={handleDelete}
                 onFetchKeys={handleFetchKeys}
                 onPublish={handlePublish}
+                onUpdate={handleUpdate}
               />
 
               <div className="px-6 border-t">

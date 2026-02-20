@@ -8,7 +8,8 @@ import { UserRole } from "@/lib/types/roles";
 
 export function usePublishRequestsStats(org_id?: string) {
   const { user } = useAuth();
-  const isSuperAdmin = user?.roles?.includes(UserRole.SUPER_USER) || user?.role === UserRole.SUPER_USER;
+  const isSuperAdmin =
+    user?.roles?.includes(UserRole.SUPER_USER) || user?.role === UserRole.SUPER_USER;
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["publish-requests", "stats", { org_id, isSuperAdmin }],
