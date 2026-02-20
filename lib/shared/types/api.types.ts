@@ -35,3 +35,15 @@ export interface ApiError extends Error {
 }
 
 export type ApiResponse<T> = T;
+
+export interface Pagination {
+  page: number;
+  page_size: number;
+  total?: number;
+  count?: number;
+  total_pages: number;
+  has_next?: boolean;
+  has_previous?: boolean;
+  next_url?: string | null;
+  prev_url?: string | null;
+}

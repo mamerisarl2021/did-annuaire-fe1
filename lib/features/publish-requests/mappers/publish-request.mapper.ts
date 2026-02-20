@@ -16,6 +16,8 @@ export const publishRequestMapper = {
       decided_by: (apiData.decided_by as string) || null,
       decided_at: (apiData.decided_at as string) || null,
       note: (apiData.note as string) || null,
+      organization_name: apiData.organization_name as string,
+      created_at: (apiData.created_at as string) || new Date().toISOString(),
     };
   },
 

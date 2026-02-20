@@ -14,6 +14,7 @@ import { API_ENDPOINTS } from "@/lib/shared/config/endpoints";
 import { PublishRequest } from "../../publish-requests/types/publish-request.types";
 import { DID } from "../../did/types";
 import { User } from "../../users/types/users.types";
+import { Pagination } from "@/lib/shared/types/api.types";
 
 export const superAdminService = {
   async getPublishRequests(params: {
@@ -29,10 +30,12 @@ export const superAdminService = {
     if (params.search) searchParams.append("search", params.search);
 
     const endpoint = `${API_ENDPOINTS.SUPERADMIN.PUBLISH_REQUESTS_LIST}?${searchParams.toString()}`;
-    const response = await httpClient.get<any>(endpoint);
-    const rawData = response.data || response;
+    const response = await httpClient.get<Record<string, unknown>>(endpoint);
+    const rawData = (response.data as Record<string, unknown>) || response;
     const items = superAdminPublishRequestMapper.toDomainList(
-      rawData.items || rawData.results || []
+      (rawData.items as Record<string, unknown>[]) ||
+        (rawData.results as Record<string, unknown>[]) ||
+        []
     );
 
     return { items };
@@ -43,7 +46,7 @@ export const superAdminService = {
     page_size: number;
     status?: string;
     search?: string;
-  }): Promise<{ items: DID[]; pagination: any }> {
+  }): Promise<{ items: DID[]; pagination: Pagination }> {
     const searchParams = new URLSearchParams();
     searchParams.append("page", params.page.toString());
     searchParams.append("page_size", params.page_size.toString());
@@ -51,10 +54,14 @@ export const superAdminService = {
     if (params.search) searchParams.append("search", params.search);
 
     const endpoint = `${API_ENDPOINTS.SUPERADMIN.DIDS_LIST}?${searchParams.toString()}`;
-    const response = await httpClient.get<any>(endpoint);
-    const rawData = response.data || response;
-    const items = superAdminDidMapper.toDomainList(rawData.items || rawData.results || []);
-    const pagination = rawData.pagination || {
+    const response = await httpClient.get<Record<string, unknown>>(endpoint);
+    const rawData = (response.data as Record<string, unknown>) || response;
+    const items = superAdminDidMapper.toDomainList(
+      (rawData.items as Record<string, unknown>[]) ||
+        (rawData.results as Record<string, unknown>[]) ||
+        []
+    );
+    const pagination: Pagination = (rawData.pagination as Pagination) || {
       page: params.page,
       page_size: params.page_size,
       count: items.length,
@@ -69,7 +76,7 @@ export const superAdminService = {
     page_size: number;
     status?: string;
     search?: string;
-  }): Promise<{ data: { items: User[]; pagination: any } }> {
+  }): Promise<{ data: { items: User[]; pagination: Pagination } }> {
     const searchParams = new URLSearchParams();
     searchParams.append("page", params.page.toString());
     searchParams.append("page_size", params.page_size.toString());
@@ -77,10 +84,14 @@ export const superAdminService = {
     if (params.search) searchParams.append("search", params.search);
 
     const endpoint = `${API_ENDPOINTS.SUPERADMIN.USERS_LIST}?${searchParams.toString()}`;
-    const response = await httpClient.get<any>(endpoint);
-    const rawData = response.data || response;
-    const items = superAdminUserMapper.toDomainList(rawData.items || rawData.results || []);
-    const pagination = rawData.pagination || {
+    const response = await httpClient.get<Record<string, unknown>>(endpoint);
+    const rawData = (response.data as Record<string, unknown>) || response;
+    const items = superAdminUserMapper.toDomainList(
+      (rawData.items as Record<string, unknown>[]) ||
+        (rawData.results as Record<string, unknown>[]) ||
+        []
+    );
+    const pagination: Pagination = (rawData.pagination as Pagination) || {
       page: params.page,
       page_size: params.page_size,
       count: items.length,
@@ -92,11 +103,13 @@ export const superAdminService = {
     return { data: { items, pagination } };
   },
 
-  async getDIDsStats(): Promise<any> {
-    const response = await httpClient.get<any>(API_ENDPOINTS.SUPERADMIN.DIDS_STATS);
-    const rawData = response.data || response;
+  async getDIDsStats(): Promise<ReturnType<typeof superAdminDidMapper.toStats>> {
+    const response = await httpClient.get<Record<string, unknown>>(
+      API_ENDPOINTS.SUPERADMIN.DIDS_STATS
+    );
+    const rawData = (response.data as Record<string, unknown>) || response;
     // According to readme, stats are nested in "data"
-    const statsData = rawData.data || rawData;
+    const statsData = (rawData.data as Record<string, unknown>) || rawData;
     return superAdminDidMapper.toStats(statsData);
   },
 
@@ -117,7 +130,7 @@ export const superAdminService = {
       (rawData.items as Record<string, unknown>[]) ||
       (rawData.results as Record<string, unknown>[]) ||
       [];
-    const rawPagination = (rawData.pagination as Record<string, unknown>) || {};
+    const rawPagination = (rawData.pagination as Pagination) || {};
 
     const mappedResults = organizationMapper.toDomainList(rawItems);
 
@@ -125,8 +138,8 @@ export const superAdminService = {
       data: {
         results: mappedResults,
         count: (rawPagination.count as number) || mappedResults.length,
-        next: (rawPagination.next_url as string) || (rawData.next as string),
-        previous: (rawPagination.prev_url as string) || (rawData.previous as string),
+        next: (rawPagination.next_url as string) || (rawData.next as string) || null,
+        previous: (rawPagination.prev_url as string) || (rawData.previous as string) || null,
       },
     };
   },

@@ -11,6 +11,7 @@ export interface PublishRequest {
   decided_at: string | null;
   note: string | null;
   organization_name?: string;
+  created_at: string;
 }
 
 export interface PublishRequestListParams {
