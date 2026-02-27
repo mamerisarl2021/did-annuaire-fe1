@@ -48,12 +48,6 @@ export function getRegistrationSteps(status: OrganizationStatusType): Registrati
       description: "Password setup",
       status: status === OrganizationStatus.ACTIVE ? "completed" : "upcoming",
     },
-    {
-      id: 4,
-      title: "Dashboard Access",
-      description: "Manage your organization",
-      status: status === OrganizationStatus.ACTIVE ? "current" : "upcoming",
-    },
   ];
 
   if (status === OrganizationStatus.REFUSED || status === OrganizationStatus.SUSPENDED) {

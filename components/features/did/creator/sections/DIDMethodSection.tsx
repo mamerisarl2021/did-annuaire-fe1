@@ -32,7 +32,7 @@ export function DIDMethodSection({
   mode,
 }: DIDMethodSectionProps) {
   const { methods, isLoading } = useDIDMethods();
-  const isReadOnly = mode === "resolve";
+  const isReadOnly = mode === "resolve" || mode === "update";
 
   return (
     <div className="bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
