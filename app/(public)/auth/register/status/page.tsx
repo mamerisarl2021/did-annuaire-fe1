@@ -104,11 +104,11 @@ function StatusContent() {
       <div className="text-center text-sm text-muted-foreground">
         <p>
           Questions? Check our{" "}
-          <Link href="/faq" className="text-primary hover:underline">
+          {/* <Link href="/faq" className="text-primary hover:underline">
             FAQ
           </Link>{" "}
-          or{" "}
-          <Link href="mailto:support@did-annuaire.com" className="text-primary hover:underline">
+          or{" "} */}
+          <Link href="mailto:[EMAIL_ADDRESS]" className="text-primary hover:underline">
             contact us
           </Link>
         </p>
