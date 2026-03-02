@@ -53,7 +53,7 @@ export function StatusMessage({ status, organizationName, className }: StatusMes
             <h3 className="font-medium text-green-800">Organization Validated!</h3>
             <p className="mt-1 text-sm text-green-700">
               Congratulations! Your organization has been approved. You can now activate your
-              administrator account.
+              administrator account, Check your email for more information.
             </p>
           </div>
         </>
