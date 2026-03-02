@@ -40,21 +40,14 @@ export function getRegistrationSteps(status: OrganizationStatusType): Registrati
       id: 2,
       title: "Validation in Progress",
       description: "Review by Super Admin",
-      status: status === OrganizationStatus.PENDING ? "current" : "completed",
-    },
-    {
-      id: 3,
-      title: "Account Activation",
-      description: "Password setup",
-      status: status === OrganizationStatus.ACTIVE ? "completed" : "upcoming",
+      status:
+        status === OrganizationStatus.ACTIVE
+          ? "completed"
+          : status === OrganizationStatus.PENDING
+            ? "current"
+            : "upcoming",
     },
   ];
-
-  if (status === OrganizationStatus.REFUSED || status === OrganizationStatus.SUSPENDED) {
-    steps[1].status = "completed";
-    steps[2].status = "upcoming";
-    steps[3].status = "upcoming";
-  }
 
   return steps;
 }
