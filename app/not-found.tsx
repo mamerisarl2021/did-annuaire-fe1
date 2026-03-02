@@ -26,9 +26,9 @@ export default function NotFound() {
           </Button>
 
           {/* Secondary Action */}
-          <Button asChild variant="outline" className="w-full" size="lg">
+          {/* <Button asChild variant="outline" className="w-full" size="lg">
             <Link href="/contact">Contact Us</Link>
-          </Button>
+          </Button> */}
         </CardContent>
       </Card>
     </div>
