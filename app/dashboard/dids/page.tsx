@@ -32,6 +32,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RefreshCw } from "lucide-react";
+import { PublishDIDModal } from "@/components/features/did/list/PublishDIDModal";
 
 export default function DIDListPage() {
   const router = useRouter();
@@ -46,6 +48,8 @@ export default function DIDListPage() {
     publishDID,
     pagination,
     isSuperAdmin,
+    isFetching,
+    refreshDIDs,
   } = useDIDs();
 
   const handleUpdate = (did: DID) => {
@@ -69,6 +73,9 @@ export default function DIDListPage() {
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [didToDeactivate, setDidToDeactivate] = useState<DID | null>(null);
 
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+  const [didToPublish, setDidToPublish] = useState<DID | null>(null);
+
   const [isKeysModalOpen, setIsKeysModalOpen] = useState(false);
   const [selectedDidId, setSelectedDidId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -88,7 +95,12 @@ export default function DIDListPage() {
     setIsKeysModalOpen(true);
   };
 
-  const handlePublish = async (did: DID) => {
+  const handlePublish = (did: DID) => {
+    setDidToPublish(did);
+    setIsPublishModalOpen(true);
+  };
+
+  const handleConfirmPublish = async (did: DID) => {
     try {
       const result = await publishDID(did.id);
 
@@ -117,6 +129,8 @@ export default function DIDListPage() {
         title: "Publication Failed",
         message: err instanceof Error ? err.message : "An error occurred during publication.",
       });
+    } finally {
+      setIsPublishModalOpen(false);
     }
   };
 
@@ -155,13 +169,24 @@ export default function DIDListPage() {
               Manage your decentralized identifiers and their associated documents.
             </p>
           </div>
-          <Button
-            onClick={handleCreate}
-            className="bg-blue-600 hover:bg-blue-700 text-white gap-2 h-11 px-6 shadow-lg shadow-blue-500/20 rounded-xl transition-all hover:-translate-y-0.5 active:translate-y-0"
-          >
-            <Plus size={18} />
-            <span className="font-bold">Create DID</span>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => refreshDIDs()}
+              disabled={isFetching}
+              className="h-11 px-4 rounded-xl border-slate-200 hover:bg-slate-50 gap-2 font-medium"
+            >
+              <RefreshCw size={18} className={isFetching ? "animate-spin" : ""} />
+              <span className="sm:inline">Refresh</span>
+            </Button>
+            <Button
+              onClick={handleCreate}
+              className="bg-blue-600 hover:bg-blue-700 text-white gap-2 h-11 px-6 shadow-lg shadow-blue-500/20 rounded-xl transition-all hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <Plus size={18} />
+              <span className="font-bold">Create DID</span>
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -230,6 +255,13 @@ export default function DIDListPage() {
           onClose={() => setIsDeactivateModalOpen(false)}
           onConfirm={handleConfirmDeactivate}
           did={didToDeactivate}
+        />
+
+        <PublishDIDModal
+          isOpen={isPublishModalOpen}
+          onClose={() => setIsPublishModalOpen(false)}
+          onConfirm={handleConfirmPublish}
+          did={didToPublish}
         />
 
         {/* Action Response Modal */}

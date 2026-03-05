@@ -29,7 +29,7 @@ export function useDIDs() {
   // Debounce search for server-side filtering
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["dids", { page, pageSize, search: debouncedSearch, isSuperAdmin }],
     queryFn: async () => {
       try {
@@ -135,6 +135,7 @@ export function useDIDs() {
     searchQuery,
     setSearchQuery,
     refreshDIDs: refetch,
+    isFetching,
     deactivateDID,
     publishDID,
     clearError,

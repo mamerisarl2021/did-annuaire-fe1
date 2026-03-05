@@ -148,7 +148,7 @@ export default function OrganizationsPage() {
         <div className="flex items-center space-x-2">
           <Button onClick={() => refresh()} variant="outline" size="sm" disabled={isLoading}>
             <RefreshCw className={`mr-2 size-4 ${isLoading ? "animate-spin" : ""}`} />
-            Refresh
+            <span className="sm:inline">Refresh</span>
           </Button>
           <Link href="/auth/register">
             <Button size="sm" className="h-9 shadow-sm">

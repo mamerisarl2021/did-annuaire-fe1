@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PaginationControl } from "@/components/common/PaginationControl";
 
 interface UsersManagementViewProps {
   scope: "SUPER_USER" | "ORG_ADMIN";
@@ -49,6 +50,8 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     deleteUser,
     setSearch,
     setStatus,
+    pagination,
+    setPage,
   } = useUsers({
     org_id: orgId,
   });
@@ -280,6 +283,13 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
               onToggleStatus={handleToggleStatus}
               onDelete={handleDelete}
             />
+            <div className="px-6 border-t">
+              <PaginationControl
+                currentPage={pagination.page}
+                totalPages={pagination.total_pages}
+                onPageChange={setPage}
+              />
+            </div>
           </CardContent>
         </Card>
       </div>
