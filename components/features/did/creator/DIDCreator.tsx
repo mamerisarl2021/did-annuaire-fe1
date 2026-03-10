@@ -134,6 +134,7 @@ export function DIDCreator({
             isCompiled={isCompiled}
             mode={mode}
             canCompile={!!logicalIdentifier && !!certificateKey}
+            hasResponse={!!response}
           />
         </div>
       </DIDCreatorLayout>

@@ -39,7 +39,12 @@ interface UsersManagementViewProps {
 }
 
 export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) {
-  const { stats, isLoading: isStatsLoading, error: statsError } = useUsersStats();
+  const {
+    stats,
+    isLoading: isStatsLoading,
+    error: statsError,
+    refresh: refreshStats,
+  } = useUsersStats();
   const {
     filteredUsers,
     isLoading,
@@ -121,6 +126,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         message: "User created in PENDING state.",
       });
       setIsCreateModalOpen(false);
+      refreshStats();
     } catch (error) {
       setActionFeedback({
         success: false,
@@ -189,6 +195,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         message: "User status updated successfully.",
       });
       setIsDeactivateModalOpen(false);
+      refreshStats();
     } catch (error) {
       setActionFeedback({
         success: false,
@@ -207,6 +214,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         message: "User deleted successfully.",
       });
       setIsDeleteModalOpen(false);
+      refreshStats();
     } catch (error) {
       setActionFeedback({
         success: false,

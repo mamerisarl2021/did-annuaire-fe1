@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { UserStatusBadge } from "./UserStatusBadge";
 import { User } from "@/lib/features/users/types/users.types";
 
@@ -66,7 +67,7 @@ export function UsersTable({
             <TableHead className="w-[25%]">Full Name</TableHead>
             <TableHead>Organization</TableHead>
             <TableHead>Contact</TableHead>
-            <TableHead>Function</TableHead>
+            <TableHead className="max-w-[150px]">Function</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -101,10 +102,10 @@ export function UsersTable({
                 </div>
               </TableCell>
 
-              <TableCell>
+              <TableCell className="max-w-[150px]">
                 <div className="flex items-center gap-2">
-                  <Briefcase className="size-3.5 text-muted-foreground" />
-                  <span className="capitalize">
+                  <Briefcase className="size-3.5 text-muted-foreground shrink-0" />
+                  <span className="capitalize truncate block">
                     {Array.isArray(user.functions) ? user.functions.join(", ") : user.functions}
                   </span>
                 </div>
@@ -121,94 +122,133 @@ export function UsersTable({
                 >
                   {user.status === "PENDING" && (
                     <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/20"
-                        onClick={() => onInvite(user)}
-                      >
-                        <Send className="size-4" />
-                        <span className="hidden lg:inline text-[11px] font-bold">Invite</span>
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
-                        onClick={() => onDelete(user)}
-                      >
-                        <Trash2 className="size-4" />
-                        <span className="hidden lg:inline text-[11px] font-bold">Delete</span>
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/20"
+                            onClick={() => onInvite(user)}
+                          >
+                            <Send className="size-4" />
+                            <span className="hidden lg:inline text-[11px] font-bold">Invite</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Send invitation</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
+                            onClick={() => onDelete(user)}
+                          >
+                            <Trash2 className="size-4" />
+                            <span className="hidden lg:inline text-[11px] font-bold">Delete</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete user</TooltipContent>
+                      </Tooltip>
                     </>
                   )}
 
                   {user.status === "INVITED" && (
                     <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/20"
-                        onClick={() => onResend(user)}
-                      >
-                        <RefreshCw className="size-4" />
-                        <span className="hidden lg:inline text-[11px] font-bold">Resend</span>
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
-                        onClick={() => onDelete(user)}
-                      >
-                        <Trash2 className="size-4" />
-                        <span className="hidden lg:inline text-[11px] font-bold">Cancel</span>
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/20"
+                            onClick={() => onResend(user)}
+                          >
+                            <RefreshCw className="size-4" />
+                            <span className="hidden lg:inline text-[11px] font-bold">Resend</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Resend invitation</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
+                            onClick={() => onDelete(user)}
+                          >
+                            <Trash2 className="size-4" />
+                            <span className="hidden lg:inline text-[11px] font-bold">Cancel</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Cancel invitation</TooltipContent>
+                      </Tooltip>
                     </>
                   )}
 
                   {(user.status === "ACTIVE" || user.status === "DEACTIVATED") && (
                     <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 gap-1.5 text-slate-600 border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900/40"
-                        onClick={() => onUpdate(user)}
-                      >
-                        <Edit className="size-4" />
-                        <span className="hidden lg:inline text-[11px] font-bold">Update</span>
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className={
-                          user.status === "ACTIVE"
-                            ? "h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
-                            : "h-8 gap-1.5 text-emerald-600 border-emerald-100 hover:bg-emerald-50 dark:border-emerald-900/40 dark:hover:bg-emerald-900/20"
-                        }
-                        onClick={() => onToggleStatus(user)}
-                      >
-                        {user.status === "ACTIVE" ? (
-                          <>
-                            <UserX className="size-4" />
-                            <span className="hidden lg:inline text-[11px] font-bold">
-                              Deactivate
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <UserCheck className="size-4" />
-                            <span className="hidden lg:inline text-[11px] font-bold">Activate</span>
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
-                        onClick={() => onDelete(user)}
-                      >
-                        <Trash2 className="size-4" />
-                        <span className="hidden lg:inline text-[11px] font-bold">Delete</span>
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 gap-1.5 text-slate-600 border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900/40"
+                            onClick={() => onUpdate(user)}
+                          >
+                            <Edit className="size-4" />
+                            <span className="hidden lg:inline text-[11px] font-bold">Update</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit profile</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className={
+                              user.status === "ACTIVE"
+                                ? "h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
+                                : "h-8 gap-1.5 text-emerald-600 border-emerald-100 hover:bg-emerald-50 dark:border-emerald-900/40 dark:hover:bg-emerald-900/20"
+                            }
+                            onClick={() => onToggleStatus(user)}
+                          >
+                            {user.status === "ACTIVE" ? (
+                              <>
+                                <UserX className="size-4" />
+                                <span className="hidden lg:inline text-[11px] font-bold">
+                                  Deactivate
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <UserCheck className="size-4" />
+                                <span className="hidden lg:inline text-[11px] font-bold">
+                                  Activate
+                                </span>
+                              </>
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {user.status === "ACTIVE" ? "Deactivate user" : "Activate user"}
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 gap-1.5 text-red-600 border-red-100 hover:bg-red-50 dark:border-red-900/40 dark:hover:bg-red-900/20"
+                            onClick={() => onDelete(user)}
+                          >
+                            <Trash2 className="size-4" />
+                            <span className="hidden lg:inline text-[11px] font-bold">Delete</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete user</TooltipContent>
+                      </Tooltip>
                     </>
                   )}
                 </div>

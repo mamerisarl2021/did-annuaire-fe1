@@ -149,72 +149,101 @@ export function DIDTable({
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Fetch Keys Button */}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-8 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/20"
-                    onClick={() => onFetchKeys(did)}
-                  >
-                    <CloudDownload className="size-4" />
-                    <span className="hidden lg:inline text-[11px] font-bold">Fetch Keys</span>
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 gap-1.5 text-blue-600 border-blue-100 hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/20"
+                        onClick={() => onFetchKeys(did)}
+                      >
+                        <CloudDownload className="size-4" />
+                        <span className="hidden lg:inline text-[11px] font-bold">Fetch Keys</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Fetch public keys</TooltipContent>
+                  </Tooltip>
 
                   {/* Publish Button */}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className={`h-8 gap-1.5 border-emerald-100 dark:border-emerald-900/40 ${
-                      did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "action")
-                        ? "text-emerald-300 dark:text-emerald-900/40 cursor-not-allowed opacity-50"
-                        : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                    }`}
-                    onClick={() => onPublish(did)}
-                    disabled={
-                      did.status !== "DRAFT" && !(did.status === "ACTIVE" && did.state === "action")
-                    }
-                  >
-                    <QrCode className="size-4" />
-                    <span className="hidden lg:inline text-[11px] font-bold">Publish</span>
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`h-8 gap-1.5 border-emerald-100 dark:border-emerald-900/40 ${
+                          did.status !== "DRAFT" &&
+                          !(did.status === "ACTIVE" && did.state === "action")
+                            ? "text-emerald-300 dark:text-emerald-900/40 cursor-not-allowed opacity-50"
+                            : "text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                        }`}
+                        onClick={() => onPublish(did)}
+                        disabled={
+                          did.status !== "DRAFT" &&
+                          !(did.status === "ACTIVE" && did.state === "action")
+                        }
+                      >
+                        <QrCode className="size-4" />
+                        <span className="hidden lg:inline text-[11px] font-bold">Publish</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Publish DID</TooltipContent>
+                  </Tooltip>
 
                   {/* Edit Button - Intercepted for ownership check */}
                   {did.status === "DEACTIVATED" ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled
-                      className="h-8 gap-1.5 text-slate-300 border-slate-200 dark:border-slate-800 cursor-not-allowed opacity-50"
-                    >
-                      <Edit className="size-4" />
-                      <span className="hidden lg:inline text-[11px] font-bold">Update</span>
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled
+                          className="h-8 gap-1.5 text-slate-300 border-slate-200 dark:border-slate-800 cursor-not-allowed opacity-50"
+                        >
+                          <Edit className="size-4" />
+                          <span className="hidden lg:inline text-[11px] font-bold">Update</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Cannot update deactivated DID</TooltipContent>
+                    </Tooltip>
                   ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1.5 text-slate-600 border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900/40"
-                      onClick={() => onUpdate(did)}
-                    >
-                      <Edit className="size-4" />
-                      <span className="hidden lg:inline text-[11px] font-bold">Update</span>
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 gap-1.5 text-slate-600 border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900/40"
+                          onClick={() => onUpdate(did)}
+                        >
+                          <Edit className="size-4" />
+                          <span className="hidden lg:inline text-[11px] font-bold">Update</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Update DID</TooltipContent>
+                    </Tooltip>
                   )}
 
                   {/* Deactivate Button */}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className={`h-8 gap-1.5 border-red-100 dark:border-red-900/40 ${
-                      did.status !== "ACTIVE"
-                        ? "text-red-300 dark:text-red-900/40 cursor-not-allowed opacity-50"
-                        : "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                    }`}
-                    onClick={() => onDelete(did)}
-                    disabled={did.status !== "ACTIVE"}
-                  >
-                    <Trash2 className="size-4" />
-                    <span className="hidden lg:inline text-[11px] font-bold">Deactivate</span>
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`h-8 gap-1.5 border-red-100 dark:border-red-900/40 ${
+                          did.status !== "ACTIVE"
+                            ? "text-red-300 dark:text-red-900/40 cursor-not-allowed opacity-50"
+                            : "text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        }`}
+                        onClick={() => onDelete(did)}
+                        disabled={did.status !== "ACTIVE"}
+                      >
+                        <Trash2 className="size-4" />
+                        <span className="hidden lg:inline text-[11px] font-bold">Deactivate</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {did.status !== "ACTIVE" ? "DID already deactivated" : "Deactivate DID"}
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </TableCell>
             </TableRow>
