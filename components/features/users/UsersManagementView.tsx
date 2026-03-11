@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, RefreshCw } from "lucide-react";
 import { useUsers } from "@/lib/features/users/hooks/useUsers";
 import { useUsersStats } from "@/lib/features/users/hooks/useUsersStats";
 import { UsersTable } from "./UsersTable";
@@ -57,6 +57,7 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
     setStatus,
     pagination,
     setPage,
+    refresh: refreshUsers,
   } = useUsers({
     org_id: orgId,
   });
@@ -238,6 +239,18 @@ export function UsersManagementView({ scope, orgId }: UsersManagementViewProps) 
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={() => {
+              refreshStats();
+              refreshUsers();
+            }}
+            disabled={isLoading}
+            className="h-11 px-4 rounded-xl border-slate-200 hover:bg-slate-50 gap-2 font-medium"
+          >
+            <RefreshCw className={isLoading ? "animate-spin" : ""} size={18} />
+            <span className="sm:inline">Refresh</span>
+          </Button>
           <Button
             onClick={() => setIsCreateModalOpen(true)}
             className="gap-2 bg-blue-600 hover:bg-blue-700 text-white h-11 px-6 shadow-lg shadow-blue-500/20 rounded-xl transition-all hover:-translate-y-0.5 active:translate-y-0"

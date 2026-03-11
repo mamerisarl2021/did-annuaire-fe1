@@ -38,7 +38,7 @@ import { PublishDIDModal } from "@/components/features/did/list/PublishDIDModal"
 export default function DIDListPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { stats, isLoading: isStatsLoading, error: statsError } = useDIDsStats();
+  const { stats, isLoading: isStatsLoading, error: statsError, refresh: refreshStats } = useDIDsStats();
   const {
     dids,
     isLoading,
@@ -131,6 +131,7 @@ export default function DIDListPage() {
       });
     } finally {
       setIsPublishModalOpen(false);
+      refreshStats();
     }
   };
 
@@ -155,6 +156,7 @@ export default function DIDListPage() {
       });
     } finally {
       setIsDeactivateModalOpen(false);
+      refreshStats();
     }
   };
 
@@ -172,7 +174,10 @@ export default function DIDListPage() {
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
-              onClick={() => refreshDIDs()}
+              onClick={() => {
+                refreshDIDs();
+                refreshStats();
+              }}
               disabled={isFetching}
               className="h-11 px-4 rounded-xl border-slate-200 hover:bg-slate-50 gap-2 font-medium"
             >

@@ -36,18 +36,24 @@ export function DIDCreatorFooter({
       <button
         type="button"
         onClick={onCompile}
-        disabled={isSubmitting || !canCompile}
+        disabled={isSubmitting || !canCompile || isCreated}
         className={cn(
           "flex-1 min-h-[56px] py-4 rounded-md font-black text-xs uppercase tracking-[0.2em] transition-all border",
-          !canCompile
-            ? "bg-slate-800 text-slate-500 cursor-not-allowed opacity-50 border-slate-700"
-            : "bg-blue-600/10 hover:bg-blue-600/20 text-blue-500 border-blue-500/40 shadow-[inset_0_0_20px_rgba(59,130,246,0.1)]",
+          isCreated
+            ? "bg-emerald-600/20 text-emerald-400 border-emerald-500/40 cursor-default"
+            : !canCompile
+              ? "bg-slate-800 text-slate-500 cursor-not-allowed opacity-50 border-slate-700"
+              : "bg-blue-600/10 hover:bg-blue-600/20 text-blue-500 border-blue-500/40 shadow-[inset_0_0_20px_rgba(59,130,246,0.1)]",
           isSubmitting && "opacity-50 cursor-not-allowed"
         )}
       >
         <span className="flex items-center justify-center gap-2">
-          {isSubmitting && !isCompiled ? <Loader2 className="size-4 animate-spin" /> : null}
-          Compile DID
+          {isCreated ? (
+            <CheckCircle2 className="size-4" />
+          ) : isSubmitting && !isCompiled ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : null}
+          {isCreated ? "DID Compiled \u2713" : "Compile DID"}
         </span>
       </button>
 
